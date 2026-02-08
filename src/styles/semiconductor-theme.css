@@ -1,0 +1,877 @@
+/* ===================================
+   SEMICONDUCTOR UI THEME
+   Custom cursors, IC animations & effects
+   =================================== */
+
+/* ===================================
+   CUSTOM IC CURSOR
+   =================================== */
+
+/* Default cursor - microchip pointer */
+html {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='6' y='6' width='12' height='12' fill='%233b82f6' stroke='%2306b6d4' stroke-width='1'/%3E%3Cline x1='6' y1='9' x2='2' y2='9' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='6' y1='12' x2='2' y2='12' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='6' y1='15' x2='2' y2='15' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='18' y1='9' x2='22' y2='9' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='18' y1='12' x2='22' y2='12' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='18' y1='15' x2='22' y2='15' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='9' y1='6' x2='9' y2='2' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='12' y1='6' x2='12' y2='2' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='15' y1='6' x2='15' y2='2' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='9' y1='18' x2='9' y2='22' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='12' y1='18' x2='12' y2='22' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='15' y1='18' x2='15' y2='22' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%2322d3ee'/%3E%3C/svg%3E") 12 12, auto;
+}
+
+/* Pointer cursor for interactive elements */
+a,
+button,
+.btn,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.clickable,
+.card:hover {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Crect x='7' y='7' width='14' height='14' fill='%238b5cf6' stroke='%2306b6d4' stroke-width='1.5'/%3E%3Cline x1='7' y1='10' x2='2' y2='10' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='7' y1='14' x2='2' y2='14' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='7' y1='18' x2='2' y2='18' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='21' y1='10' x2='26' y2='10' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='21' y1='14' x2='26' y2='14' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='21' y1='18' x2='26' y2='18' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='10' y1='7' x2='10' y2='2' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='14' y1='7' x2='14' y2='2' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='18' y1='7' x2='18' y2='2' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='10' y1='21' x2='10' y2='26' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='14' y1='21' x2='14' y2='26' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='18' y1='21' x2='18' y2='26' stroke='%2306b6d4' stroke-width='2'/%3E%3Ccircle cx='14' cy='14' r='3' fill='%2322d3ee'%3E%3Canimate attributeName='r' values='2;4;2' dur='1s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E") 14 14, pointer;
+}
+
+/* Text cursor for inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+[contenteditable] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'%3E%3Cline x1='10' y1='2' x2='10' y2='22' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='6' y1='2' x2='14' y2='2' stroke='%2306b6d4' stroke-width='2'/%3E%3Cline x1='6' y1='22' x2='14' y2='22' stroke='%2306b6d4' stroke-width='2'/%3E%3Crect x='8' y='10' width='4' height='4' fill='%233b82f6'%3E%3Canimate attributeName='opacity' values='1;0;1' dur='1s' repeatCount='indefinite'/%3E%3C/rect%3E%3C/svg%3E") 10 12, text;
+}
+
+/* ===================================
+   CLICK RIPPLE EFFECT
+   =================================== */
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.circuit-ripple {
+    position: absolute;
+    border-radius: 0;
+    background: transparent;
+    border: 2px solid var(--cyan-400);
+    animation: circuit-ripple-expand 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.circuit-ripple::before,
+.circuit-ripple::after {
+    content: '';
+    position: absolute;
+    background: var(--cyan-400);
+}
+
+.circuit-ripple::before {
+    width: 100%;
+    height: 2px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.circuit-ripple::after {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+@keyframes circuit-ripple-expand {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+
+    100% {
+        width: 150px;
+        height: 150px;
+        opacity: 0;
+    }
+}
+
+/* ===================================
+   PAGE LOADING - CIRCUIT BOARD ANIMATION
+   =================================== */
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 10000;
+    animation: loader-fade-out 0.5s ease-out 2s forwards;
+}
+
+.chip-loader {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+/* Main IC chip body */
+.chip-body {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid var(--cyan-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: chip-pulse 2s ease-in-out infinite;
+}
+
+.chip-body::before {
+    content: 'IC';
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cyan-400);
+    text-shadow: 0 0 10px var(--cyan-400);
+}
+
+/* Chip pins */
+.chip-pins {
+    position: absolute;
+}
+
+.chip-pins.top {
+    top: 5px;
+    left: 20px;
+    width: 80px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.chip-pins.bottom {
+    bottom: 5px;
+    left: 20px;
+    width: 80px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.chip-pins.left {
+    left: 5px;
+    top: 20px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.chip-pins.right {
+    right: 5px;
+    top: 20px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.pin {
+    background: var(--primary-500);
+    animation: pin-glow 0.5s ease-in-out infinite alternate;
+}
+
+.chip-pins.top .pin,
+.chip-pins.bottom .pin {
+    width: 4px;
+    height: 15px;
+}
+
+.chip-pins.left .pin,
+.chip-pins.right .pin {
+    width: 15px;
+    height: 4px;
+}
+
+/* Staggered pin animation */
+.pin:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.pin:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.pin:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.pin:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+@keyframes pin-glow {
+    from {
+        background: var(--primary-700);
+        box-shadow: none;
+    }
+
+    to {
+        background: var(--cyan-400);
+        box-shadow: 0 0 10px var(--cyan-400);
+    }
+}
+
+@keyframes chip-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(6, 182, 212, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.1);
+    }
+}
+
+@keyframes loader-fade-out {
+    to {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+.loader-text {
+    margin-top: 2rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: text-flicker 2s linear infinite;
+}
+
+@keyframes text-flicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    75% {
+        opacity: 0.8;
+    }
+}
+
+/* ===================================
+   CIRCUIT BOARD BACKGROUND PATTERN
+   =================================== */
+.circuit-bg {
+    position: relative;
+}
+
+.circuit-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(to right, rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.circuit-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.05) 0%, transparent 25%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===================================
+   ANIMATED CIRCUIT TRACES
+   =================================== */
+.circuit-traces {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.trace {
+    position: absolute;
+    background: var(--cyan-400);
+    opacity: 0.1;
+}
+
+.trace-h {
+    height: 1px;
+    animation: trace-flow-h 8s linear infinite;
+}
+
+.trace-v {
+    width: 1px;
+    animation: trace-flow-v 8s linear infinite;
+}
+
+.trace-pulse {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--cyan-400);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--cyan-400), 0 0 20px var(--cyan-400);
+}
+
+@keyframes trace-flow-h {
+    0% {
+        width: 0;
+    }
+
+    50% {
+        width: 100%;
+    }
+
+    100% {
+        width: 100%;
+        opacity: 0;
+    }
+}
+
+@keyframes trace-flow-v {
+    0% {
+        height: 0;
+    }
+
+    50% {
+        height: 100%;
+    }
+
+    100% {
+        height: 100%;
+        opacity: 0;
+    }
+}
+
+/* ===================================
+   BUTTON CHIP STYLE
+   =================================== */
+.btn-chip {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid var(--cyan-400);
+    color: var(--cyan-400);
+    padding: 1rem 2rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    overflow: visible;
+}
+
+.btn-chip::before,
+.btn-chip::after {
+    content: '';
+    position: absolute;
+    background: var(--cyan-400);
+    transition: all 0.3s ease;
+}
+
+/* Chip pins on sides */
+.btn-chip::before {
+    width: 15px;
+    height: 3px;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow:
+        0 -12px 0 var(--cyan-400),
+        0 12px 0 var(--cyan-400);
+}
+
+.btn-chip::after {
+    width: 15px;
+    height: 3px;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow:
+        0 -12px 0 var(--cyan-400),
+        0 12px 0 var(--cyan-400);
+}
+
+.btn-chip:hover {
+    background: var(--cyan-400);
+    color: var(--bg-primary);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+}
+
+.btn-chip:hover::before,
+.btn-chip:hover::after {
+    background: var(--primary-500);
+    box-shadow:
+        0 -12px 0 var(--primary-500),
+        0 12px 0 var(--primary-500);
+}
+
+/* ===================================
+   INLINE LOADING SPINNER - WAFER STYLE
+   =================================== */
+.spinner-wafer {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.spinner-wafer::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--cyan-400);
+    border-right-color: var(--primary-500);
+    animation: wafer-spin 1s linear infinite;
+}
+
+.spinner-wafer::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: calc(100% - 16px);
+    height: calc(100% - 16px);
+    background:
+        linear-gradient(90deg, transparent 48%, var(--cyan-400) 48%, var(--cyan-400) 52%, transparent 52%),
+        linear-gradient(0deg, transparent 48%, var(--cyan-400) 48%, var(--cyan-400) 52%, transparent 52%);
+    animation: wafer-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes wafer-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes wafer-pulse {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   CARD HOVER EFFECT - CIRCUIT GLOW
+   =================================== */
+.card-circuit {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-circuit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(90deg, transparent 0%, transparent 48%, rgba(6, 182, 212, 0.1) 48%, rgba(6, 182, 212, 0.1) 52%, transparent 52%, transparent 100%),
+        linear-gradient(0deg, transparent 0%, transparent 48%, rgba(6, 182, 212, 0.1) 48%, rgba(6, 182, 212, 0.1) 52%, transparent 52%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.card-circuit:hover::before {
+    opacity: 1;
+}
+
+.card-circuit::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent 0deg, var(--cyan-400) 1deg, transparent 2deg);
+    opacity: 0;
+    animation: circuit-scan 3s linear infinite paused;
+    pointer-events: none;
+}
+
+.card-circuit:hover::after {
+    opacity: 0.1;
+    animation-play-state: running;
+}
+
+@keyframes circuit-scan {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===================================
+   DATA FLOW ANIMATION
+   =================================== */
+.data-flow {
+    position: relative;
+    overflow: hidden;
+}
+
+.data-flow::after {
+    content: '01001010';
+    position: absolute;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--cyan-400);
+    opacity: 0;
+    white-space: nowrap;
+    animation: data-stream 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes data-stream {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.3;
+    }
+
+    90% {
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* ===================================
+   TRANSISTOR TOGGLE (for checkboxes)
+   =================================== */
+.transistor-toggle {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-default);
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.transistor-toggle::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 2px;
+    left: 2px;
+    background: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.transistor-toggle.active {
+    border-color: var(--cyan-400);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.transistor-toggle.active::before {
+    left: calc(100% - 24px);
+    background: var(--cyan-400);
+    box-shadow: 0 0 10px var(--cyan-400);
+}
+
+/* ===================================
+   SIGNAL BARS (for progress/levels)
+   =================================== */
+.signal-bars {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 30px;
+}
+
+.signal-bar {
+    width: 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    transition: all 0.3s ease;
+}
+
+.signal-bar:nth-child(1) {
+    height: 30%;
+}
+
+.signal-bar:nth-child(2) {
+    height: 50%;
+}
+
+.signal-bar:nth-child(3) {
+    height: 70%;
+}
+
+.signal-bar:nth-child(4) {
+    height: 90%;
+}
+
+.signal-bar:nth-child(5) {
+    height: 100%;
+}
+
+.signal-bar.active {
+    background: var(--cyan-400);
+    border-color: var(--cyan-400);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    animation: signal-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes signal-pulse {
+    from {
+        opacity: 0.7;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   SEMICONDUCTOR ICON EFFECTS
+   =================================== */
+.icon-semiconductor {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--primary-500);
+}
+
+.icon-semiconductor::before,
+.icon-semiconductor::after {
+    content: '';
+    position: absolute;
+    background: var(--primary-500);
+}
+
+.icon-semiconductor::before {
+    width: 6px;
+    height: 2px;
+    box-shadow:
+        -27px 0 0 var(--primary-500),
+        27px 0 0 var(--primary-500),
+        0 -27px 0 var(--primary-500),
+        0 27px 0 var(--primary-500);
+}
+
+/* ===================================
+   HOVER TOOLTIP - CHIP INFO STYLE
+   =================================== */
+.chip-tooltip {
+    position: relative;
+}
+
+.chip-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 8px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--cyan-400);
+    color: var(--cyan-400);
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.chip-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--cyan-400);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.chip-tooltip:hover::after,
+.chip-tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===================================
+   ELECTRIC GLITCH TEXT EFFECT
+   =================================== */
+.glitch-text {
+    position: relative;
+    animation: glitch-skew 4s infinite linear alternate-reverse;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    color: var(--cyan-400);
+    animation: glitch-effect 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    transform: translateX(-2px);
+}
+
+.glitch-text::after {
+    color: var(--accent-500);
+    animation: glitch-effect 2s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    transform: translateX(2px);
+}
+
+@keyframes glitch-effect {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    7% {
+        opacity: 0.75;
+        transform: translateX(2px);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateX(-1px);
+    }
+
+    27% {
+        opacity: 0.75;
+        transform: translateX(-2px);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    35% {
+        opacity: 0.75;
+        transform: translateX(1px);
+    }
+
+    40% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes glitch-skew {
+
+    0%,
+    100% {
+        transform: skew(0deg);
+    }
+
+    30% {
+        transform: skew(0.5deg);
+    }
+
+    60% {
+        transform: skew(-0.3deg);
+    }
+}
+
+/* ===================================
+   SCROLLBAR - CIRCUIT STYLED
+   =================================== */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-700) 0%, var(--primary-900) 100%);
+    border: 2px solid var(--bg-secondary);
+    position: relative;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-500) 0%, var(--primary-700) 100%);
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--bg-secondary);
+}
+
+/* ===================================
+   FOCUS STATES - ELECTRIC OUTLINE
+   =================================== */
+*:focus-visible {
+    outline: 2px solid var(--cyan-400);
+    outline-offset: 2px;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+/* ===================================
+   SELECTION - MATRIX STYLE
+   =================================== */
+::selection {
+    background: rgba(6, 182, 212, 0.3);
+    color: var(--cyan-400);
+    text-shadow: 0 0 5px currentColor;
+}

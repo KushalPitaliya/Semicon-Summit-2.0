@@ -139,14 +139,11 @@ const Login = () => {
                     <div className="login-footer">
                         <p>
                             Don't have an account?{' '}
-                            <a
-                                href="https://docs.google.com/forms/d/e/1FAIpQLScLd04BRieccB4CkLjRbwTFQEz26Bjl0mUyRchdCr9Zm_o3VA/viewform"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
+                            <Link to="/register">
                                 Register Now
-                            </a>
+                            </Link>
                         </p>
+
                         <Link to="/" className="back-to-home">
                             ← Back to Home
                         </Link>

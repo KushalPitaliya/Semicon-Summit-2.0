@@ -7,7 +7,9 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
+import * as XLSX from 'xlsx'
 import './Dashboard.css'
+
 
 const FacultyDashboard = () => {
     const { user, logout } = useAuth()
@@ -136,28 +138,48 @@ const FacultyDashboard = () => {
     }
 
     const handleExport = () => {
-        const headers = ['Name', 'Email', 'College', 'Phone', 'Events', 'Payment Ref', 'Timestamp']
-        const csvContent = [
-            headers.join(','),
-            ...filteredParticipants.map(p => [
-                `"${p.name}"`,
-                p.email,
-                `"${p.college || ''}"`,
-                p.phone || '',
-                `"${(p.events || []).join('; ')}"`,
-                p.paymentRef || '',
-                p.timestamp || ''
-            ].join(','))
-        ].join('\n')
+        // Prepare data for Excel
+        const excelData = filteredParticipants.map((p, index) => ({
+            'S.No': index + 1,
+            'Name': p.name || '',
+            'Email': p.email || '',
+            'Phone': p.phone || '',
+            'College': p.college || '',
+            'Events': (p.events || []).join(', '),
+            'Transaction ID': p.transactionId || p.paymentRef || '',
+            'Amount Paid': p.paymentAmount || 400,
+            'Status': p.verificationStatus || 'approved',
+            'Registered On': p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-IN') : p.timestamp || ''
+        }))
 
-        const blob = new Blob([csvContent], { type: 'text/csv' })
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `summit_registrations_${new Date().toISOString().split('T')[0]}.csv`
-        a.click()
-        window.URL.revokeObjectURL(url)
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData)
+
+        // Set column widths
+        worksheet['!cols'] = [
+            { wch: 6 },   // S.No
+            { wch: 25 },  // Name
+            { wch: 30 },  // Email
+            { wch: 15 },  // Phone
+            { wch: 30 },  // College
+            { wch: 40 },  // Events
+            { wch: 20 },  // Transaction ID
+            { wch: 12 },  // Amount
+            { wch: 12 },  // Status
+            { wch: 15 },  // Date
+        ]
+
+        // Create workbook
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations')
+
+        // Generate filename with date
+        const filename = `Summit_Registrations_${new Date().toISOString().split('T')[0]}.xlsx`
+
+        // Download file
+        XLSX.writeFile(workbook, filename)
     }
+
 
     // User Management Functions
     const handleResetPassword = async (userId) => {

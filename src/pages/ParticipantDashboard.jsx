@@ -5,6 +5,7 @@ import {
     ChevronRight, ExternalLink
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import api from '../services/api'
 import './Dashboard.css'
 
 const ParticipantDashboard = () => {
@@ -12,19 +13,30 @@ const ParticipantDashboard = () => {
     const navigate = useNavigate()
     const [announcements, setAnnouncements] = useState([])
     const [photos, setPhotos] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Fetch announcements and photos from backend
-        // For now, using mock data
-        setAnnouncements([
-            { id: 1, title: 'Welcome to Semiconductor Summit 2.0!', date: '2026-02-01', content: 'We are excited to have you join us.' },
-            { id: 2, title: 'Schedule Released', date: '2026-02-03', content: 'Check out the full event schedule on our website.' },
-        ])
-        setPhotos([
-            { id: 1, url: '/assets/event1.jpg', caption: 'Last year highlights' },
-            { id: 2, url: '/assets/event2.jpg', caption: 'Workshop session' },
-        ])
+        const fetchData = async () => {
+            try {
+                // Fetch announcements from API
+                const announcementsRes = await api.get('/announcements')
+                setAnnouncements(announcementsRes.data || [])
+
+                // Fetch gallery images from API
+                const galleryRes = await api.get('/gallery')
+                setPhotos(galleryRes.data || [])
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                // Fallback to empty arrays
+                setAnnouncements([])
+                setPhotos([])
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
     }, [])
+
 
     const handleLogout = () => {
         logout()
@@ -164,23 +176,36 @@ const ParticipantDashboard = () => {
                             <h2>Photo Gallery</h2>
                         </div>
                         <div className="gallery-grid">
-                            {photos.length === 0 ? (
+                            {loading ? (
+                                <div className="loading-state">
+                                    <div className="loading-spinner-small"></div>
+                                    <span>Loading gallery...</span>
+                                </div>
+                            ) : photos.length === 0 ? (
                                 <div className="empty-state">
                                     <Image size={32} />
                                     <p>No photos uploaded yet</p>
                                 </div>
                             ) : (
                                 photos.map((photo) => (
-                                    <div key={photo.id} className="gallery-item card">
-                                        <div className="gallery-placeholder">
-                                            <Image size={32} />
-                                            <span>{photo.caption}</span>
+                                    <div key={photo._id || photo.id} className="gallery-item card">
+                                        <div className="gallery-image-container">
+                                            <img
+                                                src={photo.thumbnailUrl || photo.url}
+                                                alt={photo.title || photo.caption || 'Gallery image'}
+                                                className="gallery-img"
+                                            />
+                                        </div>
+                                        <div className="gallery-caption">
+                                            <h4>{photo.title || 'Untitled'}</h4>
+                                            {photo.description && <p>{photo.description}</p>}
                                         </div>
                                     </div>
                                 ))
                             )}
                         </div>
                     </section>
+
                 </div>
             </main>
         </div>

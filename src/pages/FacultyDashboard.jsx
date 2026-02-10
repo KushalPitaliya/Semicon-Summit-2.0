@@ -277,7 +277,13 @@ const FacultyDashboard = () => {
     }
 
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page" style={{ position: 'relative', overflow: 'hidden' }}>
+            {/* Background */}
+            <div className="hero-bg" style={{ zIndex: 0, opacity: 0.5 }}>
+                <div className="hero-grid" />
+                <div className="hero-glow hero-glow-1" style={{ top: '-20%', left: '20%', opacity: 0.3 }} />
+            </div>
+
             {/* Sidebar */}
             <aside className="dashboard-sidebar">
                 <div className="sidebar-header">
@@ -330,7 +336,7 @@ const FacultyDashboard = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="dashboard-main">
+            <main className="dashboard-main" style={{ position: 'relative', zIndex: 1 }}>
                 <header className="dashboard-header">
                     <div className="header-content">
                         <h1>Welcome, {user?.name || 'Faculty'}!</h1>

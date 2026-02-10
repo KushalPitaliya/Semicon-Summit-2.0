@@ -6,6 +6,7 @@ import {
     ExternalLink, FileText, Info
 } from 'lucide-react';
 import api from '../services/api';
+import ParticleField from '../components/ParticleField';
 import './Register.css';
 
 // Fixed registration fee
@@ -93,8 +94,14 @@ const Register = () => {
     // ─── SUCCESS SCREEN ────────────────────────
     if (success) {
         return (
-            <div className="register-page">
-                <div className="register-container success-container">
+            <div className="register-page" style={{ position: 'relative', overflow: 'hidden' }}>
+                <div className="hero-bg">
+                    <div className="hero-grid" />
+                    <div className="hero-glow hero-glow-1" />
+                    <div className="hero-glow hero-glow-2" />
+                    <ParticleField count={40} />
+                </div>
+                <div className="register-container success-container" style={{ position: 'relative', zIndex: 1 }}>
                     <div className="success-icon">
                         <CheckCircle size={80} />
                     </div>
@@ -127,8 +134,14 @@ const Register = () => {
 
     // ─── MAIN REGISTER PAGE ────────────────────
     return (
-        <div className="register-page">
-            <div className="register-container">
+        <div className="register-page" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div className="hero-bg">
+                <div className="hero-grid" />
+                <div className="hero-glow hero-glow-1" />
+                <div className="hero-glow hero-glow-2" />
+                <ParticleField count={40} />
+            </div>
+            <div className="register-container" style={{ position: 'relative', zIndex: 1 }}>
                 <Link to="/" className="back-link">
                     <ArrowLeft size={20} />
                     Back to Home

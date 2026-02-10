@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ParticleField from '../components/ParticleField';
 import './Events.css';
 
 // ─── IMAGE MAPPING ─────────────────────────────────
@@ -744,6 +745,7 @@ const Events = () => {
                     <div className="hero-glow hero-glow-1" />
                     <div className="hero-glow hero-glow-2" />
                     <div className="hero-grid" />
+                    <ParticleField count={30} />
                 </div>
                 <div className="events-hero-content">
                     <span className="events-tag">

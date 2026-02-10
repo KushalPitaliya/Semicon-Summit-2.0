@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Cpu, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import ParticleField from '../components/ParticleField'
 import './Login.css'
 
 const Login = () => {
@@ -81,6 +82,7 @@ const Login = () => {
                 <div className="login-grid"></div>
                 <div className="login-glow login-glow-1"></div>
                 <div className="login-glow login-glow-2"></div>
+                <ParticleField count={40} />
             </div>
 
             <div className="login-container">

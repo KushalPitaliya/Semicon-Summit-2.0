@@ -42,7 +42,7 @@ const Navbar = () => {
                         <Link
                             key={link.name}
                             to={link.path}
-                            className="nav-link"
+                            className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             {link.name}

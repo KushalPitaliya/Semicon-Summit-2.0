@@ -123,9 +123,20 @@
     color: var(--text-primary);
 }
 
-.nav-link:hover::after {
+.nav-link.active {
+    color: #4ade80;
+    /* lighter green for better contrast on dark bg */
+    text-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
     width: 100%;
     left: 0;
+}
+
+.nav-link.active::after {
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
 
 .nav-login-btn {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, ArrowRight } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import './Contact.css';
 
 const Contact = () => {
@@ -33,8 +35,15 @@ const Contact = () => {
         }, 1500);
     };
 
+    const venue = {
+        name: 'CHARUSAT University, A6 Building',
+        address: 'Department of EC Engineering - CSPIT, A6 Building, CHARUSAT, Changa, Gujarat - 388421',
+        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.8!2d72.8168!3d22.5988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e4e7439a2e021%3A0x9f4c4b1dfb8a586a!2sCHARUSAT!5e0!3m2!1sen!2sin!4v1700000000000'
+    };
+
     return (
         <div className="contact-page">
+            <Navbar />
             <div className="contact-container">
                 {/* Header */}
                 <div className="contact-header">
@@ -176,25 +185,34 @@ const Contact = () => {
                     </div>
                 </div>
 
-                {/* FAQ Section */}
-                <div className="faq-section">
-                    <h2>Frequently Asked Questions</h2>
-                    <div className="faq-grid">
-                        <div className="faq-item">
-                            <h3>What is the registration fee?</h3>
-                            <p>The registration fee is ₹299, which includes access to all events during the summit.</p>
+                {/* Map Section */}
+                <div className="contact-map-section">
+                    <h2>Find Us <span className="text-gradient">Here</span></h2>
+                    <div className="contact-map-wrapper">
+                        <div className="contact-map-info">
+                            <div className="map-info-icon"><MapPin size={28} /></div>
+                            <h3>{venue.name}</h3>
+                            <p>{venue.address}</p>
+                            <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue.address)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-secondary"
+                            >
+                                Get Directions <ArrowRight size={16} />
+                            </a>
                         </div>
-                        <div className="faq-item">
-                            <h3>Can I get a refund?</h3>
-                            <p>Refunds are available up to 7 days before the event starts. Contact us for more details.</p>
-                        </div>
-                        <div className="faq-item">
-                            <h3>Are certificates provided?</h3>
-                            <p>Yes, all participants will receive a certificate of participation after attending the summit.</p>
-                        </div>
-                        <div className="faq-item">
-                            <h3>Is accommodation provided?</h3>
-                            <p>Accommodation is not included, but we can help you find nearby hotels at discounted rates.</p>
+                        <div className="contact-map">
+                            <iframe
+                                src={venue.mapEmbedUrl}
+                                width="100%"
+                                height="350"
+                                style={{ border: 0, borderRadius: '12px' }}
+                                allowFullScreen=""
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                title="Event Location"
+                            />
                         </div>
                     </div>
                 </div>
@@ -208,6 +226,7 @@ const Contact = () => {
                     </Link>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

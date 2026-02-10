@@ -179,14 +179,51 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // ==========================================
-// PUBLIC REGISTRATION (with Razorpay payment)
+// PUBLIC REGISTRATION (combined: register + payment verification)
 // ==========================================
-app.post('/api/register', async (req, res) => {
+
+// Multer config for PDF receipt uploads during registration
+const receiptStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const receiptDir = path.join(uploadsDir, 'receipts');
+        if (!fs.existsSync(receiptDir)) {
+            fs.mkdirSync(receiptDir, { recursive: true });
+        }
+        cb(null, receiptDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'receipt-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const uploadReceipt = multer({
+    storage: receiptStorage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'));
+        }
+    }
+});
+
+app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) => {
     try {
-        const { name, email, phone, college, department, selectedEvents, paymentAmount } = req.body;
+        const { name, email, phone, college, department, selectedEvents, paymentAmount, paymentId } = req.body;
+        const pdfFile = req.file;
 
         if (!name || !email || !phone) {
             return res.status(400).json({ error: 'Name, email, and phone are required' });
+        }
+
+        if (!paymentId) {
+            return res.status(400).json({ error: 'Payment ID is required' });
+        }
+
+        if (!pdfFile) {
+            return res.status(400).json({ error: 'PDF receipt is required' });
         }
 
         // Check if user already exists
@@ -195,7 +232,35 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ error: 'Email already registered. If you have already submitted, please wait for payment confirmation.' });
         }
 
-        // Create new user with pending status
+        // Check for duplicate payment ID
+        const existingPayment = await User.findOne({ razorpayPaymentId: paymentId.trim() });
+        if (existingPayment) {
+            return res.status(400).json({ error: 'This Payment ID has already been used. Please contact support if you believe this is an error.' });
+        }
+
+        // Extract text from PDF and verify payment ID
+        let pdfText = '';
+        try {
+            const pdfParse = require('pdf-parse');
+            const dataBuffer = fs.readFileSync(pdfFile.path);
+            const pdfData = await pdfParse(dataBuffer);
+            pdfText = pdfData.text;
+            console.log(`📝 PDF text extracted (${pdfText.length} characters)`);
+        } catch (pdfError) {
+            console.error('PDF parsing error:', pdfError);
+            return res.status(400).json({ error: 'Unable to read PDF. Please ensure you uploaded a valid PDF receipt.' });
+        }
+
+        // Verify payment ID exists in the PDF
+        const escapedId = paymentId.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const paymentIdRegex = new RegExp(escapedId, 'i');
+        if (!paymentIdRegex.test(pdfText)) {
+            return res.status(400).json({ error: 'Payment ID not found in the uploaded PDF. Please verify the Payment ID and try again.' });
+        }
+
+        // All checks passed — Create user and auto-approve
+        const password = generatePassword();
+
         const user = new User({
             name,
             email: email.toLowerCase(),
@@ -204,27 +269,33 @@ app.post('/api/register', async (req, res) => {
             department,
             selectedEvents: Array.isArray(selectedEvents) ? selectedEvents :
                 (typeof selectedEvents === 'string' ? JSON.parse(selectedEvents) : []),
-            verificationStatus: 'pending',
-            paymentStatus: 'pending',
-            paymentAmount: 299, // Fixed registration fee
-            role: 'participant'
+            verificationStatus: 'approved',
+            paymentStatus: 'completed',
+            paymentAmount: 299,
+            role: 'participant',
+            razorpayPaymentId: paymentId.trim(),
+            paymentScreenshot: `/uploads/receipts/${pdfFile.filename}`,
+            password: password,
+            verifiedAt: new Date()
         });
 
         await user.save();
 
-        console.log(`✅ User registered (pending payment): ${user.name} (${user.email})`);
+        // Send credentials email
+        const emailSent = await sendCredentialsEmail(user, password);
+
+        console.log(`✅ User registered & auto-approved: ${user.name} (${user.email})`);
+        console.log(`📧 Credentials email sent: ${emailSent}`);
 
         res.status(201).json({
-            message: 'Registration submitted successfully. Please complete payment to activate your account.',
+            message: 'Registration successful! Check your email for login credentials.',
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                selectedEvents: user.selectedEvents
-            },
-            // Return payment link with pre-filled information
-            paymentLink: `https://rzp.io/rzp/NsZUsMqO?prefill[name]=${encodeURIComponent(name)}&prefill[email]=${encodeURIComponent(email)}&prefill[contact]=${encodeURIComponent(phone)}`
+                verificationStatus: user.verificationStatus
+            }
         });
     } catch (error) {
         console.error('Registration error:', error);

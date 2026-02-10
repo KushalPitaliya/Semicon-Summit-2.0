@@ -6,12 +6,13 @@
 .about-page {
     min-height: 100vh;
     background: var(--bg-primary);
-    padding: 4rem 2rem 2rem;
+    padding: 2rem 2rem 2rem;
 }
 
 .about-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding-top: 5rem;
 }
 
 /* Hero Section */
@@ -244,6 +245,88 @@ section h2 {
     font-size: 1.125rem;
 }
 
+/* Glimpse/Gallery Section */
+.glimpse-section {
+    margin-bottom: 4rem;
+}
+
+.glimpse-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+.glimpse-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.about-glimpse-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: rgba(10, 15, 25, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-glimpse-card:hover {
+    border-color: rgba(34, 197, 94, 0.3);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    transform: translateY(-4px);
+}
+
+.about-glimpse-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+}
+
+.about-glimpse-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.about-glimpse-card:hover .about-glimpse-image img {
+    transform: scale(1.08);
+}
+
+.about-glimpse-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: #fff;
+}
+
+.about-glimpse-card:hover .about-glimpse-overlay {
+    opacity: 1;
+}
+
+.about-glimpse-content {
+    padding: 1rem 1.25rem;
+}
+
+.about-glimpse-content h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.about-glimpse-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
 /* Responsive */
 @media (max-width: 968px) {
 
@@ -257,6 +340,10 @@ section h2 {
     }
 
     .stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .glimpse-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
@@ -279,7 +366,8 @@ section h2 {
     }
 
     .offer-grid,
-    .stats-section {
+    .stats-section,
+    .glimpse-grid {
         grid-template-columns: 1fr;
     }
 

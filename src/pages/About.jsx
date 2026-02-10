@@ -1,11 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Target, Lightbulb, Users, Trophy, ArrowRight } from 'lucide-react';
+import { Target, Lightbulb, Users, Trophy, ArrowRight, Image } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import api from '../services/api';
 import './About.css';
 
 const About = () => {
+    const [galleryImages, setGalleryImages] = useState([]);
+    const [galleryLoading, setGalleryLoading] = useState(true);
+
+    // Fetch gallery images
+    useEffect(() => {
+        const fetchGallery = async () => {
+            try {
+                const response = await api.get('/gallery/featured');
+                setGalleryImages(response.data);
+            } catch (error) {
+                console.error('Error fetching gallery:', error);
+            } finally {
+                setGalleryLoading(false);
+            }
+        };
+        fetchGallery();
+    }, []);
+
+    const previousEventImages = [
+        { id: 1, title: 'VLSI Workshop 2024', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop', description: 'Participants learning chip design' },
+        { id: 2, title: 'Hackathon Finals', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop', description: 'Teams presenting projects' },
+        { id: 3, title: 'Expert Talk Session', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop', description: 'Industry expert sharing insights' },
+        { id: 4, title: 'Networking Event', image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=300&fit=crop', description: 'Students connecting with professionals' },
+        { id: 5, title: 'Award Ceremony', image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=300&fit=crop', description: 'Winners receiving prizes' },
+        { id: 6, title: 'Lab Session', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop', description: 'Hands-on learning experience' }
+    ];
+
     return (
         <div className="about-page">
+            <Navbar />
             <div className="about-container">
                 {/* Hero Section */}
                 <div className="about-hero">
@@ -55,7 +86,7 @@ const About = () => {
                                 <ArrowRight size={32} />
                             </div>
                             <h3>Career Opportunities</h3>
-                            <p>Gain insights into career paths and connect with potential employers in the semiconductor industryy</p>
+                            <p>Gain insights into career paths and connect with potential employers in the semiconductor industry</p>
                         </div>
                     </div>
                 </section>
@@ -73,8 +104,8 @@ const About = () => {
                             <p>Talks from chip architecture experts on latest trends and emerging technologies</p>
                         </div>
                         <div className="offer-item">
-                            <h3>⚡ 24-Hour Hackathon</h3>
-                            <p>Build innovative embedded systems projects and compete for exciting prizes</p>
+                            <h3>⚡ Competitions</h3>
+                            <p>Pitch ideas in Silicon Shark Tank and showcase your skills in exciting challenges</p>
                         </div>
                         <div className="offer-item">
                             <h3>🤝 Panel Discussions</h3>
@@ -110,6 +141,42 @@ const About = () => {
                     </div>
                 </section>
 
+                {/* ====== GLIMPSES SECTION ====== */}
+                <section className="glimpse-section">
+                    <h2>Glimpse of <span className="text-gradient">Summit 1.0</span></h2>
+                    <p className="glimpse-subtitle">Relive the moments from our previous summit.</p>
+
+                    <div className="glimpse-grid">
+                        {galleryImages.length > 0 ? (
+                            galleryImages.map((item) => (
+                                <div key={item._id} className="about-glimpse-card">
+                                    <div className="about-glimpse-image">
+                                        <img src={item.thumbnailUrl || item.url} alt={item.title} loading="lazy" />
+                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
+                                    </div>
+                                    <div className="about-glimpse-content">
+                                        <h4>{item.title}</h4>
+                                        <p>{item.description || item.category}</p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            previousEventImages.map((item) => (
+                                <div key={item.id} className="about-glimpse-card">
+                                    <div className="about-glimpse-image">
+                                        <img src={item.image} alt={item.title} loading="lazy" />
+                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
+                                    </div>
+                                    <div className="about-glimpse-content">
+                                        <h4>{item.title}</h4>
+                                        <p>{item.description}</p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
+
                 {/* Stats Section */}
                 <section className="stats-section">
                     <div className="stat-item">
@@ -139,6 +206,7 @@ const About = () => {
                     </Link>
                 </section>
             </div>
+            <Footer />
         </div>
     );
 };

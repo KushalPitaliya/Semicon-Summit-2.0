@@ -177,7 +177,7 @@ const Landing = () => {
 
     // FAQs
     const faqs = [
-        { question: 'What is the registration fee?', answer: 'The registration fee is ₹400 per participant, which includes access to all events, workshops, hackathons, lunch, refreshments, and certificate of participation.' },
+        { question: 'What is the registration fee?', answer: 'The registration fee is ₹299 per participant, which includes access to all events, workshops, hackathons, lunch, refreshments, and certificate of participation.' },
         { question: 'Who can participate?', answer: 'Students from any engineering discipline, particularly those interested in Electronics, VLSI, Embedded Systems, and Semiconductor Technology can participate.' },
         { question: 'Do I need prior experience?', answer: 'Basic knowledge of electronics is helpful but not mandatory. Our workshops are designed to accommodate beginners as well as advanced learners.' },
         { question: 'What should I bring to the event?', answer: 'Bring your college ID, laptop (if you have one), and enthusiasm to learn! All other materials will be provided.' },
@@ -274,7 +274,7 @@ const Landing = () => {
 
                     <div className="hero-note">
                         <CheckCircle2 size={16} />
-                        <span>Registration Fee: ₹400 • Limited Seats</span>
+                        <span>Registration Fee: ₹299 • Limited Seats</span>
                     </div>
                 </div>
 
@@ -655,17 +655,17 @@ const Landing = () => {
                 <div className="container">
                     <div className="register-content">
                         <h2>Ready to Join the <span className="text-gradient">Future of Tech?</span></h2>
-                        <p>Secure your spot at Semiconductor Summit 2.0 for just ₹400.</p>
+                        <p>Secure your spot at Semiconductor Summit 2.0 for just ₹299.</p>
 
                         <div className="register-steps">
                             <div className="register-step"><div className="step-number">1</div><span>Fill form</span></div>
-                            <div className="register-step"><div className="step-number">2</div><span>Pay ₹400</span></div>
+                            <div className="register-step"><div className="step-number">2</div><span>Pay ₹299</span></div>
                             <div className="register-step"><div className="step-number">3</div><span>Upload proof</span></div>
                             <div className="register-step"><div className="step-number">4</div><span>Get login</span></div>
                         </div>
 
                         <Link to="/register" className="btn btn-primary btn-lg">
-                            Register Now — ₹400 <ArrowRight size={20} />
+                            Register Now — ₹299 <ArrowRight size={20} />
                         </Link>
                     </div>
                 </div>

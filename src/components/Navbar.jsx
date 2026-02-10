@@ -17,20 +17,11 @@ const Navbar = () => {
     }, [])
 
     const navLinks = [
-        { name: 'Home', href: '#home' },
-        { name: 'About', href: '#about' },
-        { name: 'Events', href: '#events' },
-        { name: 'Contact', href: '#contact' },
+        { name: 'Home', path: '/', isRoute: true },
+        { name: 'Events', path: '/events', isRoute: true },
+        { name: 'About', path: '/about', isRoute: true },
+        { name: 'Contact', path: '/contact', isRoute: true },
     ]
-
-    const scrollToSection = (e, href) => {
-        e.preventDefault()
-        const element = document.querySelector(href)
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' })
-        }
-        setIsMobileMenuOpen(false)
-    }
 
     return (
         <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
@@ -47,14 +38,14 @@ const Navbar = () => {
 
                 <div className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>
                     {navLinks.map((link) => (
-                        <a
+                        <Link
                             key={link.name}
-                            href={link.href}
-                            onClick={(e) => scrollToSection(e, link.href)}
+                            to={link.path}
                             className="nav-link"
+                            onClick={() => setIsMobileMenuOpen(false)}
                         >
                             {link.name}
-                        </a>
+                        </Link>
                     ))}
                     <Link to="/login" className="btn btn-primary btn-sm nav-login-btn">
                         Login

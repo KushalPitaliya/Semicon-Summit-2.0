@@ -4,6 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Events from './pages/Events'
+import About from './pages/About'
+import Contact from './pages/Contact'
 import ParticipantDashboard from './pages/ParticipantDashboard'
 import CoordinatorDashboard from './pages/CoordinatorDashboard'
 import FacultyDashboard from './pages/FacultyDashboard'
@@ -20,6 +23,9 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* Protected Routes */}
         <Route

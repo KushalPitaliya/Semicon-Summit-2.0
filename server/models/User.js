@@ -49,6 +49,18 @@ const userSchema = new mongoose.Schema({
         enum: ['pending', 'approved', 'rejected'],
         default: 'pending'
     },
+    // Razorpay Payment Integration
+    razorpayPaymentId: {
+        type: String,
+        unique: true,      // Prevent duplicate payment IDs
+        sparse: true,      // Allow null values (for users who haven't paid yet)
+        trim: true
+    },
+    razorpayOrderId: {
+        type: String,
+        trim: true
+    },
+    // Legacy manual payment fields (deprecated - keeping for backward compatibility)
     transactionId: {
         type: String,
         trim: true

@@ -256,7 +256,39 @@
 .event-info h3 {
     font-size: 0.9375rem;
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.event-description {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.event-meta small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.event-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 12px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #22c55e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .event-fee {
@@ -272,75 +304,266 @@
 /* Total Section */
 .total-section {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem;
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
     border-radius: var(--radius-lg);
     margin-bottom: 1.5rem;
 }
 
-.total-section span {
-    font-weight: 500;
-    color: var(--text-secondary);
+.total-section>div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-section span:first-child {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: var(--text-primary);
 }
 
 .total-amount {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
-    color: #22c55e !important;
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-/* Payment Section */
-.payment-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-.qr-section {
+.included-text {
+    color: var(--text-muted);
+    font-size: 0.875rem;
     text-align: center;
+    margin-top: 0.25rem;
 }
 
-.qr-section h3 {
+/* Payment Info Box */
+.payment-info-box {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.payment-info-box svg {
+    color: #10b981;
+}
+
+.payment-info-box p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.payment-info-box ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.payment-info-box li {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.payment-info-box li::before {
+    content: '';
+    position: absolute;
+    left: 0.2rem;
+    top: 0.5rem;
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+/* Payment Info Box */
+.payment-info-box {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.payment-info-box svg {
+    color: #10b981;
+}
+
+.payment-info-box p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.payment-info-box ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.payment-info-box li {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.payment-info-box li::before {
+    content: '';
+    position: absolute;
+    left: 0.2rem;
+    top: 0.5rem;
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+/* Payment Guidelines */
+.payment-guidelines {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-lg);
+}
+
+.payment-guidelines h3 {
     font-size: 1rem;
     margin-bottom: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-guidelines ol {
+    margin: 0;
+    padding-left: 1.5rem;
     color: var(--text-secondary);
 }
 
-.qr-code-container {
-    background: white;
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
-    display: inline-block;
+.payment-guidelines li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
 }
 
-.qr-code-container img {
-    max-width: 200px;
+.payment-guidelines strong {
+    color: var(--text-primary);
 }
 
-.qr-placeholder {
-    color: var(--bg-primary);
-}
-
-.qr-note {
-    margin-top: 1rem;
-    color: var(--bg-primary);
-    font-size: 1.125rem;
-}
-
-.qr-instruction {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-.upload-section {
+/* PDF Upload Section */
+.pdf-upload-section {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.5rem;
+}
+
+.pdf-upload-section .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.pdf-upload-section label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.pdf-upload-section .required {
+    color: #ef4444;
+}
+
+.pdf-upload-section input[type="text"],
+.pdf-upload-section input[type="file"] {
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    transition: all var(--transition-normal);
+}
+
+.pdf-upload-section input[type="text"]:focus,
+.pdf-upload-section input[type="file"]:focus {
+    outline: none;
+    border-color: var(--cyan-400);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+}
+
+.pdf-upload-section small {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
+
+.file-preview {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: var(--radius-md);
+    color: #22c55e;
+    font-size: 0.875rem;
+}
+
+/* Alert Component */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+}
+
+.alert svg {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--text-secondary);
+}
+
+.alert-info svg {
+    color: #3b82f6;
+}
+
+.alert strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.alert p {
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+}
+
+.alert button {
+    margin-top: 0.5rem;
 }
 
 /* Upload Zone */

@@ -19,6 +19,10 @@ const Gallery = require('./models/Gallery');
 const { generatePassword, sendCredentialsEmail, sendRejectionEmail, sendPasswordResetEmail } = require('./services/emailService');
 const { uploadImage, uploadMultiple, deleteImage, getThumbnailUrl } = require('./services/cloudinaryService');
 
+// Routes
+const webhookRoutes = require('./routes/webhookRoutes');
+const paymentVerificationRoutes = require('./routes/paymentVerificationRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,6 +34,13 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
 }));
+
+// Webhook routes (must be before express.json() to handle raw body)
+app.use('/api/webhooks', webhookRoutes);
+
+// Payment verification routes
+app.use('/api', paymentVerificationRoutes);
+
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -168,51 +179,56 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // ==========================================
-// PUBLIC REGISTRATION (with payment)
+// PUBLIC REGISTRATION (with Razorpay payment)
 // ==========================================
-app.post('/api/register', uploadPayment.single('paymentScreenshot'), async (req, res) => {
+app.post('/api/register', async (req, res) => {
     try {
-        const { name, email, phone, college, department, selectedEvents, transactionId, paymentAmount } = req.body;
+        const { name, email, phone, college, department, selectedEvents, paymentAmount } = req.body;
 
-        if (!name || !email || !phone || !transactionId) {
-            return res.status(400).json({ error: 'Name, email, phone, and transaction ID are required' });
+        if (!name || !email || !phone) {
+            return res.status(400).json({ error: 'Name, email, and phone are required' });
         }
 
         // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
-            return res.status(400).json({ error: 'Email already registered. If you have already submitted, please wait for verification.' });
+            return res.status(400).json({ error: 'Email already registered. If you have already submitted, please wait for payment confirmation.' });
         }
 
-        // Parse selectedEvents
-        let events = [];
-        try {
-            events = JSON.parse(selectedEvents);
-        } catch (e) {
-            events = selectedEvents ? [selectedEvents] : [];
-        }
-
-        // Create user with pending verification status
+        // Create new user with pending status
         const user = new User({
             name,
             email: email.toLowerCase(),
             phone,
             college,
             department,
-            selectedEvents: events,
-            transactionId,
-            paymentAmount: paymentAmount || 400,
-            paymentScreenshot: req.file ? `/uploads/payments/${req.file.filename}` : null,
+            selectedEvents: Array.isArray(selectedEvents) ? selectedEvents :
+                (typeof selectedEvents === 'string' ? JSON.parse(selectedEvents) : []),
             verificationStatus: 'pending',
+            paymentStatus: 'pending',
+            paymentAmount: 299, // Fixed registration fee
             role: 'participant'
         });
 
         await user.save();
-        console.log(`✅ New registration: ${name} (${email}) - Pending verification`);
-        res.status(201).json({ message: 'Registration submitted successfully. Awaiting verification.', user });
+
+        console.log(`✅ User registered (pending payment): ${user.name} (${user.email})`);
+
+        res.status(201).json({
+            message: 'Registration submitted successfully. Please complete payment to activate your account.',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                selectedEvents: user.selectedEvents
+            },
+            // Return payment link with pre-filled information
+            paymentLink: `https://rzp.io/rzp/NsZUsMqO?prefill[name]=${encodeURIComponent(name)}&prefill[email]=${encodeURIComponent(email)}&prefill[contact]=${encodeURIComponent(phone)}`
+        });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ error: 'Registration failed: ' + error.message });
+        res.status(500).json({ error: 'Registration failed. Please try again.' });
     }
 });
 

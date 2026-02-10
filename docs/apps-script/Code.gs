@@ -29,7 +29,7 @@ const CONFIG = {
   SUMMIT_VENUE: 'Your College Name, City', // Update with actual venue
   
   // Contact information
-  CONTACT_EMAIL: 'contact@semiconsummit.com',
+  CONTACT_EMAIL: 'semisummit.ec@charusat.ac.in',
   CONTACT_PHONE: '+91 98765 43210',
   
   // Website URLs

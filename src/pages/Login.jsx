@@ -11,6 +11,10 @@ const Login = () => {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
+    const [showForgotModal, setShowForgotModal] = useState(false)
+    const [forgotEmail, setForgotEmail] = useState('')
+    const [forgotStatus, setForgotStatus] = useState({ loading: false, success: false, error: '' })
+
     const { login } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
@@ -46,6 +50,29 @@ const Login = () => {
         }
 
         setLoading(false)
+    }
+
+    const handleForgotPassword = async (e) => {
+        e.preventDefault()
+        setForgotStatus({ loading: true, success: false, error: '' })
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: forgotEmail })
+            })
+
+            const data = await response.json()
+
+            if (response.ok) {
+                setForgotStatus({ loading: false, success: true, error: '' })
+            } else {
+                setForgotStatus({ loading: false, success: false, error: data.error || 'Failed to request password reset' })
+            }
+        } catch (error) {
+            setForgotStatus({ loading: false, success: false, error: 'Network error. Please try again.' })
+        }
     }
 
     return (
@@ -97,7 +124,16 @@ const Login = () => {
                         </div>
 
                         <div className="input-group">
-                            <label htmlFor="password">Password</label>
+                            <div className="label-row">
+                                <label htmlFor="password">Password</label>
+                                <button
+                                    type="button"
+                                    className="forgot-password-link"
+                                    onClick={() => setShowForgotModal(true)}
+                                >
+                                    Forgot Password?
+                                </button>
+                            </div>
                             <div className="input-wrapper">
                                 <Lock size={18} className="input-icon" />
                                 <input
@@ -149,29 +185,86 @@ const Login = () => {
                         </Link>
                     </div>
 
-                    <div className="demo-credentials">
-                        <p className="demo-title">Demo Credentials</p>
-                        <div className="demo-list">
-                            <div className="demo-item">
-                                <span className="demo-role">Participant:</span>
-                                <code>participant@demo.com</code>
-                            </div>
-                            <div className="demo-item">
-                                <span className="demo-role">Coordinator:</span>
-                                <code>coordinator@demo.com</code>
-                            </div>
-                            <div className="demo-item">
-                                <span className="demo-role">Faculty:</span>
-                                <code>faculty@demo.com</code>
-                            </div>
-                            <div className="demo-item">
-                                <span className="demo-role">Password:</span>
-                                <code>demo123</code>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
+
+            {/* Forgot Password Modal */}
+            {showForgotModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content forgot-password-modal">
+                        <button
+                            className="modal-close"
+                            onClick={() => {
+                                setShowForgotModal(false)
+                                setForgotStatus({ loading: false, success: false, error: '' })
+                                setForgotEmail('')
+                            }}
+                        >
+                            &times;
+                        </button>
+
+                        <div className="modal-header">
+                            <div className="modal-icon-wrapper">
+                                <Lock size={24} />
+                            </div>
+                            <h2>Reset Password</h2>
+                            <p>Enter your email address and we'll send you a new password.</p>
+                        </div>
+
+                        {forgotStatus.success ? (
+                            <div className="forgot-success">
+                                <CheckCircle size={48} className="success-icon" />
+                                <h3>Email Sent!</h3>
+                                <p>Please check your inbox for your new temporary password.</p>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        setShowForgotModal(false)
+                                        setForgotStatus({ loading: false, success: false, error: '' })
+                                        setForgotEmail('')
+                                    }}
+                                >
+                                    Back to Login
+                                </button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleForgotPassword}>
+                                {forgotStatus.error && (
+                                    <div className="login-error">
+                                        <AlertCircle size={18} />
+                                        <span>{forgotStatus.error}</span>
+                                    </div>
+                                )}
+
+                                <div className="input-group">
+                                    <label htmlFor="forgot-email">Email Address</label>
+                                    <div className="input-wrapper">
+                                        <Mail size={18} className="input-icon" />
+                                        <input
+                                            type="email"
+                                            id="forgot-email"
+                                            className="input"
+                                            placeholder="Enter your registered email"
+                                            value={forgotEmail}
+                                            onChange={(e) => setForgotEmail(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    disabled={forgotStatus.loading}
+                                >
+                                    {forgotStatus.loading ? 'Sending...' : 'Send Reset Link'}
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

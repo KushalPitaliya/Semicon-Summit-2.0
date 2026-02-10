@@ -1,80 +1,166 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, User, GraduationCap, ArrowLeft, ChevronDown } from 'lucide-react';
+import { Users, User, GraduationCap, ArrowLeft, ChevronDown, Linkedin, Mail } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './Committee.css';
 
+// Placeholder for images - ideally these would be real URLs
+const PLACEHOLDER_IMG = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=";
+
+const LEADERSHIP = [
+    {
+        name: "Dr. Principal Name",
+        role: "Principal, CSPIT",
+        image: PLACEHOLDER_IMG + "Principal"
+    },
+    {
+        name: "Dr. HOD Name",
+        role: "HOD, EC Department",
+        image: PLACEHOLDER_IMG + "HOD"
+    }
+];
+
 const COMMITTEES = [
     {
         id: 1,
-        name: 'Inauguration & Valedictory Committee',
-        description: 'Responsible for planning and executing the opening and closing ceremonies of the summit.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Publicity & Outreach Committee',
+        description: '負責 promoting the summit and reaching out to potential participants.',
+        facultyCoordinators: [
+            { name: 'Dr. Sagar Patel', role: 'Convener' },
+            { name: 'Prof. Vishal Shah' },
+            { name: 'Dr. Dharmendra Chauhan' },
+            { name: 'Dr. Tigmanshu Patel' },
+            { name: 'Prof. Akshay Patel' }
+        ],
+        studentCoordinators: [
+            { name: 'Jal Lathiya' }
+        ]
     },
     {
         id: 2,
-        name: 'Registration & Certificate Committee',
-        description: 'Manages participant registration, verification, and certificate distribution.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Stage Committee',
+        description: 'Manages stage setup, decoration, and flow of events.',
+        facultyCoordinators: [
+            { name: 'Dr. Killol Pandya', role: 'Convener' },
+            { name: 'Dr. Manthan Manavadaria' },
+            { name: 'Timil Patel' },
+            { name: 'Nikul Patel' },
+            { name: 'Ashish Patel' }
+        ],
+        studentCoordinators: [
+            { name: 'Tathya Bhatt' }
+        ]
     },
     {
         id: 3,
-        name: 'Workshop & Technical Events Committee',
-        description: 'Organizes the RTL to GDS II and Verilog & FPGA hands-on workshop sessions.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Website Committee',
+        description: 'Responsible for the official summit website design and maintenance.',
+        facultyCoordinators: [
+            { name: 'Dr. Miral Desai', role: 'Convener' },
+            { name: 'Dr. Brijesh Kundaliya' }
+        ],
+        studentCoordinators: [
+            { name: 'Archi Gujar', image: PLACEHOLDER_IMG + "Archi+Gujar" },
+            { name: 'Kushal Pitaliya', role: 'Lead Developer', isHighlight: true, image: PLACEHOLDER_IMG + "Kushal+Pitaliya" }
+        ]
     },
     {
         id: 4,
-        name: 'Panel Discussion & Insight Sessions Committee',
-        description: 'Coordinates the Fabless Startups panel and Embedded vs VLSI & AI in VLSI sessions.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Decoration Committee',
+        description: 'Handles venue decoration and aesthetic arrangements.',
+        facultyCoordinators: [
+            { name: 'Dr. Arpita Patel', role: 'Convener' },
+            { name: 'Dr. Poonam Thanki' },
+            { name: 'Prof. Dhara M Patel' },
+            { name: 'Dr. Kanwar Preet Kaur' },
+            { name: 'Prof. Dhruvika Sonar' },
+            { name: 'Prof. Dhara Pomal' }
+        ],
+        studentCoordinators: [
+            { name: 'Dhruti Panchal' }
+        ]
     },
     {
         id: 5,
-        name: 'Silicon Shark Tank Committee',
-        description: 'Manages the industry-driven idea pitching competition including judges and evaluation.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Registration, Help Desk & Attendance',
+        description: 'Manages participant registration and help desk queries.',
+        facultyCoordinators: [
+            { name: 'Dr. Poonam Thanki', role: 'Convener' },
+            { name: 'Prof. Dhara Pomal' },
+            { name: 'Prof. Dhara M. Patel' },
+            { name: 'Dr. Mayur Makwana' }
+        ],
+        studentCoordinators: [
+            { name: 'Mahi Kansagara' },
+            { name: 'Minaxi Dalsania' }
+        ]
     },
     {
         id: 6,
-        name: 'Wafer to Chip Demo & Gallery Walk Committee',
-        description: 'Coordinates the Monk9 demonstration stall and Silent Silicon Ideas Gallery Walk.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Food & Transportation Committee',
+        description: 'Manages food catering and transportation logistics.',
+        facultyCoordinators: [
+            { name: 'Dr. Dharmendra Chauhan', role: 'Convener' },
+            { name: 'Dr. Sagar Patel' }
+        ],
+        studentCoordinators: [
+            { name: 'Tathya Bhatt' }
+        ]
     },
     {
         id: 7,
-        name: 'Silicon Jackpot & Technical Activities Committee',
-        description: 'Organizes the technical treasure hunt and interactive engagement activities.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Stationery, ID & Merchandise Committee',
+        description: 'Handles printing of ID cards, certificates, and merchandise.',
+        facultyCoordinators: [
+            { name: 'Dr. Hardik Modi', role: 'Convener' },
+            { name: 'Dr. Tigmanshu Patel' },
+            { name: 'Dr. Mayur Makwana' },
+            { name: 'Prof. Dhara M Patel' }
+        ],
+        studentCoordinators: [
+            { name: 'Dhruv Rupapara' }
+        ]
     },
     {
         id: 8,
-        name: 'Publicity & Social Media Committee',
-        description: 'Handles all promotional activities, social media campaigns, and event coverage.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Media Committee',
+        description: 'Manages photography, videography, and media coverage.',
+        facultyCoordinators: [
+            { name: 'Dr. Brijesh Kundaliya', role: 'Convener' },
+            { name: 'Dr. Dharmendra Chauhan' },
+            { name: 'Dr. Tigmanshu Patel' },
+            { name: 'Prof. Dhruvika Sonar' }
+        ],
+        studentCoordinators: [
+            { name: 'Shlok Patel' }
+        ]
     },
     {
         id: 9,
-        name: 'Sponsorship & Finance Committee',
-        description: 'Manages sponsorship procurement, budgeting, and financial planning.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Feedback & Reporting',
+        description: 'Collects feedback and prepares the final event report.',
+        facultyCoordinators: [
+            { name: 'Dr. Jitendra Chaudhary', role: 'Convener' },
+            { name: 'Dr. Kanwar Preet Kaur' },
+            { name: 'Prof. Akshay Patel' },
+            { name: 'Dr. Manthan Manavadaria' }
+        ],
+        studentCoordinators: [
+            { name: 'Yashvi Kankotiya' }
+        ]
     },
     {
         id: 10,
-        name: 'Hospitality & Logistics Committee',
-        description: 'Handles venue arrangements, food, transport, and guest hospitality.',
-        facultyCoordinators: ['Faculty Coordinator 1', 'Faculty Coordinator 2'],
-        studentCoordinators: ['Student Coordinator 1', 'Student Coordinator 2', 'Student Coordinator 3']
+        name: 'Budget Committee',
+        description: 'Manages the financial budget and expenses.',
+        facultyCoordinators: [
+            { name: 'Prof. Vishal Shah', role: 'Convener' },
+            { name: 'Prof. Akshay Patel' }
+        ],
+        studentCoordinators: [
+            { name: 'Man Bhimani' }
+        ]
     }
 ];
 
@@ -89,7 +175,7 @@ const Committee = () => {
         <div className="committee-page">
             <Navbar />
 
-            {/* Header */}
+            {/* Hero */}
             <section className="committee-hero">
                 <div className="container">
                     <Link to="/" className="back-link">
@@ -100,9 +186,8 @@ const Committee = () => {
                         <span className="section-tag">Our Team</span>
                         <h1>Organizing <span className="text-gradient">Committees</span></h1>
                         <p>
-                            Semiconductor Summit 2.0 is organized by 10 dedicated committees
-                            comprising faculty and student coordinators from the Department of
-                            Electronics & Communication Engineering, CSPIT - CHARUSAT.
+                            Meet the dedicated faculty and student coordinators working tirelessly
+                            to make Semiconductor Summit 2.0 a grand success.
                         </p>
                     </div>
 
@@ -118,16 +203,42 @@ const Committee = () => {
                         <div className="committee-stat">
                             <GraduationCap size={24} />
                             <div>
-                                <h3>20+</h3>
+                                <h3>25+</h3>
                                 <p>Faculty Coordinators</p>
                             </div>
                         </div>
                         <div className="committee-stat">
                             <User size={24} />
                             <div>
-                                <h3>30+</h3>
+                                <h3>10+</h3>
                                 <p>Student Coordinators</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Leadership Section - Placeholders */}
+            <section className="leadership-section">
+                <div className="container">
+                    <div className="section-header-cnt">
+                        <h2>Leadership & Patrons</h2>
+                        <div className="leadership-grid">
+                            {LEADERSHIP.map((leader, index) => (
+                                <div key={index} className="leader-card">
+                                    <div className="leader-img-wrapper">
+                                        <div className={`leader-img-placeholder ${leader.image ? 'has-image' : ''}`}>
+                                            {leader.image ? (
+                                                <img src={leader.image} alt={leader.name} />
+                                            ) : (
+                                                <User size={48} />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <h3>{leader.name}</h3>
+                                    <p>{leader.role}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -136,42 +247,68 @@ const Committee = () => {
             {/* Committee List */}
             <section className="committee-list-section">
                 <div className="container">
+                    <h2 className="section-title">Committee Allocation</h2>
                     <div className="committee-grid">
                         {COMMITTEES.map((committee, index) => (
                             <div
                                 key={committee.id}
-                                className={`committee-card ${expandedId === committee.id ? 'expanded' : ''}`}
+                                className="committee-card expanded"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                <div className="committee-card-header" onClick={() => toggleExpand(committee.id)}>
+                                <div className="committee-card-header static-header">
                                     <div className="committee-number">{String(committee.id).padStart(2, '0')}</div>
                                     <div className="committee-card-info">
                                         <h3>{committee.name}</h3>
-                                        <p>{committee.description}</p>
                                     </div>
-                                    <ChevronDown size={20} className={`expand-icon ${expandedId === committee.id ? 'rotated' : ''}`} />
                                 </div>
 
-                                {expandedId === committee.id && (
-                                    <div className="committee-card-body">
-                                        <div className="coordinator-section">
-                                            <h4><GraduationCap size={18} /> Faculty Coordinators</h4>
-                                            <ul>
-                                                {committee.facultyCoordinators.map((name, i) => (
-                                                    <li key={i}>{name}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div className="coordinator-section">
-                                            <h4><User size={18} /> Student Coordinators</h4>
-                                            <ul>
-                                                {committee.studentCoordinators.map((name, i) => (
-                                                    <li key={i}>{name}</li>
-                                                ))}
-                                            </ul>
+                                <div className="committee-card-body">
+                                    <div className="coordinator-column">
+                                        <h4 className="column-title faculty-title">
+                                            <GraduationCap size={18} /> Faculty Coordinators
+                                        </h4>
+                                        <div className="coordinator-list">
+                                            {committee.facultyCoordinators.map((faculty, i) => (
+                                                <div key={i} className="coordinator-item">
+                                                    <div className={`coordinator-avatar faculty-avatar ${faculty.image ? 'has-image' : ''}`}>
+                                                        {faculty.image ? (
+                                                            <img src={faculty.image} alt={faculty.name} />
+                                                        ) : (
+                                                            faculty.name.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <div className="coordinator-info">
+                                                        <span className="coordinator-name">{faculty.name}</span>
+                                                        {faculty.role && <span className="coordinator-role">{faculty.role}</span>}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                )}
+
+                                    <div className="coordinator-column">
+                                        <h4 className="column-title student-title">
+                                            <User size={18} /> Student Coordinators
+                                        </h4>
+                                        <div className="coordinator-list">
+                                            {committee.studentCoordinators.map((student, i) => (
+                                                <div key={i} className={`coordinator-item ${student.isHighlight ? 'highlight-item' : ''}`}>
+                                                    <div className={`coordinator-avatar student-avatar ${student.image ? 'has-image' : ''}`}>
+                                                        {student.image ? (
+                                                            <img src={student.image} alt={student.name} />
+                                                        ) : (
+                                                            student.name.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <div className="coordinator-info">
+                                                        <span className="coordinator-name">{student.name}</span>
+                                                        {student.role && <span className="coordinator-role">{student.role}</span>}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>

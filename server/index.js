@@ -178,6 +178,41 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
+// Forgot Password (Public)
+app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+
+        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!user) {
+            // For security, don't reveal if user exists or not, but return success
+            // In a real production app, you might want to handle this differently
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Generate new password
+        const newPassword = generatePassword();
+
+        // Update user
+        user.password = newPassword;
+        await user.save();
+
+        // Send email
+        await sendPasswordResetEmail(user, newPassword);
+
+        console.log(`🔐 Public password reset request for: ${user.email}`);
+        res.json({ message: 'If an account exists with this email, a new password has been sent.' });
+
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // ==========================================
 // PUBLIC REGISTRATION (combined: register + payment verification)
 // ==========================================

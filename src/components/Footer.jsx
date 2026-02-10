@@ -71,7 +71,7 @@ const Footer = () => {
                         <ul className="footer-contact">
                             <li>
                                 <Mail size={18} />
-                                <span>contact@semiconsummit.com</span>
+                                <span>semisummit.ec@charusat.ac.in</span>
                             </li>
                             <li>
                                 <Phone size={18} />
@@ -79,7 +79,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <MapPin size={18} />
-                                <span>Your College Name, City, State</span>
+                                <span>CHARUSAT University, Changa, Gujarat</span>
                             </li>
                         </ul>
                     </div>

@@ -204,6 +204,12 @@ const Register = () => {
 
     };
 
+    // Handle form submission - prevent default since we use button clicks
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Form submission is handled by button clicks (nextStep, handlePaymentRedirect, handleVerifyPayment)
+    };
+
     if (success) {
         return (
             <div className="register-page">

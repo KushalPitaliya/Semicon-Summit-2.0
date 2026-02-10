@@ -15,8 +15,8 @@ import useCountUp from '../hooks/useCountUp'
 import api from '../services/api'
 import './Landing.css'
 
-// Event Date - UPDATE THIS WITH ACTUAL DATE
-const EVENT_DATE = new Date('2026-03-15T09:00:00')
+// Event Date - March 17, 2026
+const EVENT_DATE = new Date('2026-03-17T09:00:00')
 
 const Landing = () => {
     const [selectedEvent, setSelectedEvent] = useState(null)
@@ -71,51 +71,51 @@ const Landing = () => {
     const events = [
         {
             id: 1,
-            title: 'VLSI Design Workshop',
-            description: 'Hands-on workshop covering advanced VLSI design techniques and tools.',
-            fullDescription: 'This comprehensive workshop will cover VLSI design fundamentals, including RTL design, synthesis, place and route, and verification.',
-            icon: CircuitBoard,
-            duration: '4 hours',
-            type: 'Workshop',
-            highlights: ['RTL Design', 'Synthesis', 'Place & Route', 'Verification']
+            title: 'Fabless Startups & MSMEs Panel',
+            description: 'Panel discussion on amazing semiconductor growth in India.',
+            fullDescription: 'Industry leaders discuss fabless startups and MSMEs driving semiconductor growth in India.',
+            icon: Users,
+            duration: '1 hour',
+            type: 'Panel',
+            highlights: ['Industry Leaders', 'Startup Insights', 'MSME Growth', 'Q&A Session']
         },
         {
             id: 2,
-            title: 'Chip Architecture Talk',
-            description: 'Expert session on modern chip architecture and AI accelerators.',
-            fullDescription: 'Industry experts will discuss the latest trends in chip architecture, covering multi-core processors and AI/ML accelerators.',
-            icon: Cpu,
-            duration: '2 hours',
-            type: 'Talk',
-            highlights: ['Multi-core Design', 'AI Accelerators', 'Memory Systems', 'Power Optimization']
+            title: 'RTL to GDS II Workshop',
+            description: 'Hands-on workshop using open source tools for chip design.',
+            fullDescription: 'Complete VLSI design flow from RTL to GDS II using open-source tools. Designed for 6th semester students.',
+            icon: CircuitBoard,
+            duration: '3 hours',
+            type: 'Workshop',
+            highlights: ['Open Source Tools', 'RTL Design', 'GDS II Flow', 'Hands-on Practice']
         },
         {
             id: 3,
-            title: 'Embedded Systems Hackathon',
-            description: 'Build innovative embedded solutions in this 24-hour challenge.',
-            fullDescription: 'Put your skills to the test in this 24-hour hackathon! Teams will design and implement embedded solutions with prizes worth ₹30,000+!',
-            icon: Zap,
-            duration: '24 hours',
-            type: 'Hackathon',
-            highlights: ['Team Competition', 'Dev Kits Provided', '₹30K+ Prizes', 'Mentorship']
+            title: 'Verilog & FPGA Workshop',
+            description: 'Getting started with Verilog HDL and FPGA programming.',
+            fullDescription: 'Introduction to Verilog hardware description language and FPGA development for 3rd/4th semester students.',
+            icon: Cpu,
+            duration: '3 hours',
+            type: 'Workshop',
+            highlights: ['Verilog HDL', 'FPGA Basics', 'Digital Design', 'Practical Labs']
         },
         {
             id: 4,
-            title: 'Industry Panel Discussion',
-            description: 'Leaders from top semiconductor companies discuss the future.',
-            fullDescription: 'Hear from executives at leading semiconductor companies about industry trends and career opportunities.',
-            icon: Users,
-            duration: '1.5 hours',
-            type: 'Panel',
-            highlights: ['Industry Leaders', 'Career Insights', 'Q&A Session', 'Networking']
+            title: 'Silicon Shark Tank',
+            description: 'Industry-driven idea pitching competition.',
+            fullDescription: 'Pitch your semiconductor ideas to industry judges in this exciting competition!',
+            icon: Zap,
+            duration: '4 hours',
+            type: 'Competition',
+            highlights: ['Idea Pitching', 'Industry Judges', 'Innovation', 'Prizes']
         }
     ]
 
     const stats = [
         { value: '500+', label: 'Expected Attendees' },
-        { value: '15+', label: 'Expert Speakers' },
-        { value: '8+', label: 'Technical Events' },
-        { value: '₹50K+', label: 'Prize Pool' }
+        { value: '5+', label: 'Industry Experts' },
+        { value: '10', label: 'Technical Events' },
+        { value: '3', label: 'Days of Learning' }
     ]
 
     const features = [
@@ -141,36 +141,44 @@ const Landing = () => {
         { icon: Building2, title: 'Industry Connect', description: 'Create networking opportunities with leading semiconductor companies' }
     ]
 
-    // Speakers - UPDATE WITH ACTUAL DATA
+    // Speakers - Industry Experts
     const speakers = [
-        { id: 1, name: 'Dr. Rajesh Kumar', role: 'VLSI Expert', company: 'Intel India', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop', linkedin: '#' },
-        { id: 2, name: 'Priya Sharma', role: 'Senior Engineer', company: 'Qualcomm', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop', linkedin: '#' },
-        { id: 3, name: 'Amit Patel', role: 'Design Lead', company: 'NVIDIA', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop', linkedin: '#' },
-        { id: 4, name: 'Dr. Sneha Iyer', role: 'Research Head', company: 'IIT Bombay', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop', linkedin: '#' }
+        { id: 1, name: 'Industry Expert 1', role: 'VLSI Expert', company: 'Semiconductor Industry', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop', linkedin: '#' },
+        { id: 2, name: 'Industry Expert 2', role: 'Design Engineer', company: 'EDA Company', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop', linkedin: '#' },
+        { id: 3, name: 'Industry Expert 3', role: 'Technical Lead', company: 'Chip Design Firm', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop', linkedin: '#' },
+        { id: 4, name: 'Industry Expert 4', role: 'Research Faculty', company: 'CHARUSAT', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop', linkedin: '#' }
     ]
 
-    // Schedule - UPDATE WITH ACTUAL DATA
+    // Schedule - 3 Day Event
     const schedule = [
         {
             day: 'Day 1',
-            date: 'March 15, 2026',
+            date: 'March 17, 2026 (Tuesday)',
             events: [
-                { time: '09:00 AM', title: 'Registration & Welcome', type: 'General' },
-                { time: '10:00 AM', title: 'Inauguration Ceremony', type: 'Ceremony' },
-                { time: '11:00 AM', title: 'VLSI Design Workshop - Part 1', type: 'Workshop' },
-                { time: '02:00 PM', title: 'Chip Architecture Talk', type: 'Talk' },
-                { time: '04:00 PM', title: 'Embedded Hackathon Kickoff', type: 'Hackathon' }
+                { time: '09:00 AM', title: 'Inauguration & Welcome', type: 'Ceremony' },
+                { time: '11:30 AM', title: 'Fabless Startups & MSMEs Panel', type: 'Panel' },
+                { time: '01:30 PM', title: 'RTL to GDS II Workshop', type: 'Workshop' },
+                { time: '01:30 PM', title: 'Verilog & FPGA Workshop', type: 'Workshop' }
             ]
         },
         {
             day: 'Day 2',
-            date: 'March 16, 2026',
+            date: 'March 18, 2026 (Wednesday)',
             events: [
-                { time: '09:00 AM', title: 'VLSI Design Workshop - Part 2', type: 'Workshop' },
-                { time: '11:00 AM', title: 'Industry Panel Discussion', type: 'Panel' },
-                { time: '02:00 PM', title: 'Hackathon Final Submissions', type: 'Hackathon' },
-                { time: '04:00 PM', title: 'Project Presentations', type: 'Competition' },
-                { time: '06:00 PM', title: 'Awards & Closing Ceremony', type: 'Ceremony' }
+                { time: '09:45 AM', title: 'Embedded vs VLSI Insight Session', type: 'Session' },
+                { time: '12:30 PM', title: 'Silicon Shark Tank', type: 'Competition' },
+                { time: '12:30 PM', title: 'Wafer to Chip Demo by Monk9', type: 'Demo' },
+                { time: '12:30 PM', title: 'Silent Silicon Ideas Gallery Walk', type: 'Exhibition' }
+            ]
+        },
+        {
+            day: 'Day 3',
+            date: 'March 19, 2026 (Thursday)',
+            events: [
+                { time: '09:45 AM', title: 'AI in VLSI Insight Session', type: 'Session' },
+                { time: '12:10 PM', title: 'The Silicon Jackpot - Treasure Hunt', type: 'Activity' },
+                { time: '12:10 PM', title: 'Interactive Technical Engagement', type: 'Activity' },
+                { time: '03:30 PM', title: 'Valedictory & Awards Ceremony', type: 'Ceremony' }
             ]
         }
     ]
@@ -185,36 +193,31 @@ const Landing = () => {
         { question: 'Is there a team size limit for hackathon?', answer: 'Teams can have 2-4 members. Individual participation is also allowed.' }
     ]
 
-    // Organizers - UPDATE WITH ACTUAL DATA
+    // Organizers
     const organizers = {
         presentedBy: {
-            name: 'Your College Name',
-            logo: 'https://via.placeholder.com/120x60?text=College+Logo',
-            subtitle: 'Department of Electronics & Communication'
+            name: 'CHARUSAT University',
+            subtitle: 'Department of Electronics & Communication Engineering - CSPIT'
         },
         organizedBy: [
-            { name: 'Student Technical Committee', logo: 'https://via.placeholder.com/80x80?text=STC' },
-            { name: 'IEEE Student Branch', logo: 'https://via.placeholder.com/80x80?text=IEEE' },
-            { name: 'IETE Student Forum', logo: 'https://via.placeholder.com/80x80?text=IETE' }
+            { name: 'Student Technical Committee' },
+            { name: 'IEEE Student Branch' },
+            { name: 'IETE Student Forum' }
         ],
-        sponsors: [
-            { name: 'Sponsor 1', logo: 'https://via.placeholder.com/100x50?text=Sponsor+1' },
-            { name: 'Sponsor 2', logo: 'https://via.placeholder.com/100x50?text=Sponsor+2' },
-            { name: 'Sponsor 3', logo: 'https://via.placeholder.com/100x50?text=Sponsor+3' }
-        ]
+        sponsors: []
     }
 
-    // Venue - UPDATE WITH ACTUAL VENUE
+    // Venue - CHARUSAT
     const venue = {
-        name: 'Your College Auditorium',
-        address: 'College Name, City, State - PIN',
-        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.5!2d72.5!3d23.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDAwJzAwLjAiTiA3MsKwMzAnMDAuMCJF!5e0!3m2!1sen!2sin!4v1234567890'
+        name: 'CHARUSAT University, A6 Building',
+        address: 'Department of EC Engineering - CSPIT, A6 Building, CHARUSAT, Changa, Gujarat - 388421',
+        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.8!2d72.8168!3d22.5988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e4e7439a2e021%3A0x9f4c4b1dfb8a586a!2sCHARUSAT!5e0!3m2!1sen!2sin!4v1700000000000'
     }
 
-    // Contact - UPDATE WITH ACTUAL CONTACT
+    // Contact - CHARUSAT
     const contacts = [
-        { name: 'Coordinator Name 1', role: 'Event Coordinator', phone: '+91 98765 43210', email: 'coordinator1@college.edu' },
-        { name: 'Coordinator Name 2', role: 'Technical Head', phone: '+91 98765 43211', email: 'coordinator2@college.edu' }
+        { name: 'Semiconductor Summit Team', role: 'Event Coordination', phone: '+91 98765 43210', email: 'semisummit.ec@charusat.ac.in' },
+        { name: 'EC Department - CSPIT', role: 'Department Contact', phone: '+91 98765 43211', email: 'semisummit.ec@charusat.ac.in' }
     ]
 
     // ========================================
@@ -247,19 +250,19 @@ const Landing = () => {
                     </h1>
 
                     <p className="hero-subtitle hero-animate hero-animate-delay-2">
-                        Explore the cutting-edge world of semiconductor technology through
-                        workshops, hackathons, expert talks, and networking opportunities.
+                        Architecting the Future of Chips — 10 events across 3 days of workshops,
+                        panel discussions, competitions, and industry interactions at CHARUSAT.
                     </p>
 
                     <div className="hero-info hero-animate hero-animate-delay-3">
                         <div className="hero-info-item">
                             <Calendar size={20} />
-                            <span>March 15-16, 2026</span>
+                            <span>March 17-19, 2026</span>
                         </div>
                         <div className="hero-info-divider" />
                         <div className="hero-info-item">
                             <MapPin size={20} />
-                            <span>{venue.name}</span>
+                            <span>CHARUSAT, A6 Building</span>
                         </div>
                     </div>
 
@@ -402,7 +405,7 @@ const Landing = () => {
                     <div className="section-header section-header-center">
                         <span className="section-tag">Event Timeline</span>
                         <h2>Event <span className="text-gradient">Schedule</span></h2>
-                        <p>Plan your experience with our comprehensive two-day agenda.</p>
+                        <p>Plan your experience across our comprehensive three-day agenda.</p>
                     </div>
 
                     <div className="schedule-tabs">
@@ -546,7 +549,6 @@ const Landing = () => {
                         <div className="presented-by">
                             <span className="organizer-label">Presented By</span>
                             <div className="presented-card">
-                                <img src={organizers.presentedBy.logo} alt={organizers.presentedBy.name} />
                                 <div className="presented-info">
                                     <h4>{organizers.presentedBy.name}</h4>
                                     <p>{organizers.presentedBy.subtitle}</p>
@@ -559,19 +561,7 @@ const Landing = () => {
                             <div className="organized-grid">
                                 {organizers.organizedBy.map((org, i) => (
                                     <div key={i} className="organized-card">
-                                        <img src={org.logo} alt={org.name} />
                                         <span>{org.name}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="sponsors">
-                            <span className="organizer-label">Our Sponsors</span>
-                            <div className="sponsors-grid">
-                                {organizers.sponsors.map((sponsor, i) => (
-                                    <div key={i} className="sponsor-card">
-                                        <img src={sponsor.logo} alt={sponsor.name} />
                                     </div>
                                 ))}
                             </div>
@@ -658,10 +648,9 @@ const Landing = () => {
                         <p>Secure your spot at Semiconductor Summit 2.0 for just ₹299.</p>
 
                         <div className="register-steps">
-                            <div className="register-step"><div className="step-number">1</div><span>Fill form</span></div>
-                            <div className="register-step"><div className="step-number">2</div><span>Pay ₹299</span></div>
-                            <div className="register-step"><div className="step-number">3</div><span>Upload proof</span></div>
-                            <div className="register-step"><div className="step-number">4</div><span>Get login</span></div>
+                            <div className="register-step"><div className="step-number">1</div><span>Pay ₹299</span></div>
+                            <div className="register-step"><div className="step-number">2</div><span>Fill form & upload receipt</span></div>
+                            <div className="register-step"><div className="step-number">3</div><span>Get verified</span></div>
                         </div>
 
                         <Link to="/register" className="btn btn-primary btn-lg">

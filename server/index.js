@@ -38,10 +38,10 @@ app.use(cors({
 // Webhook routes (must be before express.json() to handle raw body)
 app.use('/api/webhooks', webhookRoutes);
 
-// Payment verification routes
-app.use('/api', paymentVerificationRoutes);
-
 app.use(express.json());
+
+// Payment verification routes (after express.json so req.body is parsed)
+app.use('/api', paymentVerificationRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ensure uploads directory exists

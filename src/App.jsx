@@ -7,6 +7,7 @@ import Register from './pages/Register'
 import Events from './pages/Events'
 import About from './pages/About'
 import Contact from './pages/Contact'
+import Committee from './pages/Committee'
 import ParticipantDashboard from './pages/ParticipantDashboard'
 import CoordinatorDashboard from './pages/CoordinatorDashboard'
 import FacultyDashboard from './pages/FacultyDashboard'
@@ -26,6 +27,7 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/committee" element={<Committee />} />
 
         {/* Protected Routes */}
         <Route

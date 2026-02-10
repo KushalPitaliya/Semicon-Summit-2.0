@@ -1,4 +1,4 @@
-and import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Users, User, GraduationCap, ArrowLeft, ChevronDown, Linkedin, Mail } from 'lucide-react';
 import Navbar from '../components/Navbar';

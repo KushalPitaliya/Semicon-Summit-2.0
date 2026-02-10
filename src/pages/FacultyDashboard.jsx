@@ -411,7 +411,11 @@ const FacultyDashboard = () => {
                                             {pendingUser.paymentScreenshot && (
                                                 <button
                                                     className="btn btn-secondary screenshot-btn"
-                                                    onClick={() => setPreviewImage(`http://localhost:3001${pendingUser.paymentScreenshot}`)}
+                                                    onClick={() => {
+                                                        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+                                                        const serverBase = apiUrl.replace(/\/api\/?$/, '');
+                                                        setPreviewImage(`${serverBase}${pendingUser.paymentScreenshot}`);
+                                                    }}
                                                 >
                                                     <Image size={16} />
                                                     View Payment Screenshot

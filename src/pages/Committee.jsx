@@ -166,11 +166,7 @@ const COMMITTEES = [
 ];
 
 const Committee = () => {
-    const [expandedId, setExpandedId] = useState(null);
 
-    const toggleExpand = (id) => {
-        setExpandedId(expandedId === id ? null : id);
-    };
 
     return (
         <div className="committee-page">

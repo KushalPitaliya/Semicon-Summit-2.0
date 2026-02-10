@@ -1,70 +1,145 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './PageLoader.css';
+
+const FABRICATION_STEPS = [
+    "Design & Simulation",
+    "Wafer Production",
+    "Photolithography",
+    "Etching & Deposition",
+    "Ion Implantation",
+    "Assembly & Packaging",
+    "Final Testing",
+];
+
+// Generate stable random values once
+const ELECTRON_LINES = Array.from({ length: 20 }, (_, i) => ({
+    width: `${30 + (i * 17) % 50}%`,
+    top: `${(i * 5.3) % 100}%`,
+    duration: `${2 + (i * 0.7) % 3}s`,
+    delay: `${(i * 0.4) % 3}s`,
+}));
 
 const PageLoader = ({ onLoadComplete }) => {
     const [progress, setProgress] = useState(0);
+    const [currentStep, setCurrentStep] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
+    const onCompleteRef = useRef(onLoadComplete);
 
     useEffect(() => {
-        // Smooth progress animation
+        onCompleteRef.current = onLoadComplete;
+    }, [onLoadComplete]);
+
+    useEffect(() => {
         const interval = setInterval(() => {
             setProgress(prev => {
                 if (prev >= 100) {
                     clearInterval(interval);
                     return 100;
                 }
-                return Math.min(prev + 5, 100);
+                return Math.min(prev + 2, 100);
             });
-        }, 50);
+        }, 30);
 
-        // Start exit animation
-        const exitTimer = setTimeout(() => {
-            setIsExiting(true);
-        }, 1800);
+        return () => clearInterval(interval);
+    }, []);
 
-        // Complete load
-        const completeTimer = setTimeout(() => {
-            if (onLoadComplete) onLoadComplete();
-        }, 2200);
+    // Update step based on progress
+    useEffect(() => {
+        const stepIndex = Math.min(
+            Math.floor((progress / 100) * FABRICATION_STEPS.length),
+            FABRICATION_STEPS.length - 1
+        );
+        setCurrentStep(stepIndex);
+    }, [progress]);
 
-        return () => {
-            clearInterval(interval);
-            clearTimeout(exitTimer);
-            clearTimeout(completeTimer);
-        };
-    }, [onLoadComplete]);
+    // Trigger exit and completion
+    useEffect(() => {
+        if (progress >= 100) {
+            const exitTimer = setTimeout(() => setIsExiting(true), 400);
+            const completeTimer = setTimeout(() => {
+                if (onCompleteRef.current) onCompleteRef.current();
+            }, 1200);
+            return () => {
+                clearTimeout(exitTimer);
+                clearTimeout(completeTimer);
+            };
+        }
+    }, [progress]);
 
     return (
         <div className={`page-loader ${isExiting ? 'exiting' : ''}`}>
-            {/* Simple grid background */}
+            {/* Grid background */}
             <div className="loader-grid" />
+
+            {/* Electron flow lines */}
+            <div className="electron-flow">
+                {ELECTRON_LINES.map((line, i) => (
+                    <div
+                        key={i}
+                        className="electron-line"
+                        style={{
+                            width: line.width,
+                            top: line.top,
+                            animationDuration: line.duration,
+                            animationDelay: line.delay,
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Brand badge - appears at 20% */}
+            <div className={`loader-brand ${progress >= 20 ? 'visible' : ''}`}>
+                <div className="brand-text">
+                    SEMICONDUCTOR
+                    <br />
+                    <span className="brand-highlight">SUMMIT 2.0</span>
+                </div>
+            </div>
+
+            {/* Event badge - appears at 50% */}
+            <div className={`loader-event-badge ${progress >= 50 ? 'visible' : ''}`}>
+                <div className="event-date">17–19</div>
+                <div className="event-month">March 2026</div>
+                <div className="event-divider" />
+                <div className="event-venue">
+                    Dept. of Electronics & Communication
+                    <br />
+                    Engineering – CSPIT, CHARUSAT
+                </div>
+            </div>
 
             {/* Main content */}
             <div className="loader-content">
-                {/* Simple chip icon */}
+                {/* Chip with pins */}
                 <div className="loader-chip">
+                    {/* Top pins */}
+                    <div className="chip-pins-row top">
+                        {[0, 1, 2, 3].map(i => <div key={i} className="chip-pin" style={{ animationDelay: `${i * 0.1}s` }} />)}
+                    </div>
+                    {/* Bottom pins */}
+                    <div className="chip-pins-row bottom">
+                        {[0, 1, 2, 3].map(i => <div key={i} className="chip-pin" style={{ animationDelay: `${i * 0.1 + 0.4}s` }} />)}
+                    </div>
+                    {/* Left pins */}
+                    <div className="chip-pins-col left">
+                        {[0, 1, 2].map(i => <div key={i} className="chip-pin" style={{ animationDelay: `${i * 0.15}s` }} />)}
+                    </div>
+                    {/* Right pins */}
+                    <div className="chip-pins-col right">
+                        {[0, 1, 2].map(i => <div key={i} className="chip-pin" style={{ animationDelay: `${i * 0.15 + 0.3}s` }} />)}
+                    </div>
+
+                    {/* Chip body */}
                     <div className="chip-inner">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="4" y="4" width="16" height="16" rx="2" />
-                            <rect x="9" y="9" width="6" height="6" />
-                            <line x1="9" y1="1" x2="9" y2="4" />
-                            <line x1="15" y1="1" x2="15" y2="4" />
-                            <line x1="9" y1="20" x2="9" y2="23" />
-                            <line x1="15" y1="20" x2="15" y2="23" />
-                            <line x1="1" y1="9" x2="4" y2="9" />
-                            <line x1="1" y1="15" x2="4" y2="15" />
-                            <line x1="20" y1="9" x2="23" y2="9" />
-                            <line x1="20" y1="15" x2="23" y2="15" />
-                        </svg>
+                        <span className="chip-progress">{progress}%</span>
                     </div>
                     <div className="chip-ring" />
                     <div className="chip-ring chip-ring-2" />
                 </div>
 
-                {/* Text */}
-                <div className="loader-text">
-                    <span className="loader-title">SEMICONDUCTOR</span>
-                    <span className="loader-subtitle">SUMMIT 2.0</span>
+                {/* Boot step text */}
+                <div className="loader-boot-text" key={currentStep}>
+                    {FABRICATION_STEPS[currentStep]}
                 </div>
 
                 {/* Progress bar */}
@@ -74,7 +149,6 @@ const PageLoader = ({ onLoadComplete }) => {
                         style={{ transform: `scaleX(${progress / 100})` }}
                     />
                 </div>
-                <span className="loader-percent">{Math.round(progress)}%</span>
             </div>
         </div>
     );

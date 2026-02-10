@@ -8,6 +8,10 @@ import {
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import ParticleField from '../components/ParticleField'
+import StatCard from '../components/StatCard'
+import useScrollReveal from '../hooks/useScrollReveal'
+import useCountUp from '../hooks/useCountUp'
 import api from '../services/api'
 import './Landing.css'
 
@@ -20,6 +24,9 @@ const Landing = () => {
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
     const [galleryImages, setGalleryImages] = useState([])
     const [galleryLoading, setGalleryLoading] = useState(true)
+
+    // Scroll reveal animations
+    useScrollReveal()
 
     // Fetch gallery images
     useEffect(() => {
@@ -224,26 +231,27 @@ const Landing = () => {
                     <div className="hero-grid" />
                     <div className="hero-glow hero-glow-1" />
                     <div className="hero-glow hero-glow-2" />
+                    <ParticleField count={50} />
                 </div>
 
                 <div className="container hero-content">
-                    <div className="hero-badge">
+                    <div className="hero-badge hero-animate">
                         <Sparkles size={14} />
                         <span>The Premier Tech Event of 2026</span>
                     </div>
 
-                    <h1 className="hero-title">
-                        <span className="text-gradient">Semiconductor</span>
+                    <h1 className="hero-title hero-animate hero-animate-delay-1">
+                        <span className="text-gradient-vibrant">Semiconductor</span>
                         <br />
                         Summit 2.0
                     </h1>
 
-                    <p className="hero-subtitle">
+                    <p className="hero-subtitle hero-animate hero-animate-delay-2">
                         Explore the cutting-edge world of semiconductor technology through
                         workshops, hackathons, expert talks, and networking opportunities.
                     </p>
 
-                    <div className="hero-info">
+                    <div className="hero-info hero-animate hero-animate-delay-3">
                         <div className="hero-info-item">
                             <Calendar size={20} />
                             <span>March 15-16, 2026</span>
@@ -255,7 +263,7 @@ const Landing = () => {
                         </div>
                     </div>
 
-                    <div className="hero-cta">
+                    <div className="hero-cta hero-animate hero-animate-delay-4">
                         <Link to="/register" className="btn btn-primary">
                             Register Now <ArrowRight size={18} />
                         </Link>
@@ -277,7 +285,7 @@ const Landing = () => {
             </section>
 
             {/* ====== COUNTDOWN SECTION ====== */}
-            <section className="countdown-section">
+            <section className="countdown-section reveal">
                 <div className="container">
                     <div className="countdown-wrapper">
                         <h3 className="countdown-title">Event Starts In</h3>
@@ -307,21 +315,18 @@ const Landing = () => {
             </section>
 
             {/* ====== STATS SECTION ====== */}
-            <section className="stats-section">
+            <section className="stats-section reveal">
                 <div className="container">
                     <div className="stats-grid">
                         {stats.map((stat, i) => (
-                            <div key={i} className="stat-card">
-                                <span className="stat-value text-gradient">{stat.value}</span>
-                                <span className="stat-label">{stat.label}</span>
-                            </div>
+                            <StatCard key={i} value={stat.value} label={stat.label} />
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ====== VISION SECTION ====== */}
-            <section id="vision" className="vision-section">
+            <section id="vision" className="vision-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Our Vision</span>
@@ -342,7 +347,7 @@ const Landing = () => {
             </section>
 
             {/* ====== ABOUT / FEATURES SECTION ====== */}
-            <section id="about" className="about-section">
+            <section id="about" className="about-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">About The Summit</span>
@@ -363,7 +368,7 @@ const Landing = () => {
             </section>
 
             {/* ====== SPEAKERS SECTION ====== */}
-            <section id="speakers" className="speakers-section">
+            <section id="speakers" className="speakers-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Meet Our Experts</span>
@@ -392,7 +397,7 @@ const Landing = () => {
             </section>
 
             {/* ====== SCHEDULE SECTION ====== */}
-            <section id="schedule" className="schedule-section">
+            <section id="schedule" className="schedule-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Event Timeline</span>
@@ -425,7 +430,7 @@ const Landing = () => {
             </section>
 
             {/* ====== EVENTS SECTION ====== */}
-            <section id="events" className="events-section">
+            <section id="events" className="events-section reveal">
                 <div className="container">
                     <div className="section-header">
                         <span className="section-tag">Featured Events</span>
@@ -462,7 +467,7 @@ const Landing = () => {
             </section>
 
             {/* ====== GLIMPSE/GALLERY SECTION ====== */}
-            <section id="glimpse" className="glimpse-section">
+            <section id="glimpse" className="glimpse-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Previous Events</span>
@@ -505,7 +510,7 @@ const Landing = () => {
             </section>
 
             {/* ====== FAQ SECTION ====== */}
-            <section id="faq" className="faq-section">
+            <section id="faq" className="faq-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Got Questions?</span>
@@ -530,7 +535,7 @@ const Landing = () => {
             </section>
 
             {/* ====== ORGANIZERS SECTION ====== */}
-            <section id="organizers" className="organizers-section">
+            <section id="organizers" className="organizers-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Organizing Team</span>
@@ -576,7 +581,7 @@ const Landing = () => {
             </section>
 
             {/* ====== LOCATION MAP SECTION ====== */}
-            <section id="location" className="location-section">
+            <section id="location" className="location-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Event Venue</span>
@@ -615,7 +620,7 @@ const Landing = () => {
             </section>
 
             {/* ====== CONTACT SECTION ====== */}
-            <section id="contact" className="contact-section">
+            <section id="contact" className="contact-section reveal">
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Get In Touch</span>
@@ -645,7 +650,7 @@ const Landing = () => {
             </section>
 
             {/* ====== REGISTER CTA SECTION ====== */}
-            <section id="register" className="register-section">
+            <section id="register" className="register-section reveal">
                 <div className="register-bg"><div className="register-glow" /></div>
                 <div className="container">
                     <div className="register-content">

@@ -937,3 +937,254 @@ a:hover {
     padding: 1.25rem;
   }
 }
+
+/* ===================================
+   SCROLL REVEAL ANIMATIONS
+   Used with useScrollReveal hook
+   =================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delay utilities */
+.reveal[data-delay="1"] {
+  transition-delay: 0.1s;
+}
+
+.reveal[data-delay="2"] {
+  transition-delay: 0.2s;
+}
+
+.reveal[data-delay="3"] {
+  transition-delay: 0.3s;
+}
+
+.reveal[data-delay="4"] {
+  transition-delay: 0.4s;
+}
+
+.reveal[data-delay="5"] {
+  transition-delay: 0.5s;
+}
+
+.reveal[data-delay="6"] {
+  transition-delay: 0.6s;
+}
+
+/* Reveal from left */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Reveal with scale */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===================================
+   GLOW PULSE UTILITY
+   =================================== */
+
+.glow-pulse {
+  animation: glow-pulse-anim 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-anim {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.5), 0 0 80px rgba(34, 197, 94, 0.15);
+  }
+}
+
+/* ===================================
+   ENHANCED TEXT GRADIENT
+   =================================== */
+
+.text-gradient-vibrant {
+  background: linear-gradient(135deg, #10b981 0%, #22c55e 30%, #00ff88 60%, #4ade80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===================================
+   HERO ENTRY ANIMATION
+   =================================== */
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  animation: hero-fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.hero-animate-delay-1 {
+  animation-delay: 0.15s;
+}
+
+.hero-animate-delay-2 {
+  animation-delay: 0.3s;
+}
+
+.hero-animate-delay-3 {
+  animation-delay: 0.45s;
+}
+
+.hero-animate-delay-4 {
+  animation-delay: 0.6s;
+}
+
+/* ===================================
+   NEON SCAN LINE (hero decoration)
+   =================================== */
+
+@keyframes neon-scan {
+  0% {
+    top: -2px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.neon-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #22c55e 20%, #00ff88 50%, #22c55e 80%, transparent 100%);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.2);
+  animation: neon-scan 6s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===================================
+   GRAIN TEXTURE OVERLAY (Depth)
+   =================================== */
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ===================================
+   3D CARD TILT (Premium Interaction)
+   =================================== */
+
+.card-3d-tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+}
+
+.card-3d-tilt:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(5deg) translateZ(10px);
+}
+
+/* Apply to specific cards */
+.feature-card,
+.event-card,
+.glimpse-card {
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.feature-card:hover,
+.event-card:hover,
+.glimpse-card:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-3deg) translateY(-5px);
+}
+
+/* ===================================
+   ANIMATED SECTION TAGS
+   =================================== */
+
+.section-tag {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.section-tag::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #22c55e 0%, transparent 100%);
+  animation: tag-line 2s ease-in-out infinite;
+}
+
+@keyframes tag-line {
+
+  0%,
+  100% {
+    width: 40px;
+    opacity: 0.6;
+  }
+
+  50% {
+    width: 60px;
+    opacity: 1;
+  }
+}

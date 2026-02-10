@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Send, CheckCircle, ArrowRight } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ParticleField from '../components/ParticleField';
 import './Contact.css';
 
 const Contact = () => {
@@ -42,9 +43,15 @@ const Contact = () => {
     };
 
     return (
-        <div className="contact-page">
+        <div className="contact-page" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div className="hero-bg">
+                <div className="hero-grid" />
+                <div className="hero-glow hero-glow-1" />
+                <div className="hero-glow hero-glow-2" />
+                <ParticleField count={40} />
+            </div>
             <Navbar />
-            <div className="contact-container">
+            <div className="contact-container" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Header */}
                 <div className="contact-header">
                     <h1>Get in <span className="text-gradient">Touch</span></h1>

@@ -4,6 +4,7 @@ import { Target, Lightbulb, Users, Trophy, ArrowRight, Image } from 'lucide-reac
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../services/api';
+import ParticleField from '../components/ParticleField';
 import './About.css';
 
 const About = () => {
@@ -35,9 +36,15 @@ const About = () => {
     ];
 
     return (
-        <div className="about-page">
+        <div className="about-page" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div className="hero-bg">
+                <div className="hero-grid" />
+                <div className="hero-glow hero-glow-1" />
+                <div className="hero-glow hero-glow-2" />
+                <ParticleField count={40} />
+            </div>
             <Navbar />
-            <div className="about-container">
+            <div className="about-container" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Hero Section */}
                 <div className="about-hero">
                     <h1>About <span className="text-gradient">Semiconductor Summit 2.0</span></h1>

@@ -1,22 +1,25 @@
 import { Link } from 'react-router-dom'
-import { Cpu, Mail, Phone, MapPin, Linkedin, Twitter, Instagram } from 'lucide-react'
+import { Cpu, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Youtube, Facebook } from 'lucide-react'
 import './Footer.css'
 
 const Footer = () => {
     const currentYear = new Date().getFullYear()
 
     const quickLinks = [
-        { name: 'Home', href: '#home' },
-        { name: 'About', href: '#about' },
-        { name: 'Events', href: '#events' },
-        { name: 'Register', href: '#register' },
-        { name: 'Contact', href: '#contact' },
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about' },
+        { name: 'Events', path: '/events' },
+        { name: 'Committee', path: '/committee' },
+        { name: 'Register', path: '/register' },
+        { name: 'Contact', path: '/contact' },
     ]
 
     const socialLinks = [
-        { icon: Linkedin, href: '#', label: 'LinkedIn' },
-        { icon: Twitter, href: '#', label: 'Twitter' },
-        { icon: Instagram, href: '#', label: 'Instagram' },
+        { icon: Youtube, href: 'https://www.youtube.com/@CHARUSATUniversityOfficial', label: 'YouTube' },
+        { icon: Facebook, href: 'https://www.facebook.com/thecharusat/', label: 'Facebook' },
+        { icon: Twitter, href: 'https://x.com/thecharusat/', label: 'X (Twitter)' },
+        { icon: Instagram, href: 'https://www.instagram.com/thecharusat/', label: 'Instagram' },
+        { icon: Linkedin, href: 'https://www.linkedin.com/school/charotar-university-of-science-and-technology/', label: 'LinkedIn' },
     ]
 
     return (
@@ -44,6 +47,8 @@ const Footer = () => {
                                 <a
                                     key={social.label}
                                     href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="social-link"
                                     aria-label={social.label}
                                 >
@@ -59,7 +64,11 @@ const Footer = () => {
                         <ul className="footer-links">
                             {quickLinks.map((link) => (
                                 <li key={link.name}>
-                                    <a href={link.href}>{link.name}</a>
+                                    {link.path.startsWith('/#') ? (
+                                        <a href={link.path}>{link.name}</a>
+                                    ) : (
+                                        <Link to={link.path}>{link.name}</Link>
+                                    )}
                                 </li>
                             ))}
                         </ul>

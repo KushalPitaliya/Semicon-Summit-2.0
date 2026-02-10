@@ -13,6 +13,81 @@
     padding: 8rem 0 3rem;
     background: var(--gradient-hero);
     position: relative;
+    overflow: hidden;
+    /* Added to contain absolute children */
+}
+
+/* Hero Background Animation */
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+}
+
+.hero-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+}
+
+.hero-glow-1 {
+    top: -10%;
+    left: 15%;
+    width: 600px;
+    height: 600px;
+    background: rgba(16, 185, 129, 0.2);
+    animation: hero-orb-1 10s ease-in-out infinite;
+}
+
+.hero-glow-2 {
+    bottom: -10%;
+    right: 5%;
+    width: 500px;
+    height: 500px;
+    background: rgba(0, 255, 136, 0.12);
+    animation: hero-orb-2 12s ease-in-out infinite;
+}
+
+@keyframes hero-orb-1 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -20px) scale(1.05);
+    }
+
+    66% {
+        transform: translate(-20px, 15px) scale(0.95);
+    }
+}
+
+@keyframes hero-orb-2 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(-25px, 20px) scale(1.08);
+    }
+
+    66% {
+        transform: translate(15px, -25px) scale(0.92);
+    }
 }
 
 .committee-hero .back-link {
@@ -323,10 +398,11 @@
 }
 
 .faculty-title {
-    color: #f59e0b;
+    color: #06b6d4;
+    /* Cyan to replace Amber */
 }
 
-/* Amber for faculty */
+/* Amber for faculty - Removed/Updated */
 .student-title {
     color: #22c55e;
 }
@@ -377,9 +453,12 @@
 }
 
 .faculty-avatar {
-    background: rgba(245, 158, 11, 0.2);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background: rgba(6, 182, 212, 0.2);
+    /* Cyan background */
+    color: #06b6d4;
+    /* Cyan text */
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    /* Cyan border */
 }
 
 .student-avatar {

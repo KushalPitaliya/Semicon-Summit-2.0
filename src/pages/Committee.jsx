@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+and import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, User, GraduationCap, ArrowLeft, ChevronDown, Linkedin, Mail } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ParticleField from '../components/ParticleField';
 import './Committee.css';
 
 // Placeholder for images - ideally these would be real URLs
@@ -27,7 +28,7 @@ const COMMITTEES = [
         name: 'Publicity & Outreach Committee',
         description: '負責 promoting the summit and reaching out to potential participants.',
         facultyCoordinators: [
-            { name: 'Dr. Sagar Patel', role: 'Convener' },
+            { name: 'Dr. Sagar Patel' },
             { name: 'Prof. Vishal Shah' },
             { name: 'Dr. Dharmendra Chauhan' },
             { name: 'Dr. Tigmanshu Patel' },
@@ -42,7 +43,7 @@ const COMMITTEES = [
         name: 'Stage Committee',
         description: 'Manages stage setup, decoration, and flow of events.',
         facultyCoordinators: [
-            { name: 'Dr. Killol Pandya', role: 'Convener' },
+            { name: 'Dr. Killol Pandya' },
             { name: 'Dr. Manthan Manavadaria' },
             { name: 'Timil Patel' },
             { name: 'Nikul Patel' },
@@ -57,12 +58,12 @@ const COMMITTEES = [
         name: 'Website Committee',
         description: 'Responsible for the official summit website design and maintenance.',
         facultyCoordinators: [
-            { name: 'Dr. Miral Desai', role: 'Convener' },
+            { name: 'Dr. Miral Desai' },
             { name: 'Dr. Brijesh Kundaliya' }
         ],
         studentCoordinators: [
-            { name: 'Archi Gujar', image: PLACEHOLDER_IMG + "Archi+Gujar" },
-            { name: 'Kushal Pitaliya', role: 'Lead Developer', isHighlight: true, image: PLACEHOLDER_IMG + "Kushal+Pitaliya" }
+            { name: 'Kushal Pitaliya', role: 'Lead Developer', image: PLACEHOLDER_IMG + "Kushal+Pitaliya" },
+            { name: 'Archi Gujar', image: PLACEHOLDER_IMG + "Archi+Gujar" }
         ]
     },
     {
@@ -70,7 +71,7 @@ const COMMITTEES = [
         name: 'Decoration Committee',
         description: 'Handles venue decoration and aesthetic arrangements.',
         facultyCoordinators: [
-            { name: 'Dr. Arpita Patel', role: 'Convener' },
+            { name: 'Dr. Arpita Patel' },
             { name: 'Dr. Poonam Thanki' },
             { name: 'Prof. Dhara M Patel' },
             { name: 'Dr. Kanwar Preet Kaur' },
@@ -86,7 +87,7 @@ const COMMITTEES = [
         name: 'Registration, Help Desk & Attendance',
         description: 'Manages participant registration and help desk queries.',
         facultyCoordinators: [
-            { name: 'Dr. Poonam Thanki', role: 'Convener' },
+            { name: 'Dr. Poonam Thanki' },
             { name: 'Prof. Dhara Pomal' },
             { name: 'Prof. Dhara M. Patel' },
             { name: 'Dr. Mayur Makwana' }
@@ -101,7 +102,7 @@ const COMMITTEES = [
         name: 'Food & Transportation Committee',
         description: 'Manages food catering and transportation logistics.',
         facultyCoordinators: [
-            { name: 'Dr. Dharmendra Chauhan', role: 'Convener' },
+            { name: 'Dr. Dharmendra Chauhan' },
             { name: 'Dr. Sagar Patel' }
         ],
         studentCoordinators: [
@@ -113,7 +114,7 @@ const COMMITTEES = [
         name: 'Stationery, ID & Merchandise Committee',
         description: 'Handles printing of ID cards, certificates, and merchandise.',
         facultyCoordinators: [
-            { name: 'Dr. Hardik Modi', role: 'Convener' },
+            { name: 'Dr. Hardik Modi' },
             { name: 'Dr. Tigmanshu Patel' },
             { name: 'Dr. Mayur Makwana' },
             { name: 'Prof. Dhara M Patel' }
@@ -127,7 +128,7 @@ const COMMITTEES = [
         name: 'Media Committee',
         description: 'Manages photography, videography, and media coverage.',
         facultyCoordinators: [
-            { name: 'Dr. Brijesh Kundaliya', role: 'Convener' },
+            { name: 'Dr. Brijesh Kundaliya' },
             { name: 'Dr. Dharmendra Chauhan' },
             { name: 'Dr. Tigmanshu Patel' },
             { name: 'Prof. Dhruvika Sonar' }
@@ -141,7 +142,7 @@ const COMMITTEES = [
         name: 'Feedback & Reporting',
         description: 'Collects feedback and prepares the final event report.',
         facultyCoordinators: [
-            { name: 'Dr. Jitendra Chaudhary', role: 'Convener' },
+            { name: 'Dr. Jitendra Chaudhary' },
             { name: 'Dr. Kanwar Preet Kaur' },
             { name: 'Prof. Akshay Patel' },
             { name: 'Dr. Manthan Manavadaria' }
@@ -155,7 +156,7 @@ const COMMITTEES = [
         name: 'Budget Committee',
         description: 'Manages the financial budget and expenses.',
         facultyCoordinators: [
-            { name: 'Prof. Vishal Shah', role: 'Convener' },
+            { name: 'Prof. Vishal Shah' },
             { name: 'Prof. Akshay Patel' }
         ],
         studentCoordinators: [
@@ -177,7 +178,13 @@ const Committee = () => {
 
             {/* Hero */}
             <section className="committee-hero">
-                <div className="container">
+                <div className="hero-bg">
+                    <div className="hero-grid" />
+                    <div className="hero-glow hero-glow-1" />
+                    <div className="hero-glow hero-glow-2" />
+                    <ParticleField count={40} />
+                </div>
+                <div className="container" style={{ position: 'relative', zIndex: 10 }}>
                     <Link to="/" className="back-link">
                         <ArrowLeft size={20} />
                         Back to Home

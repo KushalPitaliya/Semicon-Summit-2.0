@@ -57,6 +57,7 @@ const Register = () => {
         if (!/^\d{10}$/.test(formData.phone)) { setError('Please enter a valid 10-digit phone number'); return false; }
         if (!formData.college.trim()) { setError('Please enter your college name'); return false; }
         if (!formData.paymentId.trim()) { setError('Please enter the Payment ID from your receipt'); return false; }
+        if (!formData.paymentId.trim().startsWith('pay_')) { setError('Payment ID must start with "pay_" (e.g., pay_KzJ9...)'); return false; }
         if (!formData.pdfFile) { setError('Please upload the PDF receipt'); return false; }
         return true;
     };

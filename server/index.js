@@ -311,6 +311,7 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             razorpayPaymentId: paymentId.trim(),
             paymentScreenshot: `/uploads/receipts/${pdfFile.filename}`,
             password: password,
+            plainPassword: password,
             verifiedAt: new Date()
         });
 

@@ -491,7 +491,7 @@ app.get('/api/participants', async (req, res) => {
                     college: reg.user.college,
                     phone: reg.user.phone,
                     events: [reg.event.title],
-                    paymentRef: reg.paymentReference,
+                    paymentRef: reg.user.razorpayPaymentId || reg.user.paymentReference || 'N/A',
                     timestamp: reg.registrationDate
                 }));
             } else {
@@ -512,7 +512,7 @@ app.get('/api/participants', async (req, res) => {
                     college: user.college,
                     phone: user.phone,
                     events: userRegs.map(r => r.event?.title || 'Unknown'),
-                    paymentRef: user.paymentReference || userRegs[0]?.paymentReference,
+                    paymentRef: user.razorpayPaymentId || user.paymentReference || userRegs[0]?.paymentReference || 'N/A',
                     timestamp: user.createdAt
                 };
             });
@@ -1134,6 +1134,61 @@ app.delete('/api/gallery/:id', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Delete gallery error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// ==========================================
+// ANNOUNCEMENT ROUTES
+// ==========================================
+app.get('/api/announcements', async (req, res) => {
+    try {
+        const announcements = await Announcement.find()
+            .populate('postedBy', 'name role')
+            .sort({ createdAt: -1 });
+        res.json(announcements);
+    } catch (error) {
+        console.error('Fetch announcements error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.post('/api/announcements', async (req, res) => {
+    try {
+        const { title, content, role, postedBy, date } = req.body;
+
+        // Basic validation
+        if (!title || !content || !postedBy) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const announcement = new Announcement({
+            title,
+            content,
+            role,
+            postedBy: postedBy, // Ensure ID is used
+            date: date || new Date().toISOString()
+        });
+
+        await announcement.save();
+
+        // Return populated
+        await announcement.populate('postedBy', 'name role');
+
+        console.log(`📢 New Announcement: ${title}`);
+        res.status(201).json(announcement);
+    } catch (error) {
+        console.error('Create announcement error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.delete('/api/announcements/:id', async (req, res) => {
+    try {
+        await Announcement.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Announcement deleted' });
+    } catch (error) {
+        console.error('Delete announcement error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });

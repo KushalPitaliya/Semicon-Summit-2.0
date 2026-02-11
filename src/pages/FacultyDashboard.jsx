@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
     Users, Download, Filter, Search, LogOut,
     CheckCircle, XCircle, Eye, Clock, Image,
-    AlertTriangle, X, Key, Trash2, UserCog, Upload, ImagePlus
+    AlertTriangle, X, Key, Trash2, UserCog, Upload, ImagePlus, Bell
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
@@ -35,6 +35,10 @@ const FacultyDashboard = () => {
     const [galleryUploadModal, setGalleryUploadModal] = useState(false)
     const [galleryForm, setGalleryForm] = useState({ title: '', description: '', category: 'event', files: [] })
 
+    // Announcements State
+    const [announcements, setAnnouncements] = useState([])
+    const [newAnnouncement, setNewAnnouncement] = useState({ title: '', content: '' })
+
     const events = [
         'All Events',
         'VLSI Design Workshop',
@@ -63,9 +67,12 @@ const FacultyDashboard = () => {
             const usersRes = await api.get('/users')
             setAllUsers(usersRes.data)
 
-            // Fetch gallery images
-            const galleryRes = await api.get('/gallery')
-            setGalleryImages(galleryRes.data)
+
+
+
+            // Fetch announcements
+            const annRes = await api.get('/announcements')
+            setAnnouncements(annRes.data)
         } catch (error) {
             console.error('Error fetching data:', error)
         } finally {
@@ -136,6 +143,43 @@ const FacultyDashboard = () => {
             setActionLoading(null)
         }
     }
+
+    const handleAddAnnouncement = async () => {
+        if (!newAnnouncement.title || !newAnnouncement.content) return
+
+        setActionLoading('announcement')
+        try {
+            await api.post('/announcements', {
+                ...newAnnouncement,
+                role: 'faculty',
+                postedBy: user._id
+            })
+            setNewAnnouncement({ title: '', content: '' })
+            // Refresh
+            const annRes = await api.get('/announcements')
+            setAnnouncements(annRes.data)
+        } catch (error) {
+            console.error('Error creating announcement:', error)
+            alert('Failed to create announcement')
+        } finally {
+            setActionLoading(null)
+        }
+    }
+
+    const handleDeleteAnnouncement = async (id) => {
+        if (!window.confirm('Delete this announcement?')) return
+        try {
+            await api.delete(`/announcements/${id}`)
+            // Refresh
+            const annRes = await api.get('/announcements')
+            setAnnouncements(annRes.data)
+        } catch (error) {
+            console.error('Error deleting announcement:', error)
+            alert('Failed to delete announcement')
+        }
+    }
+
+
 
     const handleExport = () => {
         // Prepare data for Excel
@@ -723,6 +767,79 @@ const FacultyDashboard = () => {
                                 )}
                             </div>
                         </section>
+                    )}
+
+                    {/* Announcements Tab */}
+                    {activeTab === 'announcements' && (
+                        <div className="dashboard-section">
+                            <div className="section-header-row">
+                                <h2>Manage Announcements</h2>
+                            </div>
+
+                            <div className="announcement-form card" style={{ marginBottom: '2rem' }}>
+                                <h3>Create New Announcement</h3>
+                                <div className="form-group">
+                                    <label>Title</label>
+                                    <input
+                                        type="text"
+                                        className="input"
+                                        placeholder="Announcement title"
+                                        value={newAnnouncement.title}
+                                        onChange={(e) => setNewAnnouncement(prev => ({ ...prev, title: e.target.value }))}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Content</label>
+                                    <textarea
+                                        className="input textarea"
+                                        placeholder="Announcement content..."
+                                        rows={4}
+                                        value={newAnnouncement.content}
+                                        onChange={(e) => setNewAnnouncement(prev => ({ ...prev, content: e.target.value }))}
+                                    ></textarea>
+                                </div>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleAddAnnouncement}
+                                    disabled={!newAnnouncement.title || !newAnnouncement.content || actionLoading === 'announcement'}
+                                >
+                                    {actionLoading === 'announcement' ? 'Posting...' : 'Post Announcement'}
+                                </button>
+                            </div>
+
+                            <h3>Posted Announcements</h3>
+                            {announcements.length > 0 ? (
+                                <div className="announcements-list">
+                                    {announcements.map(announcement => (
+                                        <div key={announcement._id} className="announcement-item card">
+                                            <div className="announcement-header">
+                                                <h4>{announcement.title}</h4>
+                                                <div className="announcement-actions">
+                                                    <span className="announcement-date">
+                                                        {new Date(announcement.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                    <button
+                                                        className="delete-btn"
+                                                        onClick={() => handleDeleteAnnouncement(announcement._id)}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <p>{announcement.content}</p>
+                                            <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#666' }}>
+                                                Posted by: {announcement.postedBy?.name || 'Unknown'} ({announcement.role})
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="empty-state">
+                                    <Bell size={48} />
+                                    <p>No announcements yet</p>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </main>

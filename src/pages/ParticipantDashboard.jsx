@@ -164,10 +164,12 @@ const ParticipantDashboard = () => {
                                 </div>
                             ) : (
                                 announcements.map((announcement) => (
-                                    <div key={announcement.id} className="announcement-item card">
+                                    <div key={announcement._id || announcement.id} className="announcement-item card">
                                         <div className="announcement-header">
                                             <h4>{announcement.title}</h4>
-                                            <span className="announcement-date">{announcement.date}</span>
+                                            <span className="announcement-date">
+                                                {announcement.date ? new Date(announcement.date).toLocaleDateString() : 'N/A'}
+                                            </span>
                                         </div>
                                         <p>{announcement.content}</p>
                                     </div>

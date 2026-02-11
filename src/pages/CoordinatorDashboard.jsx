@@ -5,6 +5,7 @@ import {
     Plus, Trash2, CheckCircle, X, AlertCircle
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import api from '../services/api'
 import './Dashboard.css'
 
 const CoordinatorDashboard = () => {
@@ -14,12 +15,25 @@ const CoordinatorDashboard = () => {
     const [uploads, setUploads] = useState({
         photos: [],
         documents: [],
-        announcements: []
+        // announcements removed from here
     })
+    const [announcements, setAnnouncements] = useState([]) // Real API state
     const [newAnnouncement, setNewAnnouncement] = useState({ title: '', content: '' })
-    const [uploadStatus, setUploadStatus] = useState(null)
     const fileInputRef = useRef(null)
     const docInputRef = useRef(null)
+
+    useEffect(() => {
+        fetchAnnouncements()
+    }, [])
+
+    const fetchAnnouncements = async () => {
+        try {
+            const res = await api.get('/announcements')
+            setAnnouncements(res.data)
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     const handleLogout = () => {
         logout()
@@ -64,24 +78,37 @@ const CoordinatorDashboard = () => {
         }
     }
 
-    const handleAddAnnouncement = () => {
+    const handleAddAnnouncement = async () => {
         if (newAnnouncement.title && newAnnouncement.content) {
-            const announcement = {
-                id: Date.now(),
-                ...newAnnouncement,
-                date: new Date().toLocaleDateString()
+            try {
+                await api.post('/announcements', {
+                    ...newAnnouncement,
+                    role: 'coordinator',
+                    postedBy: user._id
+                })
+                setNewAnnouncement({ title: '', content: '' })
+                setUploadStatus({ type: 'success', message: 'Announcement posted successfully' })
+                fetchAnnouncements()
+                setTimeout(() => setUploadStatus(null), 3000)
+            } catch (err) {
+                setUploadStatus({ type: 'error', message: 'Failed to post announcement' })
             }
-            setUploads(prev => ({
-                ...prev,
-                announcements: [announcement, ...prev.announcements]
-            }))
-            setNewAnnouncement({ title: '', content: '' })
-            setUploadStatus({ type: 'success', message: 'Announcement posted successfully' })
-            setTimeout(() => setUploadStatus(null), 3000)
         }
     }
 
-    const handleDelete = (type, id) => {
+    const handleDelete = async (type, id) => {
+        if (type === 'announcements') {
+            if (!confirm('Delete this announcement?')) return
+            try {
+                await api.delete(`/announcements/${id}`)
+                fetchAnnouncements()
+            } catch (err) {
+                alert('Failed to delete')
+            }
+            return
+        }
+
+        // Local state delete for photos/docs
         setUploads(prev => ({
             ...prev,
             [type]: prev[type].filter(item => item.id !== id)
@@ -303,24 +330,29 @@ const CoordinatorDashboard = () => {
                                 </button>
                             </div>
 
-                            {uploads.announcements.length > 0 && (
+                            {announcements.length > 0 && (
                                 <div className="announcements-list">
                                     <h3>Posted Announcements</h3>
-                                    {uploads.announcements.map(announcement => (
-                                        <div key={announcement.id} className="announcement-item card">
+                                    {announcements.map(announcement => (
+                                        <div key={announcement._id} className="announcement-item card">
                                             <div className="announcement-header">
                                                 <h4>{announcement.title}</h4>
                                                 <div className="announcement-actions">
-                                                    <span className="announcement-date">{announcement.date}</span>
+                                                    <span className="announcement-date">
+                                                        {new Date(announcement.createdAt).toLocaleDateString()}
+                                                    </span>
                                                     <button
                                                         className="delete-btn"
-                                                        onClick={() => handleDelete('announcements', announcement.id)}
+                                                        onClick={() => handleDelete('announcements', announcement._id)}
                                                     >
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </div>
                                             <p>{announcement.content}</p>
+                                            <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#666' }}>
+                                                Posted by: {announcement.postedBy?.name || 'Unknown'} ({announcement.role})
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

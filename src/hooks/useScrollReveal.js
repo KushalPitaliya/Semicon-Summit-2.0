@@ -30,6 +30,11 @@ export function useScrollReveal() {
 
         return () => observerRef.current?.disconnect();
     }, []);
+
+    // Return an object with reveal function for compatibility
+    return {
+        reveal: () => {}
+    };
 }
 
 export default useScrollReveal;

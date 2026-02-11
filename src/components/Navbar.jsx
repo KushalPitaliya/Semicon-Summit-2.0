@@ -19,7 +19,7 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/', isRoute: true },
         { name: 'Events', path: '/events', isRoute: true },
-        { name: 'Committee', path: '/committee', isRoute: true },
+        { name: 'Team', path: '/committee', isRoute: true },
         { name: 'About', path: '/about', isRoute: true },
         { name: 'Contact', path: '/contact', isRoute: true },
     ]

@@ -8,6 +8,8 @@ import ParticleField from '../components/ParticleField';
 import './About.css';
 
 const About = () => {
+    const [selectedImage, setSelectedImage] = useState(null);
+
     const [galleryImages, setGalleryImages] = useState([]);
     const [galleryLoading, setGalleryLoading] = useState(true);
 
@@ -27,16 +29,29 @@ const About = () => {
     }, []);
 
     const previousEventImages = [
-        { id: 1, title: 'VLSI Workshop 2024', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop', description: 'Participants learning chip design' },
-        { id: 2, title: 'Hackathon Finals', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop', description: 'Teams presenting projects' },
-        { id: 3, title: 'Expert Talk Session', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop', description: 'Industry expert sharing insights' },
-        { id: 4, title: 'Networking Event', image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=300&fit=crop', description: 'Students connecting with professionals' },
-        { id: 5, title: 'Award Ceremony', image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400&h=300&fit=crop', description: 'Winners receiving prizes' },
-        { id: 6, title: 'Lab Session', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop', description: 'Hands-on learning experience' }
+        // Day 1 images (0.jpeg - 9.jpeg) - All 10 images
+        { id: 1, title: 'Summit Day 1 - Session 1', image: '/images/Glimps/0.jpeg' },
+        { id: 2, title: 'Summit Day 1 - Session 2', image: '/images/Glimps/1.jpeg' },
+        { id: 3, title: 'Summit Day 1 - Session 3', image: '/images/Glimps/2.jpeg' },
+        { id: 4, title: 'Summit Day 1 - Session 4', image: '/images/Glimps/3.jpeg' },
+        { id: 5, title: 'Summit Day 1 - Session 5', image: '/images/Glimps/4.jpeg' },
+        { id: 6, title: 'Summit Day 1 - Session 6', image: '/images/Glimps/5.jpeg' },
+        { id: 7, title: 'Summit Day 1 - Session 7', image: '/images/Glimps/6.jpeg' },
+        { id: 8, title: 'Summit Day 1 - Session 8', image: '/images/Glimps/7.jpeg' },
+        { id: 9, title: 'Summit Day 1 - Session 9', image: '/images/Glimps/8.jpeg' },
+        { id: 10, title: 'Summit Day 1 - Session 10', image: '/images/Glimps/9.jpeg' },
+        // Day 2 images - All 6 images
+        { id: 11, title: 'Summit Day 2 - Highlights 1', image: '/images/Glimps/summit day 2 _1.jpeg' },
+        { id: 12, title: 'Summit Day 2 - Highlights 2', image: '/images/Glimps/summit day 2 _2.jpg' },
+        { id: 13, title: 'Summit Day 2 - Highlights 3', image: '/images/Glimps/summit day 2 _3.jpg' },
+        { id: 14, title: 'Summit Day 2 - Highlights 4', image: '/images/Glimps/summit day 2 _4.jpg' },
+        { id: 15, title: 'Summit Day 2 - Highlights 5', image: '/images/Glimps/summit day 2 _5.jpg' },
+        { id: 16, title: 'Summit Day 2 - Highlights 6', image: '/images/Glimps/summit day 2 _6.jpeg' }
     ];
 
     return (
         <div className="about-page" style={{ position: 'relative', overflow: 'hidden' }}>
+            {/* ... (background and navbar) ... */}
             <div className="hero-bg">
                 <div className="hero-grid" />
                 <div className="hero-glow hero-glow-1" />
@@ -44,6 +59,7 @@ const About = () => {
                 <ParticleField count={40} />
             </div>
             <Navbar />
+
             <div className="about-container" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Hero Section */}
                 <div className="about-hero">
@@ -51,8 +67,45 @@ const About = () => {
                     <p className="hero-subtitle">Bridging Academia and Industry in Semiconductor Technology</p>
                 </div>
 
+                {/* ====== GLIMPSES SECTION (Moved to Top) ====== */}
+                <section className="glimpse-section">
+                    <h2>Glimpse of <span className="text-gradient">Summit 1.0</span></h2>
+                    <p className="glimpse-subtitle">Relive the moments from our previous summit.</p>
+
+                    <div className="glimpse-grid">
+                        {galleryImages.length > 0 ? (
+                            galleryImages.map((item) => (
+                                <div
+                                    key={item._id}
+                                    className="about-glimpse-card"
+                                    onClick={() => setSelectedImage(item.url)}
+                                >
+                                    <div className="about-glimpse-image">
+                                        <img src={item.thumbnailUrl || item.url} alt={item.title} loading="lazy" />
+                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            previousEventImages.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="about-glimpse-card"
+                                    onClick={() => setSelectedImage(item.image)}
+                                >
+                                    <div className="about-glimpse-image">
+                                        <img src={item.image} alt={item.title} loading="lazy" />
+                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
+
                 {/* Mission Section */}
                 <section className="mission-section">
+                    {/* ... (rest of mission content) ... */}
                     <div className="section-icon">
                         <Target size={40} />
                     </div>
@@ -62,6 +115,7 @@ const About = () => {
 
                 {/* Why Attend Section */}
                 <section className="why-attend-section">
+                    {/* ... (rest of content) ... */}
                     <h2>Why Attend?</h2>
                     <div className="benefits-grid">
                         <div className="benefit-card">
@@ -148,42 +202,6 @@ const About = () => {
                     </div>
                 </section>
 
-                {/* ====== GLIMPSES SECTION ====== */}
-                <section className="glimpse-section">
-                    <h2>Glimpse of <span className="text-gradient">Summit 1.0</span></h2>
-                    <p className="glimpse-subtitle">Relive the moments from our previous summit.</p>
-
-                    <div className="glimpse-grid">
-                        {galleryImages.length > 0 ? (
-                            galleryImages.map((item) => (
-                                <div key={item._id} className="about-glimpse-card">
-                                    <div className="about-glimpse-image">
-                                        <img src={item.thumbnailUrl || item.url} alt={item.title} loading="lazy" />
-                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
-                                    </div>
-                                    <div className="about-glimpse-content">
-                                        <h4>{item.title}</h4>
-                                        <p>{item.description || item.category}</p>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            previousEventImages.map((item) => (
-                                <div key={item.id} className="about-glimpse-card">
-                                    <div className="about-glimpse-image">
-                                        <img src={item.image} alt={item.title} loading="lazy" />
-                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
-                                    </div>
-                                    <div className="about-glimpse-content">
-                                        <h4>{item.title}</h4>
-                                        <p>{item.description}</p>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </section>
-
                 {/* Stats Section */}
                 <section className="stats-section">
                     <div className="stat-item">
@@ -213,6 +231,17 @@ const About = () => {
                     </Link>
                 </section>
             </div>
+
+            {/* Lightbox Modal */}
+            {selectedImage && (
+                <div className="lightbox-overlay" onClick={() => setSelectedImage(null)}>
+                    <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="lightbox-close" onClick={() => setSelectedImage(null)}>×</button>
+                        <img src={selectedImage} alt="Large View" />
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );

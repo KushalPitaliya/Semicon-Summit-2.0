@@ -1,32 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Target, Lightbulb, Users, Trophy, ArrowRight, Image } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import api from '../services/api';
 import ParticleField from '../components/ParticleField';
 import './About.css';
 
 const About = () => {
     const [selectedImage, setSelectedImage] = useState(null);
-
-    const [galleryImages, setGalleryImages] = useState([]);
-    const [galleryLoading, setGalleryLoading] = useState(true);
-
-    // Fetch gallery images
-    useEffect(() => {
-        const fetchGallery = async () => {
-            try {
-                const response = await api.get('/gallery/featured');
-                setGalleryImages(response.data);
-            } catch (error) {
-                console.error('Error fetching gallery:', error);
-            } finally {
-                setGalleryLoading(false);
-            }
-        };
-        fetchGallery();
-    }, []);
 
     const previousEventImages = [
         // Day 1 images (0.jpeg - 9.jpeg) - All 10 images
@@ -73,33 +54,18 @@ const About = () => {
                     <p className="glimpse-subtitle">Relive the moments from our previous summit.</p>
 
                     <div className="glimpse-grid">
-                        {galleryImages.length > 0 ? (
-                            galleryImages.map((item) => (
-                                <div
-                                    key={item._id}
-                                    className="about-glimpse-card"
-                                    onClick={() => setSelectedImage(item.url)}
-                                >
-                                    <div className="about-glimpse-image">
-                                        <img src={item.thumbnailUrl || item.url} alt={item.title} loading="lazy" />
-                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
-                                    </div>
+                        {previousEventImages.map((item) => (
+                            <div
+                                key={item.id}
+                                className="about-glimpse-card"
+                                onClick={() => setSelectedImage(item.image)}
+                            >
+                                <div className="about-glimpse-image">
+                                    <img src={item.image} alt={item.title} loading="lazy" />
+                                    <div className="about-glimpse-overlay"><Image size={24} /></div>
                                 </div>
-                            ))
-                        ) : (
-                            previousEventImages.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="about-glimpse-card"
-                                    onClick={() => setSelectedImage(item.image)}
-                                >
-                                    <div className="about-glimpse-image">
-                                        <img src={item.image} alt={item.title} loading="lazy" />
-                                        <div className="about-glimpse-overlay"><Image size={24} /></div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
+                            </div>
+                        ))}
                     </div>
                 </section>
 

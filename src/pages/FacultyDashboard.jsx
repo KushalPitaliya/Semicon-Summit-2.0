@@ -502,19 +502,7 @@ const FacultyDashboard = () => {
                                         />
                                     </div>
 
-                                    <div className="filter-group">
-                                        <Filter size={18} />
-                                        <select
-                                            className="input select-input"
-                                            value={selectedEvent}
-                                            onChange={(e) => setSelectedEvent(e.target.value)}
-                                        >
-                                            <option value="all">All Events</option>
-                                            {events.slice(1).map(event => (
-                                                <option key={event} value={event}>{event}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+
 
                                     <button className="btn btn-primary" onClick={handleExport}>
                                         <Download size={18} />
@@ -537,9 +525,9 @@ const FacultyDashboard = () => {
                                                     <th>#</th>
                                                     <th>Name</th>
                                                     <th>Email</th>
+                                                    <th>Password</th>
                                                     <th>College</th>
                                                     <th>Phone</th>
-                                                    <th>Events</th>
                                                     <th>Payment Ref</th>
                                                     <th>Registered On</th>
                                                 </tr>
@@ -557,15 +545,13 @@ const FacultyDashboard = () => {
                                                             <td>{index + 1}</td>
                                                             <td className="name-cell">{participant.name}</td>
                                                             <td>{participant.email}</td>
+                                                            <td className="password-cell">
+                                                                <code style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '2px 6px', borderRadius: '4px' }}>
+                                                                    {participant.password || 'N/A'}
+                                                                </code>
+                                                            </td>
                                                             <td>{participant.college}</td>
                                                             <td>{participant.phone}</td>
-                                                            <td>
-                                                                <div className="events-badges">
-                                                                    {(participant.events || []).map((event, i) => (
-                                                                        <span key={i} className="event-badge">{event}</span>
-                                                                    ))}
-                                                                </div>
-                                                            </td>
                                                             <td><code>{participant.paymentRef}</code></td>
                                                             <td className="timestamp-cell">{participant.timestamp}</td>
                                                         </tr>
@@ -617,6 +603,7 @@ const FacultyDashboard = () => {
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Email</th>
+                                                <th>Password</th>
                                                 <th>Role</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
@@ -630,6 +617,11 @@ const FacultyDashboard = () => {
                                                         {u.college && <span className="text-muted"><br />{u.college}</span>}
                                                     </td>
                                                     <td>{u.email}</td>
+                                                    <td>
+                                                        <code style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '2px 6px', borderRadius: '4px' }}>
+                                                            {u.plainPassword || 'N/A'}
+                                                        </code>
+                                                    </td>
                                                     <td>
                                                         <select
                                                             className="role-select"

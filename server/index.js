@@ -373,6 +373,7 @@ app.post('/api/admin/verify/:id', async (req, res) => {
 
         // Update user
         user.password = password;
+        user.plainPassword = password;
         user.verificationStatus = 'approved';
         user.paymentStatus = 'completed';
         user.verifiedBy = verifierId;
@@ -484,6 +485,7 @@ app.get('/api/participants', async (req, res) => {
                 participants = registrations.map(reg => ({
                     id: reg.user._id,
                     name: reg.user.name,
+                    password: reg.user.plainPassword || 'N/A',
                     email: reg.user.email,
                     college: reg.user.college,
                     phone: reg.user.phone,
@@ -504,6 +506,7 @@ app.get('/api/participants', async (req, res) => {
                 return {
                     id: user._id,
                     name: user.name,
+                    password: user.plainPassword || 'N/A',
                     email: user.email,
                     college: user.college,
                     phone: user.phone,
@@ -890,6 +893,7 @@ app.post('/api/users/:id/reset-password', async (req, res) => {
 
         // Update user password
         user.password = newPassword;
+        user.plainPassword = newPassword;
         await user.save();
 
         // Send email with new password

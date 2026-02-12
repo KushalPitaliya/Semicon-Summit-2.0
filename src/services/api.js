@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Create axios instance
 const api = axios.create({
@@ -9,6 +9,43 @@ const api = axios.create({
         'Content-Type': 'application/json'
     }
 })
+
+// Request interceptor to attach JWT token
+api.interceptors.request.use((config) => {
+    const userData = localStorage.getItem('summitUser')
+    if (userData) {
+        try {
+            const user = JSON.parse(userData)
+            if (user.token) {
+                config.headers.Authorization = `Bearer ${user.token}`
+            } else if (user._id) {
+                // Backward compatibility: use _id as token
+                config.headers.Authorization = `Bearer ${user._id}`
+            }
+        } catch (e) {
+            // Invalid JSON in storage
+        }
+    }
+    return config
+}, (error) => {
+    return Promise.reject(error)
+})
+
+// Response interceptor for auth errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Token expired or invalid — clear stored user
+            const currentPath = window.location.pathname
+            if (currentPath.startsWith('/dashboard')) {
+                localStorage.removeItem('summitUser')
+                window.location.href = '/login'
+            }
+        }
+        return Promise.reject(error)
+    }
+)
 
 // Auth API
 export const authAPI = {
@@ -65,7 +102,7 @@ export const announcementsAPI = {
 export const uploadsAPI = {
     uploadPhoto: async (file) => {
         const formData = new FormData()
-        formData.append('photo', file)
+        formData.append('photos', file)
         const response = await api.post('/uploads/photos', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
@@ -74,7 +111,7 @@ export const uploadsAPI = {
 
     uploadDocument: async (file) => {
         const formData = new FormData()
-        formData.append('document', file)
+        formData.append('documents', file)
         const response = await api.post('/uploads/documents', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })

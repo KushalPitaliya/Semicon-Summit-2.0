@@ -1,937 +1,503 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-    Calendar, Clock, MapPin, Users, Award, Zap, Lightbulb, Cpu, Code,
-    Trophy, Target, X, ChevronRight, ArrowRight,
-    CheckCircle, Star, Sparkles, AlertTriangle, BookOpen,
-    Coffee, UtensilsCrossed, Mic, PartyPopper, ZoomIn
-} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ParticleField from '../components/ParticleField';
+import {
+    Cpu, Code, Trophy, Zap, Users, Lightbulb, Target, Award,
+    ArrowRight, X, Calendar, Clock, MapPin, IndianRupee, ExternalLink, Eye,
+    Sparkles, FileText, Mic2, Gamepad2, GraduationCap, Layers, Brain,
+    Filter, CircuitBoard
+} from 'lucide-react';
 import './Events.css';
 
-// ─── IMAGE MAPPING ─────────────────────────────────
-const EVENT_IMAGES = {
-    'panel-discussion': '/images/panel discussion event.png',
-    'rtl-gds-workshop': '/images/Hands on Workshop.png',
-    'verilog-fpga-workshop': '/images/Hands on workshop-2.png',
-    'embedded-vlsi': '/images/event description.png',
-    'silicon-shark-tank': '/images/Silicon Shark Tank.png',
-    'wafer-chip-demo': '/images/Stall Visit.png',
-    'ai-vlsi': '/images/Al in VLSI.png',
-    'silicon-jackpot': '/images/The Silicon Jackpot.png',
-    'tech-engagement': '/images/event description.png',
-    'gallery-walk': '/images/Silent Silicon Gallery.png',
-};
-
-// ─── ICON MAP ──────────────────────────────────────
-const ICON_MAP = {
-    'panel-discussion': Users,
-    'rtl-gds-workshop': Code,
-    'verilog-fpga-workshop': Cpu,
-    'embedded-vlsi': Lightbulb,
-    'silicon-shark-tank': Trophy,
-    'wafer-chip-demo': Zap,
-    'gallery-walk': Award,
-    'ai-vlsi': Target,
-    'silicon-jackpot': Award,
-    'tech-engagement': Zap,
-};
-
-// ─── COMPLETE EVENT DATA (clickable events with cards) ──────
-const EVENTS_DATA = [
+const CATEGORIES = [
     {
-        id: 'panel-discussion',
-        name: 'Fabless Startups and Fabless MSMEs',
-        subtitle: 'Amazing Semiconductor Growth',
-        tagline: 'Shaping the Future of Silicon',
-        description: 'Panel discussion on fabless startups and MSMEs in semiconductor industry',
-        fullDescription: 'Join industry leaders for an insightful panel discussion on the rise of fabless startups and MSMEs in the semiconductor ecosystem. Explore business models, challenges, opportunities, and the future of fabless semiconductor companies in India.',
-        day: 'Day 1',
-        date: 'March 17, 2026',
-        weekday: 'Tuesday',
-        time: '11:30 AM – 12:30 PM',
-        venue: 'Seminar Hall, First Floor, A6 Building',
-        category: 'Panel Discussion',
-        color: '#3b82f6',
-        highlights: [
-            'Fabless business model insights',
-            'Startup ecosystem in semiconductors',
-            'MSME opportunities and challenges',
-            'Industry expert panel',
-            'Interactive Q&A session'
-        ],
-        rules: [
-            'Open to all registered participants',
-            'Questions can be submitted during the session',
-            'Active participation is encouraged'
-        ],
-        prerequisites: 'None – Open to all'
+        id: 'all',
+        title: 'All Events',
+        icon: Sparkles,
+        color: '#22c55e'
     },
     {
-        id: 'rtl-gds-workshop',
-        name: 'RTL to GDS II (Open Source)',
-        tagline: 'Ready to Design Your Own Chip?',
-        description: 'Hands-on workshop on the complete RTL to GDS II flow using open-source EDA tools',
-        fullDescription: 'Learn the complete chip design flow from RTL (Register Transfer Level) to GDSII using cutting-edge open-source EDA tools. This hands-on workshop covers the entire ASIC design flow including synthesis, place and route, and verification.',
-        day: 'Day 1',
-        date: 'March 17, 2026',
-        weekday: 'Tuesday',
-        time: '01:30 PM – 04:30 PM',
-        venue: 'Seminar Hall, First Floor, A6 Building',
-        category: 'Hands-on Workshop',
-        color: '#8b5cf6',
-        highlights: [
-            'Complete RTL to GDSII flow',
-            'Open-source EDA tools (OpenROAD, Yosys)',
-            'Synthesis and Place & Route',
-            'Timing analysis and verification',
-            'Hands-on practical sessions'
-        ],
-        rules: [
-            'Restricted to Final Year and Pre-Final Year students',
-            'Bring your own laptop with required software pre-installed',
-            'Basic Verilog knowledge is mandatory'
-        ],
-        prerequisites: 'Basic knowledge of digital design, Verilog (for 6th semester students)'
-    },
-    {
-        id: 'verilog-fpga-workshop',
-        name: 'Getting Started with Verilog and FPGA',
-        tagline: 'Concepts Become Circuits',
-        description: 'Hands-on workshop for beginners covering Verilog HDL fundamentals and FPGA programming',
-        fullDescription: 'Perfect for beginners! Learn the fundamentals of Verilog HDL and FPGA development. This hands-on workshop covers Verilog syntax, combinational and sequential logic, and implementing designs on real FPGA hardware.',
-        day: 'Day 1',
-        date: 'March 17, 2026',
-        weekday: 'Tuesday',
-        time: '01:30 PM – 04:30 PM',
-        venue: 'Lab No: 231, First Floor, A6 Building',
-        category: 'Hands-on Workshop',
-        color: '#8b5cf6',
-        highlights: [
-            'Verilog HDL fundamentals',
-            'Combinational and sequential circuits',
-            'FPGA architecture basics',
-            'Hands-on FPGA programming',
-            'Real hardware implementation'
-        ],
-        rules: [
-            'Restricted to First and Second Year students only',
-            'Bring your own laptop',
-            'No prior Verilog experience needed'
-        ],
-        prerequisites: 'Basic digital electronics knowledge (for 3rd/4th semester students)'
-    },
-    {
-        id: 'embedded-vlsi',
-        name: 'Embedded vs VLSI — What Should I Choose?',
-        tagline: 'Navigate Your Career Path',
-        description: 'Career guidance session on choosing between embedded systems and VLSI',
-        fullDescription: 'Confused about choosing between embedded systems and VLSI career paths? This insight session provides comprehensive guidance on both domains — career prospects, required skills, industry trends, and how to make the right choice based on your interests and strengths.',
-        day: 'Day 2',
-        date: 'March 18, 2026',
-        weekday: 'Wednesday',
-        time: '09:45 AM – 11:00 AM',
-        venue: 'Seminar Hall, A6 Building',
-        category: 'Insight Session',
-        color: '#f59e0b',
-        highlights: [
-            'Career path comparison',
-            'Industry demand and trends',
-            'Required skill sets for each domain',
-            'Job roles and opportunities',
-            'Expert career guidance'
-        ],
-        rules: [
-            'Open to all registered participants',
-            'Especially valuable for 2nd and 3rd year students',
-            'Bring your questions about career paths'
-        ],
-        prerequisites: 'None – Especially valuable for 2nd and 3rd year students'
-    },
-    {
-        id: 'silicon-shark-tank',
-        name: 'Silicon Shark Tank',
-        tagline: 'Think. Prepare. Pitch. Convince.',
-        description: 'Industry-interactive innovation and idea-pitching event with live presentations to expert jury',
-        fullDescription: 'Silicon Shark Tank is an industry-interactive innovation and idea-pitching event designed to nurture entrepreneurial thinking, system-level design approaches, and strong problem-solving skills among engineering students. The event simulates a real-world industry pitch environment where participants experience how technical ideas are evaluated by professionals from semiconductor, VLSI, embedded systems, FPGA, and hardware–software co-design domains.',
-        day: 'Day 2',
-        date: 'March 18, 2026',
-        weekday: 'Wednesday',
-        time: '12:30 PM – 04:30 PM',
-        venue: 'Seminar Hall, First Floor, A6 Building',
-        category: 'Industry-Driven Idea Pitching',
-        color: '#ef4444',
-        highlights: [
-            'Pitch innovative semiconductor ideas to industry experts',
-            'Real-world industry pitch simulation',
-            'Internship opportunities for selected teams',
-            'Industry mentorship and guidance',
-            'Technical feedback for idea refinement'
-        ],
-        themes: [
-            'Semiconductor Design & Technology',
-            'VLSI Design (RTL to GDS, Physical Design, Verification)',
-            'Embedded Systems & FPGA-based Solutions',
-            'Hardware–Software Co-Design',
-            'AI / ML Accelerators & Edge Computing',
-            'Low-Power & High-Performance Design',
-            'Semiconductor Manufacturing Challenges',
-            'EDA Tools, Automation & Innovation',
-            'Smart Electronic & System-Level Solutions'
-        ],
-        eventStructure: [
-            {
-                round: 'Round 1: Idea Submission (Screening Round)',
-                details: [
-                    'Idea submission must be original — AI-generated content is strictly not allowed',
-                    'Word limit: Maximum 200 words',
-                    'Must include: Problem statement, existing system loopholes, proposed solution, application/use-case, innovation aspect, technical domain (VLSI-focused)',
-                    'Supporting visuals (block diagram, mind map, or execution flow) required',
-                    'Ideas must be plagiarism-free',
-                    'Outcome: Shortlisting of teams for Round 2'
-                ]
-            },
-            {
-                round: 'Round 2: Live Pitch to Industry Experts',
-                details: [
-                    'Shortlisted teams present live before an expert jury',
-                    'Pitch Duration: 10 minutes per team (7 min presentation + 3 min Q&A)',
-                    'Use slides, block diagrams, or system architecture',
-                    'Working demo is not mandatory'
-                ]
-            }
-        ],
-        judgingCriteria: [
-            { criteria: 'Problem Relevance', marks: 8 },
-            { criteria: 'Technical Depth', marks: 10 },
-            { criteria: 'Innovation & Originality', marks: 10 },
-            { criteria: 'Feasibility', marks: 8 },
-            { criteria: 'Application Impact', marks: 5 },
-            { criteria: 'Presentation & Communication', marks: 5 },
-            { criteria: 'Q&A Handling', marks: 4 },
-        ],
-        rules: [
-            'Team size: Maximum 2 students per team',
-            'Cross-department teams are allowed and encouraged',
-            'Each team must nominate one Team Leader for official communication',
-            'Ideas must be original and not copied from existing products or published projects',
-            'Reference to existing research is allowed with clear mention of innovation',
-            'AI-generated ideas and plagiarized content will lead to immediate disqualification',
-            'Strict adherence to time limits is mandatory',
-            'Professional and ethical conduct is expected at all stages',
-            'No financial funding or cash prize will be provided',
-            'Organizers reserve the right to modify rules if required'
-        ],
-        certificates: [
-            'Participation certificates for all eligible participants',
-            'Excellence / Shortlisting certificates for selected teams'
-        ],
-        prerequisites: 'Open to undergraduate and postgraduate engineering students. Prepare your idea submission.'
-    },
-    {
-        id: 'wafer-chip-demo',
-        name: 'Wafer to Chip Demonstration by Monk9',
-        tagline: 'From Sand to Silicon',
-        description: 'Live demonstration of semiconductor manufacturing — from wafer fabrication to final chip',
-        fullDescription: 'Witness the complete semiconductor manufacturing journey from wafer to chip! Monk9 Technologies presents a live demonstration showcasing the intricate steps of chip fabrication, packaging, and testing. A rare opportunity to see the hardware side of semiconductors up close.',
-        day: 'Day 2',
-        date: 'March 18, 2026',
-        weekday: 'Wednesday',
-        time: '12:30 PM – 04:30 PM',
-        venue: 'Left Side Lawn, Ground Floor, A6 Building',
-        category: 'Stall Visit & Demo',
+        id: 'industry-strategy',
+        title: 'Industry & Strategy',
+        description: 'High-impact discussions and expert insights.',
         color: '#10b981',
-        highlights: [
-            'Live chip manufacturing demonstration',
-            'Wafer fabrication process explained',
-            'Packaging and testing stages',
-            'Industry equipment showcase',
-            'Interactive Q&A with Monk9 team'
-        ],
-        rules: [
-            'Open to all registered participants',
-            'Follow safety guidelines at the stall',
-            'Do not touch equipment without permission'
-        ],
-        prerequisites: 'None – Open to all'
+        icon: Mic2
     },
     {
-        id: 'gallery-walk',
-        name: 'Silent Silicon Ideas Gallery Walk',
-        tagline: 'Ideas Shaped in Silicon',
-        description: 'Exhibition of student projects, research posters, and semiconductor innovations',
-        fullDescription: 'Explore innovative projects and ideas from students and participants! The Silent Silicon Ideas Gallery showcases creative semiconductor projects, research posters, and innovative designs. Walk through a gallery where ideas become insight and creativity meets silicon.',
-        day: 'Day 2',
-        date: 'March 18, 2026',
-        weekday: 'Wednesday',
-        time: '12:30 PM – 04:30 PM',
-        venue: 'EC Department, A6 Building',
-        category: 'Gallery Walk & Exhibition',
-        color: '#06b6d4',
-        highlights: [
-            'Student project exhibitions',
-            'Innovative chip design showcases',
-            'Research poster presentations',
-            'Peer learning opportunities',
-            'Networking with innovators'
-        ],
-        rules: [
-            'Open to all participants and exhibitors',
-            'Exhibitors must set up posters by 12:00 PM',
-            'Maintain silence during the gallery walk'
-        ],
-        prerequisites: 'None – Open to all participants and exhibitors'
-    },
-    {
-        id: 'ai-vlsi',
-        name: 'AI in VLSI: Will it Change or Replace the VLSI Engineer?',
-        tagline: 'Transforming the Engineer — Not Replacing Them',
-        description: 'Exploring the impact of AI on VLSI design and engineering careers',
-        fullDescription: 'Explore how artificial intelligence is transforming VLSI design. Will AI replace VLSI engineers or become a powerful tool? This session discusses AI-driven EDA tools, machine learning in chip design, and the future role of VLSI engineers in an AI-enhanced world.',
-        day: 'Day 3',
-        date: 'March 19, 2026',
-        weekday: 'Thursday',
-        time: '09:45 AM – 11:00 AM',
-        venue: 'Seminar Hall, A6 Building',
-        category: 'Insight Session',
-        color: '#f59e0b',
-        highlights: [
-            'AI in chip design workflows',
-            'Machine-learning-driven EDA tools',
-            'Future of VLSI engineering careers',
-            'Human-AI collaboration in design',
-            'Industry perspectives and Q&A'
-        ],
-        rules: [
-            'Open to all registered participants',
-            'Q&A session at the end',
-            'Career guidance included'
-        ],
-        prerequisites: 'None – Open to all'
-    },
-    {
-        id: 'silicon-jackpot',
-        name: 'The Silicon Jackpot',
-        subtitle: 'Technical Treasure Hunt',
-        tagline: 'Solve the Logic · Trace the Circuit · Find the Treasure',
-        description: 'Thrilling technical treasure hunt with semiconductor-themed challenges',
-        fullDescription: 'Embark on an exciting technical treasure hunt! Solve semiconductor-related technical puzzles, crack codes, and complete challenges to find the treasure. Test your knowledge, teamwork, and problem-solving skills in this thrilling campus-wide competition.',
-        day: 'Day 3',
-        date: 'March 19, 2026',
-        weekday: 'Thursday',
-        time: '12:10 PM – 03:30 PM',
-        venue: 'Foyer, EC Department, A6 Building',
-        category: 'Technical Treasure Hunt',
-        color: '#ec4899',
-        highlights: [
-            'Semiconductor-themed puzzles',
-            'Team-based campus-wide competition',
-            'Aptitude + Basic Digital Logic rounds',
-            'Live Aptitude, Digital & Verilog on FPGA',
-            'Exciting prizes for winners'
-        ],
-        rules: [
-            'Form teams of 3–4 members',
-            'Solve questions → Collect flags to advance',
-            'All team members must be registered participants',
-            'Use of mobile phones for internet search is prohibited during rounds'
-        ],
-        prerequisites: 'Form teams of 3–4 members before the event'
-    },
-    {
-        id: 'tech-engagement',
-        name: 'Interactive Technical Engagement Activities',
-        subtitle: 'Problem-Solving Challenges & Tech Games',
-        tagline: 'Learn. Play. Innovate.',
-        description: 'Fun technical games and problem-solving challenges for all participants',
-        fullDescription: 'Participate in a variety of technical challenges and tech games! From circuit debugging to algorithm challenges, these interactive activities combine learning with fun. Perfect for applying your technical knowledge in creative and competitive ways.',
-        day: 'Day 3',
-        date: 'March 19, 2026',
-        weekday: 'Thursday',
-        time: '12:10 PM – 03:30 PM',
-        venue: 'Activity Zones, A6 Building',
-        category: 'Problem-Solving Challenges',
+        id: 'workshops',
+        title: 'Technical Workshops',
+        description: 'Hands-on exposure to VLSI flows.',
         color: '#14b8a6',
-        highlights: [
-            'Technical games and challenges',
-            'Circuit debugging activities',
-            'Algorithmic problem solving',
-            'Interactive learning experiences',
-            'Individual and team competitions'
-        ],
-        rules: [
-            'Open to all registered participants',
-            'Individual and team events available',
-            'Follow coordinator instructions at each station'
-        ],
-        prerequisites: 'None – Open to all'
+        icon: Code
+    },
+    {
+        id: 'innovation',
+        title: 'Competitions',
+        description: 'Challenges to test your skills.',
+        color: '#f59e0b',
+        icon: Trophy
+    },
+    {
+        id: 'industry-experience',
+        title: 'Industry Info',
+        description: 'Real-world demonstrations.',
+        color: '#84cc16',
+        icon: Zap
     }
 ];
 
-// ─── FULL SCHEDULE WITH BREAKS ─────────────────────
-// type: 'event' → clickable, opens modal
-// type: 'break' → not clickable, simple display
-// type: 'ceremony' → clickable but no poster modal, just info
-const FULL_SCHEDULE = {
-    'Day 1': [
-        { type: 'break', time: '09:30 AM – 10:30 AM', title: 'Welcome of Guests & Refreshments ☕', icon: Coffee, color: '#22c55e' },
-        { type: 'ceremony', time: '10:30 AM – 10:40 AM', title: 'Address by the Principal', icon: Mic, color: '#3b82f6', venue: 'Seminar Hall, First Floor, A6 Building', description: 'Welcome address by the Principal of CSPIT, CHARUSAT University.' },
-        { type: 'ceremony', time: '10:45 AM – 10:50 AM', title: 'Address by the Provost & Registrar', icon: Mic, color: '#3b82f6', venue: 'Seminar Hall, First Floor, A6 Building', description: 'Address by the Provost and Registrar of CHARUSAT University.' },
-        { type: 'ceremony', time: '10:50 AM – 11:30 AM', title: 'Inaugural Talk', icon: Mic, color: '#8b5cf6', venue: 'Seminar Hall, First Floor, A6 Building', description: 'The inaugural keynote talk of Semiconductor Summit 2.0, setting the stage for three days of learning, innovation, and industry interaction.' },
-        { type: 'event', eventId: 'panel-discussion' },
-        { type: 'break', time: '12:30 PM – 01:30 PM', title: 'Lunch Break and Networking 🍽️', icon: UtensilsCrossed, color: '#f97316' },
-        { type: 'event', eventId: 'rtl-gds-workshop' },
-        { type: 'event', eventId: 'verilog-fpga-workshop' },
-    ],
-    'Day 2': [
-        { type: 'break', time: '09:00 AM – 09:30 AM', title: 'Refreshment ☕', icon: Coffee, color: '#a78bfa' },
-        { type: 'event', eventId: 'embedded-vlsi' },
-        { type: 'break', time: '11:00 AM – 12:10 PM', title: 'Lunch Break and Networking 🍽️', icon: UtensilsCrossed, color: '#f97316' },
-        { type: 'event', eventId: 'silicon-shark-tank' },
-        { type: 'event', eventId: 'wafer-chip-demo' },
-        { type: 'event', eventId: 'gallery-walk' },
-    ],
-    'Day 3': [
-        { type: 'break', time: '09:00 AM – 09:30 AM', title: 'Refreshment ☕', icon: Coffee, color: '#a78bfa' },
-        { type: 'event', eventId: 'ai-vlsi' },
-        { type: 'break', time: '11:00 AM – 12:00 Noon', title: 'Lunch Break and Networking 🍽️', icon: UtensilsCrossed, color: '#f97316' },
-        { type: 'event', eventId: 'silicon-jackpot' },
-        { type: 'event', eventId: 'tech-engagement' },
-        { type: 'ceremony', time: '03:30 PM – 04:30 PM', title: 'Awards & Closing Ceremony 🏆', icon: PartyPopper, color: '#f59e0b', venue: 'Seminar Hall, A6 Building', description: 'The grand closing ceremony featuring prize distribution, certificates, recognition of outstanding participants, and a summary of the summit highlights.' },
-    ],
-};
+const EVENTS = [
+    // ── Category 1: Industry & Strategy ──
+    {
+        id: 'fabless-startups',
+        categoryId: 'industry-strategy',
+        title: 'Fabless Startups & MSMEs',
+        subtitle: 'Powering India’s Semiconductor Growth',
+        type: 'Industry Panel',
+        icon: Users,
+        poster: '/images/panel discussion event.png',
+        prize: 'Networking',
+        description: 'A strategic panel discussion featuring industry leaders and startup founders exploring the role of fabless companies and MSMEs in strengthening India’s semiconductor ecosystem.',
+        fullDescription: `A strategic panel discussion featuring industry leaders and startup founders exploring the role of fabless companies and MSMEs in strengthening India’s semiconductor ecosystem.
 
-// Build an events lookup
-const EVENTS_MAP = {};
-EVENTS_DATA.forEach(ev => { EVENTS_MAP[ev.id] = ev; });
+This session will address:
+• Growth of fabless semiconductor startups in India
+• Opportunities and challenges in the MSME ecosystem
+• Policy support and industry collaborations
+• Talent requirements and future demand
+• Building a sustainable semiconductor value chain
 
-// ─── DAY INFO ──────────────────────────────────────
-const DAYS = [
-    { id: 'Day 1', label: 'Day 1', date: 'March 17', weekday: 'Tuesday', color: '#3b82f6' },
-    { id: 'Day 2', label: 'Day 2', date: 'March 18', weekday: 'Wednesday', color: '#8b5cf6' },
-    { id: 'Day 3', label: 'Day 3', date: 'March 19', weekday: 'Thursday', color: '#ec4899' },
+Participants will gain insights directly from industry experts shaping the next phase of India’s semiconductor development.`,
+        date: 'March 17, 2026',
+        time: '11:30 AM - 12:30 PM',
+        venue: 'Main Auditorium',
+        fee: 'Included',
+        rulesUrl: null
+    },
+    {
+        id: 'ai-vlsi',
+        categoryId: 'industry-strategy',
+        title: 'AI in VLSI',
+        subtitle: 'Will It Change the VLSI Engineer?',
+        type: 'Expert Insight',
+        icon: Brain,
+        poster: '/images/Al in VLSI.png',
+        prize: 'Knowledge',
+        description: 'Artificial Intelligence is reshaping semiconductor design workflows. This session examines how AI-driven EDA tools are redefining the role of VLSI engineers.',
+        fullDescription: `Artificial Intelligence is reshaping semiconductor design workflows. This session examines how AI-driven EDA tools, automation in physical design, and intelligent verification systems are redefining the role of VLSI engineers.
+
+Participants will gain clarity on evolving skill requirements and future industry expectations.
+
+A must-attend discussion for students preparing for careers in chip design and automation-driven environments.`,
+        date: 'March 19, 2026',
+        time: '11:00 AM - 12:00 PM',
+        venue: 'Seminar Hall A',
+        fee: 'Included',
+        rulesUrl: null
+    },
+    {
+        id: 'embedded-vlsi',
+        categoryId: 'industry-strategy',
+        title: 'Embedded vs VLSI',
+        subtitle: 'What Should I Choose?',
+        type: 'Career Guidance',
+        icon: GraduationCap,
+        poster: '/images/expert-1.png',
+        prize: 'Career Path',
+        description: 'An interactive session designed to help students understand the differences between embedded systems and VLSI domains.',
+        fullDescription: `An interactive session designed to help students understand the differences between embedded systems and VLSI domains.
+
+Key discussion points include:
+• Core skill requirements
+• Industry demand and growth trends
+• Learning pathways
+• Career progression opportunities
+
+This session aims to provide clarity for students at early academic stages.`,
+        date: 'March 18, 2026',
+        time: '09:45 AM - 11:00 AM',
+        venue: 'Seminar Hall B',
+        fee: 'Included',
+        rulesUrl: null
+    },
+
+    // ── Category 2: Workshops ──
+    {
+        id: 'rtl-gds',
+        categoryId: 'workshops',
+        title: 'RTL to GDS II',
+        subtitle: 'Open Source ASIC Design Flow',
+        type: 'Advanced Workshop',
+        icon: Layers,
+        poster: '/images/Hands on workshop-2.png',
+        prize: 'Certificates',
+        description: 'Explore the complete open-source ASIC design flow — from RTL design to GDS II generation. For final-year students and advanced learners.',
+        fullDescription: `This advanced, hands-on workshop is designed for final-year students and participants with prior knowledge of digital design and HDL concepts.
+
+Participants will explore the complete open-source ASIC design flow — from RTL design to GDS II generation.
+
+Workshop Coverage:
+• RTL design concepts
+• Synthesis using open-source tools
+• Static timing considerations
+• Floorplanning & placement basics
+• Routing and layout generation
+• Understanding GDS II output
+
+Recommended For: Final-year students.`,
+        date: 'March 18, 2026',
+        time: 'Full Day (Starts 9 AM)',
+        venue: 'Lab Complex 1',
+        fee: 'Included',
+        rulesUrl: null
+    },
+    {
+        id: 'verilog-fpga',
+        categoryId: 'workshops',
+        title: 'Verilog & FPGA',
+        subtitle: 'Getting Started with Digital Design',
+        type: 'Beginner Workshop',
+        icon: CircuitBoard,
+        poster: '/images/Hands on Workshop.png',
+        prize: 'Certificates',
+        description: 'Beginner-friendly workshop covering Verilog programming and basic FPGA-based system development for 1st and 2nd year students.',
+        fullDescription: `This beginner-friendly workshop is designed for 1st and 2nd year students who want to build a strong foundation in digital hardware design and FPGA implementation.
+
+Participants will be introduced to Verilog programming and basic FPGA-based system development.
+
+Workshop Coverage:
+• Introduction to digital design concepts
+• Basics of Verilog HDL
+• Writing simple modules
+• Simulation fundamentals
+• Introduction to FPGA boards
+• Running and testing simple hardware designs
+
+Recommended For: 1st and 2nd year students.`,
+        date: 'March 18, 2026',
+        time: 'Full Day (Starts 9 AM)',
+        venue: 'Lab Complex 2',
+        fee: 'Included',
+        rulesUrl: null
+    },
+
+    // ── Category 3: Innovation & Competitions ──
+    {
+        id: 'shark-tank',
+        categoryId: 'innovation',
+        title: 'Silicon Shark Tank',
+        subtitle: 'Industry-Driven Idea Pitching',
+        type: 'Flagship Event',
+        icon: Lightbulb,
+        poster: '/images/Silicon Shark Tank.png',
+        prize: 'Internships',
+        description: 'A flagship innovation challenge connecting student ideas with industry evaluation and internship pathways. Two-round competitive platform.',
+        fullDescription: `Silicon Shark Tank is a two-round competitive platform designed to encourage innovation in semiconductor technology.
+
+Round 1 – Screening Round (Idea Submission)
+Submit a technical concept proposal (max 500 words) covering:
+• Problem Statement
+• Proposed Solution
+• Technical Domain (VLSI-focused)
+
+Round 2 – Live Pitch to the Sharks
+Shortlisted teams will present their ideas before an industry panel.
+• Total Time: 10 minutes per team
+• Format: Slides, architecture, block diagrams
+
+Rewards: Winning team members will receive internship opportunities from leading semiconductor startups.`,
+        date: 'March 19, 2026',
+        time: '09:00 AM - 01:00 PM',
+        venue: 'Main Auditorium',
+        fee: 'Prize Pool',
+        rulesUrl: '/images/SHARK TANK Rules.docx'
+    },
+    {
+        id: 'silicon-jackpot',
+        categoryId: 'innovation',
+        title: 'The Silicon Jackpot',
+        subtitle: 'Technical Treasure Hunt',
+        type: 'Competition',
+        icon: Target,
+        poster: '/images/The Silicon Jackpot.png',
+        prize: '₹15,000 Pool',
+        description: 'A structured three-round challenge combining technical quizzes, applied problem-solving, and a live FPGA-based grand finale.',
+        fullDescription: `The Silicon Jackpot is a structured three-round challenge combining technical knowledge with practical problem-solving skills.
+
+Round Structure:
+• Round 1: Technical Quiz Sprint — MCQ quiz on semi fundamentals
+• Round 2: Problem-Solving Challenge — Applied design thinking
+• Round 3: Live FPGA Battle — Grand finale with hands-on challenge
+
+Each round tests a different aspect of technical ability.`,
+        date: 'March 19, 2026',
+        time: '02:00 PM - 05:00 PM',
+        venue: 'Campus Grounds',
+        fee: 'Prize Pool',
+        rulesUrl: null
+    },
+    {
+        id: 'playzone',
+        categoryId: 'innovation',
+        title: 'Silicon PlayZone',
+        subtitle: 'Technical Game Arena',
+        type: 'Interactive',
+        icon: Gamepad2,
+        poster: '/images/MAIN.png',
+        prize: 'Merchandise',
+        description: 'Hands-On. Minds-On. A dynamic zone designed to make engineering interactive and engaging.',
+        fullDescription: `A dynamic zone designed to make engineering interactive and engaging.
+
+Activities include:
+• Spin the Wheel — Technical surprise challenges
+• Truth or Dare — Electronics edition
+• Join the Circuit — Rapid connection logic challenge
+• Mini hardware-based problem-solving tasks`,
+        date: 'All Days',
+        time: 'Open All Day',
+        venue: 'Expo Area',
+        fee: 'Included',
+        rulesUrl: null
+    },
+    {
+        id: 'ideas-showcase',
+        categoryId: 'innovation',
+        title: 'Silicon Ideas Showcase',
+        subtitle: 'Silent Feedback Edition',
+        type: 'Exhibition',
+        icon: Eye,
+        poster: '/images/Silent Silicon Gallery.png',
+        prize: 'Best Idea',
+        description: 'Walk Through Innovation. Leave Your Insight. Silent poster exhibition with QR-based digital feedback system.',
+        fullDescription: `Silent Silicon — Innovation Gallery Walk
+
+Students present semiconductor and hardware innovation ideas through poster exhibits. Instead of traditional verbal presentations, participants receive structured written feedback from visitors via sticky notes and digital interaction.
+
+Each poster includes a QR code enabling attendees to:
+• Access detailed technical explanations
+• Submit questions digitally
+• Provide structured feedback`,
+        date: 'All Days',
+        time: 'Open All Day',
+        venue: 'Corridor A',
+        fee: 'Included',
+        rulesUrl: null
+    },
+
+    // ── Category 4: Industry Experience ──
+    {
+        id: 'wafer-chip',
+        categoryId: 'industry-experience',
+        title: 'Wafer to Chip',
+        subtitle: 'Live Demonstration by Monk9',
+        type: 'Industry Demo',
+        icon: Cpu,
+        poster: '/images/Stall Visit.png',
+        prize: 'Learning',
+        description: 'See How a Chip Comes to Life — From Silicon Wafer to Working Chip. An industry-led demonstration by Monk9.',
+        fullDescription: `Wafer to Chip — Live Demonstration by Monk9
+
+An industry-led demonstration offering a complete view of the semiconductor lifecycle — from wafer fabrication concepts to final chip realization.
+
+Conducted by industry experts from Monk9, this session provides participants with real-world insights into:
+• Semiconductor fabrication fundamentals
+• Chip design and verification workflow
+• Industry toolchains and development stages`,
+        date: 'March 19, 2026',
+        time: 'Late Morning',
+        venue: 'Stall Area',
+        fee: 'Included',
+        rulesUrl: null
+    }
 ];
 
-// ─── FULLSCREEN IMAGE VIEWER ───────────────────────
-const ImageViewer = ({ src, alt, onClose }) => {
-    const overlayRef = useRef(null);
-
-    useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        const handleEsc = (e) => e.key === 'Escape' && onClose();
-        window.addEventListener('keydown', handleEsc);
-        return () => {
-            document.body.style.overflow = '';
-            window.removeEventListener('keydown', handleEsc);
-        };
-    }, [onClose]);
-
-    return (
-        <div
-            className="image-viewer-overlay"
-            ref={overlayRef}
-            onClick={(e) => e.target === overlayRef.current && onClose()}
-        >
-            <button className="image-viewer-close" onClick={onClose} aria-label="Close image">
-                <X size={24} />
-            </button>
-            <div className="image-viewer-container">
-                <img src={src} alt={alt} className="image-viewer-img" />
-            </div>
-        </div>
-    );
-};
-
-
-// ─── EVENT MODAL ───────────────────────────────────
+/* ─── EVENT MODAL (2-Column) ─── */
 const EventModal = ({ event, onClose }) => {
-    const overlayRef = useRef(null);
-    const [viewingImage, setViewingImage] = useState(false);
-
-    useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        const handleEsc = (e) => {
-            if (viewingImage) {
-                setViewingImage(false);
-            } else {
-                e.key === 'Escape' && onClose();
-            }
-        };
-        window.addEventListener('keydown', handleEsc);
-        return () => {
-            document.body.style.overflow = '';
-            window.removeEventListener('keydown', handleEsc);
-        };
-    }, [onClose, viewingImage]);
-
-    const handleOverlayClick = (e) => {
-        if (e.target === overlayRef.current) onClose();
-    };
-
     if (!event) return null;
 
-    const totalMarks = event.judgingCriteria
-        ? event.judgingCriteria.reduce((sum, c) => sum + c.marks, 0)
-        : 0;
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = ''; };
+    }, []);
 
-    const posterSrc = EVENT_IMAGES[event.id];
+    const handleViewRules = (e) => {
+        e.stopPropagation();
+        if (event.rulesUrl) window.open(event.rulesUrl, '_blank');
+    };
+
+    const category = CATEGORIES.find(c => c.id === event.categoryId);
+    const catColor = category?.color || '#22c55e';
 
     return (
-        <>
-            <div className="ev-modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
-                <div className="ev-modal">
-                    {/* Close */}
-                    <button className="ev-modal-close" onClick={onClose} aria-label="Close">
-                        <X size={22} />
-                    </button>
+        <div className="ev-modal-overlay" onClick={onClose}>
+            <div className="ev-modal-container-2col" onClick={e => e.stopPropagation()}>
+                <button className="ev-modal-close-btn" onClick={onClose} aria-label="Close modal">
+                    <X size={24} />
+                </button>
 
-                    {/* Poster — clickable for full-screen */}
-                    {posterSrc && (
-                        <div
-                            className="ev-modal-poster"
-                            onClick={() => setViewingImage(true)}
-                            title="Click to view full image"
-                        >
-                            <img src={posterSrc} alt={event.name} />
-                            <div className="ev-modal-poster-fade" />
-                            <span className="ev-modal-category" style={{ background: event.color }}>
-                                {event.category}
-                            </span>
-                            <div className="ev-modal-poster-zoom">
-                                <ZoomIn size={20} />
-                                <span>View Full Image</span>
+                {/* Left Column: Poster */}
+                <div className="ev-modal-left">
+                    <img src={event.poster || 'https://placehold.co/600x800/102030/22c55e?text=No+Poster'} alt={event.title} className="ev-modal-poster-img" />
+                    <div className="ev-modal-poster-overlay-grad" />
+                </div>
+
+                {/* Right Column: Details */}
+                <div className="ev-modal-right">
+                    <div className="ev-modal-header-section">
+                        <span className="ev-modal-badge" style={{ borderColor: catColor, color: catColor }}>{event.type}</span>
+                        <h2 className="ev-modal-title">{event.title}</h2>
+                        <h3 className="ev-modal-subtitle" style={{ color: catColor }}>{event.subtitle}</h3>
+                    </div>
+
+                    <div className="ev-modal-info-grid">
+                        <div className="ev-modal-info-box">
+                            <Calendar size={18} className="ev-icon" />
+                            <div>
+                                <span className="ev-label">Date</span>
+                                <span className="ev-value">{event.date}</span>
                             </div>
                         </div>
-                    )}
-
-                    {/* Body */}
-                    <div className="ev-modal-body">
-                        {/* Header */}
-                        <div className="ev-modal-header">
-                            <div className="ev-modal-day-badge" style={{ borderColor: event.color, color: event.color }}>
-                                {event.day} · {event.date} ({event.weekday})
-                            </div>
-                            {event.tagline && <p className="ev-modal-tagline">"{event.tagline}"</p>}
-                            <h2 className="ev-modal-title">{event.name}</h2>
-                            {event.subtitle && <p className="ev-modal-subtitle">{event.subtitle}</p>}
-                        </div>
-
-                        {/* Meta bar */}
-                        <div className="ev-modal-meta">
-                            <div className="ev-modal-meta-item">
-                                <Clock size={16} />
-                                <span>{event.time}</span>
-                            </div>
-                            <div className="ev-modal-meta-item">
-                                <MapPin size={16} />
-                                <span>{event.venue}</span>
+                        <div className="ev-modal-info-box">
+                            <Clock size={18} className="ev-icon" />
+                            <div>
+                                <span className="ev-label">Time</span>
+                                <span className="ev-value">{event.time}</span>
                             </div>
                         </div>
-
-                        {/* Description */}
-                        <div className="ev-modal-desc">
-                            <p>{event.fullDescription}</p>
+                        <div className="ev-modal-info-box">
+                            <MapPin size={18} className="ev-icon" />
+                            <div>
+                                <span className="ev-label">Venue</span>
+                                <span className="ev-value">{event.venue}</span>
+                            </div>
                         </div>
-
-                        {/* Themes (Shark Tank) */}
-                        {event.themes && (
-                            <div className="ev-modal-section">
-                                <h3><BookOpen size={18} /> Themes & Focus Areas</h3>
-                                <div className="ev-modal-themes">
-                                    {event.themes.map((theme, i) => (
-                                        <span key={i} className="ev-theme-tag">{theme}</span>
-                                    ))}
-                                </div>
+                        <div className="ev-modal-info-box">
+                            <IndianRupee size={18} className="ev-icon" />
+                            <div>
+                                <span className="ev-label">Fee</span>
+                                <span className="ev-value">{event.fee}</span>
                             </div>
-                        )}
-
-                        {/* Event Structure (Shark Tank) */}
-                        {event.eventStructure && (
-                            <div className="ev-modal-section">
-                                <h3><Star size={18} /> Event Structure</h3>
-                                {event.eventStructure.map((round, i) => (
-                                    <div key={i} className="ev-round-block">
-                                        <h4>🔹 {round.round}</h4>
-                                        <ul>
-                                            {round.details.map((d, j) => (
-                                                <li key={j}>
-                                                    <ChevronRight size={14} />
-                                                    <span>{d}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Judging Criteria (Shark Tank) */}
-                        {event.judgingCriteria && (
-                            <div className="ev-modal-section">
-                                <h3><Trophy size={18} /> Judging Criteria</h3>
-                                <div className="ev-judging-table">
-                                    <div className="ev-judging-header">
-                                        <span>Criteria</span>
-                                        <span>Marks</span>
-                                    </div>
-                                    {event.judgingCriteria.map((c, i) => (
-                                        <div key={i} className="ev-judging-row">
-                                            <span>{c.criteria}</span>
-                                            <span className="ev-judging-marks">{c.marks}</span>
-                                        </div>
-                                    ))}
-                                    <div className="ev-judging-total">
-                                        <span>Total</span>
-                                        <span>{totalMarks} Marks</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Highlights */}
-                        <div className="ev-modal-section">
-                            <h3><Star size={18} /> What You'll Experience</h3>
-                            <ul className="ev-modal-highlights">
-                                {event.highlights.map((h, i) => (
-                                    <li key={i}>
-                                        <CheckCircle size={15} />
-                                        <span>{h}</span>
-                                    </li>
-                                ))}
-                            </ul>
                         </div>
+                    </div>
 
-                        {/* Rules */}
-                        {event.rules && event.rules.length > 0 && (
-                            <div className="ev-modal-section ev-modal-rules-section">
-                                <h3><AlertTriangle size={18} /> Rules & Guidelines</h3>
-                                <ul className="ev-modal-rules-list">
-                                    {event.rules.map((r, i) => (
-                                        <li key={i}>
-                                            <ChevronRight size={14} />
-                                            <span>{r}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                    <div className="ev-modal-desc">
+                        <h4>Description</h4>
+                        <div className="ev-desc-text">
+                            {event.fullDescription.split('\n').map((line, i) => (
+                                <p key={i}>{line}</p>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="ev-modal-actions">
+                        {event.rulesUrl && (
+                            <button className="ev-btn-outline" onClick={handleViewRules}>
+                                <FileText size={18} /> Event Rules
+                            </button>
                         )}
-
-                        {/* Certificates (Shark Tank) */}
-                        {event.certificates && (
-                            <div className="ev-modal-section ev-modal-certs">
-                                <h3><Award size={18} /> Certificates & Recognition</h3>
-                                <ul className="ev-modal-highlights">
-                                    {event.certificates.map((c, i) => (
-                                        <li key={i}>
-                                            <CheckCircle size={15} />
-                                            <span>{c}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-
-                        {/* Prerequisites */}
-                        {event.prerequisites && (
-                            <div className="ev-modal-prereq">
-                                <strong>Prerequisites:</strong> {event.prerequisites}
-                            </div>
-                        )}
-
-                        {/* CTA */}
-                        <Link to="/register" className="ev-modal-cta" onClick={onClose}>
-                            Register Now <ArrowRight size={18} />
+                        <Link to="/register" className="ev-btn-primary">
+                            Register Now <ExternalLink size={18} />
                         </Link>
                     </div>
                 </div>
             </div>
-
-            {/* Fullscreen Image Viewer */}
-            {viewingImage && posterSrc && (
-                <ImageViewer
-                    src={posterSrc}
-                    alt={event.name}
-                    onClose={() => setViewingImage(false)}
-                />
-            )}
-        </>
+        </div>
     );
 };
 
-// ─── CEREMONY INFO MODAL (for inauguration, valedictory, etc.) ───
-const CeremonyModal = ({ item, onClose }) => {
-    const overlayRef = useRef(null);
-
-    useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        const handleEsc = (e) => e.key === 'Escape' && onClose();
-        window.addEventListener('keydown', handleEsc);
-        return () => {
-            document.body.style.overflow = '';
-            window.removeEventListener('keydown', handleEsc);
-        };
-    }, [onClose]);
-
-    if (!item) return null;
-    const IconComp = item.icon || Mic;
-
+/* ─── EVENT CARD (Restructured) ─── */
+const EventCard = ({ event, category, index, onClick }) => {
     return (
-        <div className="ev-modal-overlay" ref={overlayRef} onClick={(e) => e.target === overlayRef.current && onClose()}>
-            <div className="ev-modal ev-modal-compact">
-                <button className="ev-modal-close" onClick={onClose} aria-label="Close">
-                    <X size={22} />
-                </button>
-                <div className="ev-modal-body">
-                    <div className="ceremony-modal-icon" style={{ borderColor: item.color, color: item.color }}>
-                        <IconComp size={36} />
-                    </div>
-                    <h2 className="ev-modal-title" style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
-                        {item.title}
-                    </h2>
-                    <div className="ev-modal-meta" style={{ justifyContent: 'center', marginBottom: '1.5rem' }}>
-                        <div className="ev-modal-meta-item">
-                            <Clock size={16} />
-                            <span>{item.time}</span>
-                        </div>
-                        {item.venue && (
-                            <div className="ev-modal-meta-item">
-                                <MapPin size={16} />
-                                <span>{item.venue}</span>
-                            </div>
-                        )}
-                    </div>
-                    {item.description && (
-                        <div className="ev-modal-desc" style={{ textAlign: 'center' }}>
-                            <p>{item.description}</p>
-                        </div>
-                    )}
+        <div
+            className="ev-card-modern"
+            onClick={onClick}
+            style={{ '--delay': `${index * 0.1}s` }}
+        >
+            <div className="ev-card-modern-poster-wrap">
+                <img src={event.poster || 'https://placehold.co/400x400/102030/22c55e?text=No+Poster'} alt={event.title} loading="lazy" />
+                <div className="ev-card-overlay-grad" />
+                <span className="ev-card-badge">{event.type}</span>
+            </div>
+
+            <div className="ev-card-modern-content">
+                <div className="ev-card-info-bar">
+                    <span className="ev-card-fee-badge">
+                        {event.fee === 'Included' ? 'Included' : event.fee}
+                    </span>
+                    <span className="ev-card-rules-text">
+                        {event.rulesUrl ? 'Rules Available' : ''}
+                    </span>
+                </div>
+
+                <div className="ev-card-buttons">
+                    <button className="ev-btn-view">
+                        View Details
+                    </button>
+                    <Link to="/register" className="ev-btn-reg" onClick={(e) => e.stopPropagation()}>
+                        Register <ArrowRight size={14} />
+                    </Link>
                 </div>
             </div>
         </div>
     );
 };
 
-
-// ─── MAIN EVENTS PAGE ─────────────────────────────
+/* ─── EVENTS PAGE ─── */
 const Events = () => {
-    const [selectedDay, setSelectedDay] = useState('all');
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [selectedCeremony, setSelectedCeremony] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [activeCategory, setActiveCategory] = useState('all');
 
-    useEffect(() => {
-        setIsLoaded(true);
-    }, []);
-
-    // Count actual events (not breaks) per day
-    const getEventCount = (dayId) => {
-        const schedule = FULL_SCHEDULE[dayId] || [];
-        return schedule.filter(item => item.type === 'event').length;
-    };
-
-    const getTotalItems = (dayId) => {
-        return (FULL_SCHEDULE[dayId] || []).length;
-    };
+    const filteredEvents = activeCategory === 'all'
+        ? EVENTS
+        : EVENTS.filter(e => e.categoryId === activeCategory);
 
     return (
-        <div className="events-page">
+        <div className="events-page-new">
             <Navbar />
 
-            {/* Hero */}
-            <section className={`events-hero ${isLoaded ? 'loaded' : ''}`}>
-                <div className="events-hero-bg">
-                    <div className="hero-glow hero-glow-1" />
-                    <div className="hero-glow hero-glow-2" />
-                    <div className="hero-grid" />
-                    <ParticleField count={30} />
-                </div>
-                <div className="events-hero-content">
-                    <span className="events-tag">
-                        <Sparkles size={14} /> ALL 10 EVENTS • ₹299 ONLY
-                    </span>
-                    <h1>Event <span className="text-gradient">Schedule</span></h1>
-                    <p>Semiconductor Summit 2.0 · March 17–19, 2026 · CHARUSAT</p>
+            <section className="events-hero-mini">
+                <ParticleField count={30} />
+                <div className="events-hero-wrap">
+                    <h1>Explore <span className="text-gradient">Events</span></h1>
+                    <p>Workshops, Competitions & Panels</p>
                 </div>
             </section>
 
-            <div className="events-container">
-                {/* Day Filter Tabs */}
-                <div className="day-tabs">
-                    <button
-                        className={`day-tab ${selectedDay === 'all' ? 'active' : ''}`}
-                        onClick={() => setSelectedDay('all')}
-                    >
-                        <span className="tab-label">All Days</span>
-                        <span className="tab-count">{EVENTS_DATA.length}</span>
-                    </button>
-                    {DAYS.map(day => {
-                        const eventCount = getEventCount(day.id);
-                        return (
-                            <button
-                                key={day.id}
-                                className={`day-tab ${selectedDay === day.id ? 'active' : ''}`}
-                                onClick={() => setSelectedDay(day.id)}
-                                style={{ '--tab-accent': day.color }}
-                            >
-                                <span className="tab-label">{day.label}</span>
-                                <span className="tab-date">{day.date} ({day.weekday})</span>
-                                <span className="tab-count">{eventCount} events</span>
-                            </button>
-                        );
-                    })}
-                </div>
-
-                {/* Schedule Timeline */}
-                {(selectedDay === 'all' ? DAYS : DAYS.filter(d => d.id === selectedDay)).map(day => {
-                    const scheduleItems = FULL_SCHEDULE[day.id] || [];
-                    if (scheduleItems.length === 0) return null;
-
-                    return (
-                        <div key={day.id} className="schedule-day">
-                            {/* Day header */}
-                            <div className="schedule-day-header" style={{ '--day-color': day.color }}>
-                                <div className="schedule-day-badge">
-                                    <Calendar size={18} />
-                                    <span className="schedule-day-label">{day.label}</span>
-                                </div>
-                                <span className="schedule-day-date">{day.date}, 2026 · {day.weekday}</span>
-                                <span className="schedule-day-count">
-                                    {getEventCount(day.id)} events · {getTotalItems(day.id)} activities
-                                </span>
-                            </div>
-
-                            {/* Timeline items */}
-                            <div className="schedule-timeline">
-                                {scheduleItems.map((item, idx) => {
-                                    // ─── BREAK ITEM (non-clickable) ───
-                                    if (item.type === 'break') {
-                                        const BreakIcon = item.icon || Coffee;
-                                        return (
-                                            <div
-                                                key={`break-${idx}`}
-                                                className="schedule-item schedule-break"
-                                                style={{ '--item-color': item.color, animationDelay: `${idx * 0.06}s` }}
-                                            >
-                                                <div className="schedule-time">
-                                                    <span className="schedule-time-text">{item.time}</span>
-                                                </div>
-                                                <div className="schedule-dot-col">
-                                                    <div className="schedule-dot schedule-dot-break">
-                                                        <BreakIcon size={14} />
-                                                    </div>
-                                                    {idx < scheduleItems.length - 1 && <div className="schedule-line schedule-line-break" />}
-                                                </div>
-                                                <div className="schedule-content schedule-break-content">
-                                                    <span className="schedule-break-title">{item.title}</span>
-                                                </div>
-                                            </div>
-                                        );
-                                    }
-
-                                    // ─── CEREMONY ITEM (clickable, mini modal) ───
-                                    if (item.type === 'ceremony') {
-                                        const CeremonyIcon = item.icon || Mic;
-                                        return (
-                                            <div
-                                                key={`ceremony-${idx}`}
-                                                className="schedule-item schedule-ceremony"
-                                                onClick={() => setSelectedCeremony(item)}
-                                                style={{ '--item-color': item.color, animationDelay: `${idx * 0.06}s` }}
-                                            >
-                                                <div className="schedule-time">
-                                                    <span className="schedule-time-text">{item.time}</span>
-                                                </div>
-                                                <div className="schedule-dot-col">
-                                                    <div className="schedule-dot">
-                                                        <CeremonyIcon size={14} />
-                                                    </div>
-                                                    {idx < scheduleItems.length - 1 && <div className="schedule-line" />}
-                                                </div>
-                                                <div className="schedule-content">
-                                                    <span className="schedule-category" style={{ background: `${item.color}15`, color: item.color, borderColor: `${item.color}30` }}>
-                                                        Ceremony
-                                                    </span>
-                                                    <h3 className="schedule-event-name">{item.title}</h3>
-                                                    {item.description && <p className="schedule-desc">{item.description}</p>}
-                                                    {item.venue && (
-                                                        <div className="schedule-venue-row">
-                                                            <MapPin size={13} />
-                                                            <span>{item.venue}</span>
-                                                        </div>
-                                                    )}
-                                                    <span className="schedule-view-btn">
-                                                        View Details <ChevronRight size={14} />
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        );
-                                    }
-
-                                    // ─── EVENT ITEM (clickable, full modal) ───
-                                    const event = EVENTS_MAP[item.eventId];
-                                    if (!event) return null;
-                                    const IconComp = ICON_MAP[event.id] || Zap;
-
-                                    return (
-                                        <div
-                                            key={event.id}
-                                            className="schedule-item"
-                                            onClick={() => setSelectedEvent(event)}
-                                            style={{ '--item-color': event.color, animationDelay: `${idx * 0.06}s` }}
-                                        >
-                                            {/* Time column */}
-                                            <div className="schedule-time">
-                                                <span className="schedule-time-text">{event.time}</span>
-                                            </div>
-
-                                            {/* Dot & line */}
-                                            <div className="schedule-dot-col">
-                                                <div className="schedule-dot">
-                                                    <IconComp size={14} />
-                                                </div>
-                                                {idx < scheduleItems.length - 1 && <div className="schedule-line" />}
-                                            </div>
-
-                                            {/* Content */}
-                                            <div className="schedule-content">
-                                                <span className="schedule-category">{event.category}</span>
-                                                <h3 className="schedule-event-name">{event.name}</h3>
-                                                {event.tagline && <p className="schedule-tagline">{event.tagline}</p>}
-                                                <p className="schedule-desc">{event.description}</p>
-                                                <div className="schedule-venue-row">
-                                                    <MapPin size={13} />
-                                                    <span>{event.venue}</span>
-                                                </div>
-                                                <span className="schedule-view-btn">
-                                                    View Details <ChevronRight size={14} />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    );
-                })}
-
-                {/* CTA */}
-                <div className="events-cta-section">
-                    <div className="cta-glass">
-                        <Sparkles size={32} className="cta-icon" />
-                        <h2>Ready to Join the Summit?</h2>
-                        <p>Register now for all 10 events — Only ₹299</p>
-                        <Link to="/register" className="btn btn-primary btn-large cta-btn">
-                            Register Now <ArrowRight size={20} />
-                        </Link>
-                    </div>
+            {/* Filter Bar */}
+            <div className="events-filter-bar-sticky">
+                <div className="events-filter-container">
+                    {CATEGORIES.map(cat => (
+                        <button
+                            key={cat.id}
+                            className={`filter-tab ${activeCategory === cat.id ? 'active' : ''}`}
+                            onClick={() => setActiveCategory(cat.id)}
+                        >
+                            <cat.icon size={16} />
+                            <span>{cat.title}</span>
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            <Footer />
+            <div className="events-main-container">
+                <div className="events-grid-modern">
+                    {filteredEvents.map((event, index) => {
+                        const cat = CATEGORIES.find(c => c.id === event.categoryId);
+                        return (
+                            <EventCard
+                                key={event.id}
+                                event={event}
+                                category={cat}
+                                index={index}
+                                onClick={() => setSelectedEvent(event)}
+                            />
+                        );
+                    })}
+                </div>
+            </div>
 
-            {/* Event Modal */}
             {selectedEvent && (
                 <EventModal
                     event={selectedEvent}
@@ -939,13 +505,7 @@ const Events = () => {
                 />
             )}
 
-            {/* Ceremony Modal */}
-            {selectedCeremony && (
-                <CeremonyModal
-                    item={selectedCeremony}
-                    onClose={() => setSelectedCeremony(null)}
-                />
-            )}
+            <Footer />
         </div>
     );
 };

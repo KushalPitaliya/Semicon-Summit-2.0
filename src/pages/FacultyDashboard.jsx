@@ -73,6 +73,10 @@ const FacultyDashboard = () => {
             // Fetch announcements
             const annRes = await api.get('/announcements')
             setAnnouncements(annRes.data)
+
+            // Fetch gallery images
+            const galleryRes = await api.get('/gallery')
+            setGalleryImages(galleryRes.data)
         } catch (error) {
             console.error('Error fetching data:', error)
         } finally {
@@ -189,7 +193,7 @@ const FacultyDashboard = () => {
             'Email': p.email || '',
             'Phone': p.phone || '',
             'College': p.college || '',
-            'Events': (p.events || []).join(', '),
+            'Selected Events': (p.selectedEvents || []).join(', '),
             'Transaction ID': p.transactionId || p.paymentRef || '',
             'Amount Paid': p.paymentAmount || 400,
             'Status': p.verificationStatus || 'approved',
@@ -363,6 +367,13 @@ const FacultyDashboard = () => {
                         <span>User Management</span>
                     </button>
                     <button
+                        className={`nav-item ${activeTab === 'announcements' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('announcements')}
+                    >
+                        <Bell size={20} />
+                        <span>Announcements</span>
+                    </button>
+                    <button
                         className={`nav-item ${activeTab === 'gallery' ? 'active' : ''}`}
                         onClick={() => setActiveTab('gallery')}
                     >
@@ -468,7 +479,7 @@ const FacultyDashboard = () => {
                                                     }}
                                                 >
                                                     <Image size={16} />
-                                                    View Payment Screenshot
+                                                    View Payment Receipt (PDF)
                                                 </button>
                                             )}
 
@@ -572,6 +583,7 @@ const FacultyDashboard = () => {
                                                     <th>Password</th>
                                                     <th>College</th>
                                                     <th>Phone</th>
+                                                    <th>Selected Events</th>
                                                     <th>Payment Ref</th>
                                                     <th>Registered On</th>
                                                 </tr>
@@ -579,7 +591,7 @@ const FacultyDashboard = () => {
                                             <tbody>
                                                 {filteredParticipants.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan="8" className="table-empty">
+                                                        <td colSpan="9" className="table-empty">
                                                             No registrations found
                                                         </td>
                                                     </tr>
@@ -596,6 +608,17 @@ const FacultyDashboard = () => {
                                                             </td>
                                                             <td>{participant.college}</td>
                                                             <td>{participant.phone}</td>
+                                                            <td>
+                                                                <div className="events-badges">
+                                                                    {(participant.selectedEvents || []).length > 0 ? (
+                                                                        participant.selectedEvents.map((evt, i) => (
+                                                                            <span key={i} className="event-badge">{evt}</span>
+                                                                        ))
+                                                                    ) : (
+                                                                        <span className="text-muted">All Events</span>
+                                                                    )}
+                                                                </div>
+                                                            </td>
                                                             <td><code>{participant.paymentRef}</code></td>
                                                             <td className="timestamp-cell">{participant.timestamp}</td>
                                                         </tr>

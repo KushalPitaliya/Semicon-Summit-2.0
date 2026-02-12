@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Upload, CheckCircle, AlertCircle, ArrowLeft, ArrowRight,
     CreditCard, User, Mail, Phone, Building,
-    ExternalLink, FileText, Info
+    ExternalLink, FileText, Info, Calendar
 } from 'lucide-react';
 import api from '../services/api';
 import ParticleField from '../components/ParticleField';
@@ -14,6 +14,20 @@ const REGISTRATION_FEE = 299;
 
 // Razorpay payment link
 const PAYMENT_LINK = 'https://rzp.io/rzp/NsZUsMqO';
+
+// Available events for selection
+const AVAILABLE_EVENTS = [
+    { id: 'fabless-startups', name: 'Fabless Startups & MSMEs' },
+    { id: 'ai-vlsi', name: 'AI in VLSI' },
+    { id: 'embedded-vs-vlsi', name: 'Embedded vs VLSI' },
+    { id: 'rtl-gds', name: 'RTL to GDS II Workshop' },
+    { id: 'verilog-fpga', name: 'Verilog & FPGA Workshop' },
+    { id: 'shark-tank', name: 'Silicon Shark Tank' },
+    { id: 'silicon-jackpot', name: 'The Silicon Jackpot' },
+    { id: 'silicon-playzone', name: 'Silicon PlayZone' },
+    { id: 'ideas-showcase', name: 'Silicon Ideas Showcase' },
+    { id: 'wafer-to-chip', name: 'Wafer to Chip Demo' }
+];
 
 const Register = () => {
     const [step, setStep] = useState(1);
@@ -28,13 +42,23 @@ const Register = () => {
         college: '',
         department: '',
         paymentId: '',
-        pdfFile: null
+        pdfFile: null,
+        selectedEvents: []
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         setError('');
+    };
+
+    const handleEventToggle = (eventName) => {
+        setFormData(prev => ({
+            ...prev,
+            selectedEvents: prev.selectedEvents.includes(eventName)
+                ? prev.selectedEvents.filter(name => name !== eventName)
+                : [...prev.selectedEvents, eventName]
+        }));
     };
 
     const handlePdfUpload = (e) => {
@@ -79,6 +103,7 @@ const Register = () => {
             data.append('paymentId', formData.paymentId.trim());
             data.append('paymentAmount', REGISTRATION_FEE);
             data.append('pdfReceipt', formData.pdfFile);
+            data.append('selectedEvents', JSON.stringify(formData.selectedEvents));
 
             await api.post('/register', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
@@ -311,6 +336,31 @@ const Register = () => {
                                         className="input"
                                     />
                                 </div>
+                            </div>
+
+                            {/* Event Selection */}
+                            <div className="event-selection-section">
+                                <h3><Calendar size={20} /> Select Events to Participate</h3>
+                                <p className="section-note">Choose the events you're interested in (optional - you can attend all events)</p>
+
+                                <div className="events-grid">
+                                    {AVAILABLE_EVENTS.map(event => (
+                                        <label key={event.id} className="event-checkbox-label">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.selectedEvents.includes(event.name)}
+                                                onChange={() => handleEventToggle(event.name)}
+                                                className="event-checkbox"
+                                            />
+                                            <span className="event-name">{event.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                {formData.selectedEvents.length > 0 && (
+                                    <p className="selected-count">
+                                        ✓ {formData.selectedEvents.length} event{formData.selectedEvents.length !== 1 ? 's' : ''} selected
+                                    </p>
+                                )}
                             </div>
 
                             {/* Payment Verification */}

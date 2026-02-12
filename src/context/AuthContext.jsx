@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import api from '../services/api'
+import { authAPI } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -16,44 +16,51 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Check localStorage for existing session
+        // Check for stored user on mount
         const storedUser = localStorage.getItem('summitUser')
         if (storedUser) {
             try {
-                setUser(JSON.parse(storedUser))
-            } catch (e) {
+                const parsedUser = JSON.parse(storedUser)
+                // Validate token with backend
+                const token = parsedUser.token || parsedUser._id
+                authAPI.validateToken(token)
+                    .then(validatedUser => {
+                        // Preserve the token from stored data
+                        validatedUser.token = parsedUser.token || parsedUser._id
+                        setUser(validatedUser)
+                    })
+                    .catch(() => {
+                        localStorage.removeItem('summitUser')
+                        setUser(null)
+                    })
+                    .finally(() => setLoading(false))
+            } catch {
                 localStorage.removeItem('summitUser')
+                setLoading(false)
             }
+        } else {
+            setLoading(false)
         }
-        setLoading(false)
     }, [])
 
     const login = async (email, password) => {
-        try {
-            // Call the backend API
-            const response = await api.post('/auth/login', { email, password })
-
-            const userData = response.data
-            setUser(userData)
-            localStorage.setItem('summitUser', JSON.stringify(userData))
-            return { success: true, user: userData }
-        } catch (error) {
-            // Return error from backend or fallback message
-            const errorMessage = error.response?.data?.error || 'Invalid email or password'
-            return { success: false, error: errorMessage }
-        }
+        const userData = await authAPI.login(email, password)
+        // userData now includes a JWT token from the backend
+        localStorage.setItem('summitUser', JSON.stringify(userData))
+        setUser(userData)
+        return userData
     }
 
     const logout = () => {
-        setUser(null)
         localStorage.removeItem('summitUser')
+        setUser(null)
     }
 
     const value = {
         user,
-        loading,
         login,
         logout,
+        loading,
         isAuthenticated: !!user
     }
 

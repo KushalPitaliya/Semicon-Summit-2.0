@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Cpu } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import './Navbar.css'
 
 const Navbar = () => {
@@ -17,24 +17,24 @@ const Navbar = () => {
     }, [])
 
     const navLinks = [
-        { name: 'Home', path: '/', isRoute: true },
-        { name: 'Events', path: '/events', isRoute: true },
-        { name: 'Team', path: '/committee', isRoute: true },
-        { name: 'About', path: '/about', isRoute: true },
-        { name: 'Contact', path: '/contact', isRoute: true },
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about' },
+        { name: 'Events', path: '/events' },
+        { name: 'Schedule', path: '/schedule' },
+        { name: 'Speakers', path: '/speakers' },
+        { name: 'Organizing Committee', path: '/committee' },
+        { name: 'Contact', path: '/contact' },
     ]
 
     return (
         <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
             <div className="navbar-container">
-                <Link to="/" className="navbar-logo">
-                    <div className="logo-icon">
-                        <Cpu size={28} />
-                    </div>
-                    <div className="logo-text">
-                        <span className="logo-title">Semiconductor</span>
-                        <span className="logo-subtitle">Summit 2.0</span>
-                    </div>
+                <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
+                    <img
+                        src="/images/Logo/Logo of SS.png"
+                        alt="Semiconductor Summit 2.0"
+                        className="navbar-logo-img"
+                    />
                 </Link>
 
                 <div className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>

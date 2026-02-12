@@ -136,7 +136,7 @@ const ParticipantDashboard = () => {
                             <h2>Registered Events</h2>
                         </div>
                         <div className="events-list">
-                            {(user?.events || ['VLSI Design Workshop', 'Chip Architecture Talk']).map((event, index) => (
+                            {(user?.selectedEvents || ['VLSI Design Workshop', 'Chip Architecture Talk']).map((event, index) => (
                                 <div key={index} className="event-item card">
                                     <div className="event-item-icon">
                                         <Calendar size={20} />

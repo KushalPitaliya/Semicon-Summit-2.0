@@ -11,15 +11,18 @@ const connectDB = require('./config/database');
 // Models
 const User = require('./models/User');
 const Event = require('./models/Event');
-const Announcement = require('./models/Announcement');
-const Registration = require('./models/Registration');
-const Gallery = require('./models/Gallery');
 
 // Services
-const { generatePassword, sendCredentialsEmail, sendRejectionEmail, sendPasswordResetEmail } = require('./services/emailService');
-const { uploadImage, uploadMultiple, deleteImage, getThumbnailUrl } = require('./services/cloudinaryService');
+const { generatePassword, sendCredentialsEmail } = require('./services/emailService');
 
-// Routes
+// Route files
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const participantRoutes = require('./routes/participantRoutes');
+const eventRoutes = require('./routes/eventRoutes');
+const announcementRoutes = require('./routes/announcementRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const paymentVerificationRoutes = require('./routes/paymentVerificationRoutes');
 
@@ -42,189 +45,40 @@ app.use(express.json());
 
 // Payment verification routes (after express.json so req.body is parsed)
 app.use('/api', paymentVerificationRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Ensure uploads directory exists
+// Static uploads
 const uploadsDir = path.join(__dirname, 'uploads');
-const photosDir = path.join(uploadsDir, 'photos');
-const docsDir = path.join(uploadsDir, 'documents');
-const paymentsDir = path.join(uploadsDir, 'payments');
+app.use('/uploads', express.static(uploadsDir));
 
-[uploadsDir, photosDir, docsDir, paymentsDir].forEach(dir => {
+// Ensure uploads directories exist
+const paymentsDir = path.join(uploadsDir, 'payments');
+const receiptsDir = path.join(uploadsDir, 'receipts');
+[uploadsDir, paymentsDir, receiptsDir].forEach(dir => {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
 });
 
-// Multer configuration for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const type = req.path.includes('photos') ? 'photos' : 'documents';
-        cb(null, path.join(uploadsDir, type));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({
-    storage,
-    limits: {
-        fileSize: 25 * 1024 * 1024 // 25MB max
-    },
-    fileFilter: (req, file, cb) => {
-        const type = req.path.includes('photos') ? 'photos' : 'documents';
-
-        if (type === 'photos') {
-            const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            cb(null, allowed.includes(file.mimetype));
-        } else {
-            const allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-            cb(null, allowed.includes(file.mimetype));
-        }
-    }
-});
-
-// Multer configuration for payment screenshots
-const paymentStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, paymentsDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'payment-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const uploadPayment = multer({
-    storage: paymentStorage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
-    fileFilter: (req, file, cb) => {
-        const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        cb(null, allowed.includes(file.mimetype));
-    }
-});
-
-// In-memory storage for uploaded files (files are stored on disk)
-let uploadedFiles = {
-    photos: [],
-    documents: []
-};
+// ==========================================
+// MOUNT ROUTE FILES
+// ==========================================
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/participants', participantRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/announcements', announcementRoutes);
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/uploads', uploadRoutes);
 
 // ==========================================
-// AUTH ROUTES
+// PUBLIC REGISTRATION (kept inline for PDF receipt handling)
 // ==========================================
-app.post('/api/auth/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-
-        // Find user in MongoDB
-        const user = await User.findOne({ email: email.toLowerCase() });
-
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
-
-        // Compare password
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
-
-        // Return user data (password excluded by toJSON method)
-        res.json(user);
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Register new user
-app.post('/api/auth/register', async (req, res) => {
-    try {
-        const { name, email, password, phone, college, department } = req.body;
-
-        if (!name || !email || !password) {
-            return res.status(400).json({ error: 'Name, email and password are required' });
-        }
-
-        // Check if user exists
-        const existingUser = await User.findOne({ email: email.toLowerCase() });
-        if (existingUser) {
-            return res.status(400).json({ error: 'Email already registered' });
-        }
-
-        // Create new user
-        const user = new User({
-            name,
-            email: email.toLowerCase(),
-            password,
-            phone,
-            college,
-            department,
-            role: 'participant'
-        });
-
-        await user.save();
-        res.status(201).json(user);
-    } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Forgot Password (Public)
-app.post('/api/auth/forgot-password', async (req, res) => {
-    try {
-        const { email } = req.body;
-
-        if (!email) {
-            return res.status(400).json({ error: 'Email is required' });
-        }
-
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) {
-            // For security, don't reveal if user exists or not, but return success
-            // In a real production app, you might want to handle this differently
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Generate new password
-        const newPassword = generatePassword();
-
-        // Update user
-        user.password = newPassword;
-        await user.save();
-
-        // Send email
-        await sendPasswordResetEmail(user, newPassword);
-
-        console.log(`🔐 Public password reset request for: ${user.email}`);
-        res.json({ message: 'If an account exists with this email, a new password has been sent.' });
-
-    } catch (error) {
-        console.error('Forgot password error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// PUBLIC REGISTRATION (combined: register + payment verification)
-// ==========================================
-
-// Multer config for PDF receipt uploads during registration
 const receiptStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const receiptDir = path.join(uploadsDir, 'receipts');
-        if (!fs.existsSync(receiptDir)) {
-            fs.mkdirSync(receiptDir, { recursive: true });
+        if (!fs.existsSync(receiptsDir)) {
+            fs.mkdirSync(receiptsDir, { recursive: true });
         }
-        cb(null, receiptDir);
+        cb(null, receiptsDir);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -234,7 +88,7 @@ const receiptStorage = multer.diskStorage({
 
 const uploadReceipt = multer({
     storage: receiptStorage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (file.mimetype === 'application/pdf') {
             cb(null, true);
@@ -257,18 +111,22 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             return res.status(400).json({ error: 'Payment ID is required' });
         }
 
+        const normalizedPaymentId = paymentId.trim();
+
+        if (!/^pay_[A-Za-z0-9]+$/.test(normalizedPaymentId)) {
+            return res.status(400).json({ error: 'Invalid Payment ID format. Please enter the ID starting with "pay_".' });
+        }
+
         if (!pdfFile) {
             return res.status(400).json({ error: 'PDF receipt is required' });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already registered. If you have already submitted, please wait for payment confirmation.' });
         }
 
-        // Check for duplicate payment ID
-        const existingPayment = await User.findOne({ razorpayPaymentId: paymentId.trim() });
+        const existingPayment = await User.findOne({ razorpayPaymentId: normalizedPaymentId });
         if (existingPayment) {
             return res.status(400).json({ error: 'This Payment ID has already been used. Please contact support if you believe this is an error.' });
         }
@@ -286,8 +144,7 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             return res.status(400).json({ error: 'Unable to read PDF. Please ensure you uploaded a valid PDF receipt.' });
         }
 
-        // Verify payment ID exists in the PDF
-        const escapedId = paymentId.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedId = normalizedPaymentId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const paymentIdRegex = new RegExp(escapedId, 'i');
         if (!paymentIdRegex.test(pdfText)) {
             return res.status(400).json({ error: 'Payment ID not found in the uploaded PDF. Please verify the Payment ID and try again.' });
@@ -308,16 +165,14 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             paymentStatus: 'completed',
             paymentAmount: 299,
             role: 'participant',
-            razorpayPaymentId: paymentId.trim(),
+            razorpayPaymentId: normalizedPaymentId,
             paymentScreenshot: `/uploads/receipts/${pdfFile.filename}`,
             password: password,
-            plainPassword: password,
             verifiedAt: new Date()
         });
 
         await user.save();
 
-        // Send credentials email
         const emailSent = await sendCredentialsEmail(user, password);
 
         console.log(`✅ User registered & auto-approved: ${user.name} (${user.email})`);
@@ -340,9 +195,8 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
 });
 
 // ==========================================
-// ADMIN VERIFICATION ROUTES
+// ADMIN VERIFICATION ROUTES (kept for backward compat)
 // ==========================================
-// Get pending verifications
 app.get('/api/admin/pending', async (req, res) => {
     try {
         const pending = await User.find({ verificationStatus: 'pending' })
@@ -354,12 +208,9 @@ app.get('/api/admin/pending', async (req, res) => {
     }
 });
 
-// Approve registration
 app.post('/api/admin/verify/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { verifierId } = req.body;
-
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -369,20 +220,14 @@ app.post('/api/admin/verify/:id', async (req, res) => {
             return res.status(400).json({ error: 'User already processed' });
         }
 
-        // Generate password
         const password = generatePassword();
-
-        // Update user
         user.password = password;
-        user.plainPassword = password;
         user.verificationStatus = 'approved';
         user.paymentStatus = 'completed';
-        user.verifiedBy = verifierId;
         user.verifiedAt = new Date();
 
         await user.save();
 
-        // Send credentials email
         const emailSent = await sendCredentialsEmail(user, password);
 
         console.log(`✅ User verified: ${user.name} (${user.email})`);
@@ -390,7 +235,7 @@ app.post('/api/admin/verify/:id', async (req, res) => {
             message: 'User verified successfully',
             user,
             emailSent,
-            generatedPassword: password // Return for admin reference (in case email fails)
+            generatedPassword: password
         });
     } catch (error) {
         console.error('Verification error:', error);
@@ -398,11 +243,11 @@ app.post('/api/admin/verify/:id', async (req, res) => {
     }
 });
 
-// Reject registration
 app.post('/api/admin/reject/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { reason, verifierId } = req.body;
+        const { reason } = req.body;
+        const { sendRejectionEmail } = require('./services/emailService');
 
         const user = await User.findById(id);
         if (!user) {
@@ -413,15 +258,12 @@ app.post('/api/admin/reject/:id', async (req, res) => {
             return res.status(400).json({ error: 'User already processed' });
         }
 
-        // Update user
         user.verificationStatus = 'rejected';
         user.rejectionReason = reason || 'Payment verification failed';
-        user.verifiedBy = verifierId;
         user.verifiedAt = new Date();
 
         await user.save();
 
-        // Send rejection email
         await sendRejectionEmail(user, reason);
 
         console.log(`❌ User rejected: ${user.name} (${user.email})`);
@@ -433,359 +275,10 @@ app.post('/api/admin/reject/:id', async (req, res) => {
 });
 
 // ==========================================
-// USER ROUTES
-// ==========================================
-app.get('/api/users', async (req, res) => {
-    try {
-        const { role, event } = req.query;
-        let query = {};
-
-        if (role) {
-            query.role = role;
-        }
-
-        const users = await User.find(query)
-            .populate('registeredEvents')
-            .sort({ createdAt: -1 });
-
-        res.json(users);
-    } catch (error) {
-        console.error('Get users error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.get('/api/users/:id', async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id).populate('registeredEvents');
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        console.error('Get user error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// PARTICIPANTS ROUTES (for Faculty)
-// ==========================================
-app.get('/api/participants', async (req, res) => {
-    try {
-        const { event } = req.query;
-        let participants;
-
-        if (event && event !== 'all') {
-            // Find event by title
-            const eventDoc = await Event.findOne({ title: event });
-            if (eventDoc) {
-                const registrations = await Registration.find({ event: eventDoc._id })
-                    .populate('user')
-                    .populate('event');
-                participants = registrations.map(reg => ({
-                    id: reg.user._id,
-                    name: reg.user.name,
-                    password: reg.user.plainPassword || 'N/A',
-                    email: reg.user.email,
-                    college: reg.user.college,
-                    phone: reg.user.phone,
-                    events: [reg.event.title],
-                    paymentRef: reg.user.razorpayPaymentId || reg.user.paymentReference || 'N/A',
-                    timestamp: reg.registrationDate
-                }));
-            } else {
-                participants = [];
-            }
-        } else {
-            // Get all participants
-            const users = await User.find({ role: 'participant' }).sort({ createdAt: -1 });
-            const registrations = await Registration.find().populate('event');
-
-            participants = users.map(user => {
-                const userRegs = registrations.filter(r => r.user.toString() === user._id.toString());
-                return {
-                    id: user._id,
-                    name: user.name,
-                    password: user.plainPassword || 'N/A',
-                    email: user.email,
-                    college: user.college,
-                    phone: user.phone,
-                    events: userRegs.map(r => r.event?.title || 'Unknown'),
-                    paymentRef: user.razorpayPaymentId || user.paymentReference || userRegs[0]?.paymentReference || 'N/A',
-                    timestamp: user.createdAt
-                };
-            });
-        }
-
-        res.json(participants);
-    } catch (error) {
-        console.error('Get participants error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.get('/api/participants/export', async (req, res) => {
-    try {
-        const users = await User.find({ role: 'participant' }).sort({ createdAt: -1 });
-        const registrations = await Registration.find().populate('event');
-
-        const participants = users.map(user => {
-            const userRegs = registrations.filter(r => r.user.toString() === user._id.toString());
-            return {
-                name: user.name,
-                email: user.email,
-                college: user.college,
-                phone: user.phone,
-                events: userRegs.map(r => r.event?.title || 'Unknown').join('; '),
-                paymentRef: user.paymentReference || userRegs[0]?.paymentReference || '',
-                timestamp: user.createdAt
-            };
-        });
-
-        // Generate CSV
-        const headers = ['Name', 'Email', 'College', 'Phone', 'Events', 'Payment Ref', 'Timestamp'];
-        const csvContent = [
-            headers.join(','),
-            ...participants.map(p => [
-                `"${p.name}"`,
-                p.email,
-                `"${p.college || ''}"`,
-                p.phone || '',
-                `"${p.events}"`,
-                p.paymentRef,
-                p.timestamp
-            ].join(','))
-        ].join('\n');
-
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename=registrations.csv');
-        res.send(csvContent);
-    } catch (error) {
-        console.error('Export error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// EVENTS ROUTES
-// ==========================================
-app.get('/api/events', async (req, res) => {
-    try {
-        const events = await Event.find({ isActive: true }).sort({ date: 1 });
-        res.json(events);
-    } catch (error) {
-        console.error('Get events error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.post('/api/events', async (req, res) => {
-    try {
-        const event = new Event(req.body);
-        await event.save();
-        res.status(201).json(event);
-    } catch (error) {
-        console.error('Create event error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.get('/api/events/:id', async (req, res) => {
-    try {
-        const event = await Event.findById(req.params.id);
-        if (!event) {
-            return res.status(404).json({ error: 'Event not found' });
-        }
-        res.json(event);
-    } catch (error) {
-        console.error('Get event error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// REGISTRATION ROUTES
-// ==========================================
-app.post('/api/registrations', async (req, res) => {
-    try {
-        const { userId, eventId, paymentReference, paymentMethod, amount } = req.body;
-
-        // Check if already registered
-        const existingReg = await Registration.findOne({ user: userId, event: eventId });
-        if (existingReg) {
-            return res.status(400).json({ error: 'Already registered for this event' });
-        }
-
-        // Create registration
-        const registration = new Registration({
-            user: userId,
-            event: eventId,
-            paymentReference,
-            paymentMethod,
-            amount,
-            paymentStatus: 'completed'
-        });
-
-        await registration.save();
-
-        // Update event count
-        await Event.findByIdAndUpdate(eventId, { $inc: { registeredCount: 1 } });
-
-        // Update user's registered events
-        await User.findByIdAndUpdate(userId, { $push: { registeredEvents: eventId } });
-
-        res.status(201).json(registration);
-    } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.get('/api/registrations', async (req, res) => {
-    try {
-        const registrations = await Registration.find()
-            .populate('user')
-            .populate('event')
-            .sort({ registrationDate: -1 });
-        res.json(registrations);
-    } catch (error) {
-        console.error('Get registrations error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// ANNOUNCEMENTS ROUTES
-// ==========================================
-app.get('/api/announcements', async (req, res) => {
-    try {
-        const announcements = await Announcement.find({ isActive: true })
-            .populate('createdBy', 'name')
-            .sort({ createdAt: -1 });
-        res.json(announcements);
-    } catch (error) {
-        console.error('Get announcements error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.post('/api/announcements', async (req, res) => {
-    try {
-        const { title, content, priority, targetAudience, createdBy } = req.body;
-
-        if (!title || !content) {
-            return res.status(400).json({ error: 'Title and content are required' });
-        }
-
-        const announcement = new Announcement({
-            title,
-            content,
-            priority: priority || 'normal',
-            targetAudience: targetAudience || 'all',
-            createdBy: createdBy || null
-        });
-
-        await announcement.save();
-        res.status(201).json(announcement);
-    } catch (error) {
-        console.error('Create announcement error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.delete('/api/announcements/:id', async (req, res) => {
-    try {
-        const result = await Announcement.findByIdAndDelete(req.params.id);
-        if (!result) {
-            return res.status(404).json({ error: 'Announcement not found' });
-        }
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Delete announcement error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// UPLOADS ROUTES
-// ==========================================
-app.post('/api/uploads/photos', upload.array('photos', 10), (req, res) => {
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ error: 'No files uploaded' });
-    }
-
-    const newPhotos = req.files.map(file => ({
-        id: Date.now() + Math.random(),
-        filename: file.filename,
-        originalName: file.originalname,
-        size: file.size,
-        url: `/uploads/photos/${file.filename}`,
-        uploadedAt: new Date().toISOString()
-    }));
-
-    uploadedFiles.photos.push(...newPhotos);
-    res.status(201).json(newPhotos);
-});
-
-app.post('/api/uploads/documents', upload.array('documents', 10), (req, res) => {
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ error: 'No files uploaded' });
-    }
-
-    const newDocs = req.files.map(file => ({
-        id: Date.now() + Math.random(),
-        filename: file.filename,
-        originalName: file.originalname,
-        size: file.size,
-        url: `/uploads/documents/${file.filename}`,
-        uploadedAt: new Date().toISOString()
-    }));
-
-    uploadedFiles.documents.push(...newDocs);
-    res.status(201).json(newDocs);
-});
-
-app.get('/api/uploads/photos', (req, res) => {
-    res.json(uploadedFiles.photos);
-});
-
-app.get('/api/uploads/documents', (req, res) => {
-    res.json(uploadedFiles.documents);
-});
-
-app.delete('/api/uploads/:type/:id', (req, res) => {
-    const { type, id } = req.params;
-    const numId = parseFloat(id);
-
-    if (!['photos', 'documents'].includes(type)) {
-        return res.status(400).json({ error: 'Invalid type' });
-    }
-
-    const index = uploadedFiles[type].findIndex(f => f.id === numId);
-
-    if (index === -1) {
-        return res.status(404).json({ error: 'File not found' });
-    }
-
-    // Delete file from disk
-    const file = uploadedFiles[type][index];
-    const filePath = path.join(uploadsDir, type, file.filename);
-
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-    }
-
-    uploadedFiles[type].splice(index, 1);
-    res.json({ success: true });
-});
-
-// ==========================================
 // SEED DATABASE WITH DEMO DATA
 // ==========================================
 app.post('/api/seed', async (req, res) => {
     try {
-        // Create demo users
         const demoUsers = [
             { name: 'John Participant', email: 'participant@demo.com', password: 'demo123', role: 'participant', college: 'Tech University', phone: '9876543210' },
             { name: 'Jane Coordinator', email: 'coordinator@demo.com', password: 'demo123', role: 'coordinator' },
@@ -801,7 +294,6 @@ app.post('/api/seed', async (req, res) => {
             }
         }
 
-        // Create demo events
         const demoEvents = [
             { title: 'VLSI Design Workshop', description: 'Learn VLSI design fundamentals', date: new Date('2026-03-15'), time: '10:00 AM', venue: 'Hall A', category: 'workshop', capacity: 100, registrationFee: 400 },
             { title: 'Chip Architecture Talk', description: 'Expert talk on modern chip architectures', date: new Date('2026-03-15'), time: '2:00 PM', venue: 'Hall B', category: 'talk', capacity: 200, registrationFee: 0 },
@@ -826,376 +318,12 @@ app.post('/api/seed', async (req, res) => {
 });
 
 // ==========================================
-// USER MANAGEMENT ROUTES (Faculty)
-// ==========================================
-
-// Update user
-app.put('/api/users/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updates = req.body;
-
-        // Don't allow password update through this route
-        delete updates.password;
-
-        const user = await User.findByIdAndUpdate(id, updates, { new: true });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.json(user);
-    } catch (error) {
-        console.error('Update user error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Delete user
-app.delete('/api/users/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Prevent deleting faculty users
-        if (user.role === 'faculty') {
-            return res.status(403).json({ error: 'Cannot delete faculty users' });
-        }
-
-        // Delete associated registrations
-        await Registration.deleteMany({ user: id });
-
-        // Delete user
-        await User.findByIdAndDelete(id);
-
-        console.log(`🗑️ User deleted: ${user.name} (${user.email})`);
-        res.json({ success: true, message: 'User deleted successfully' });
-    } catch (error) {
-        console.error('Delete user error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Reset user password (Faculty only)
-app.post('/api/users/:id/reset-password', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Generate new password
-        const newPassword = generatePassword();
-
-        // Update user password
-        user.password = newPassword;
-        user.plainPassword = newPassword;
-        await user.save();
-
-        // Send email with new password
-        const emailSent = await sendPasswordResetEmail(user, newPassword);
-
-        console.log(`🔐 Password reset for: ${user.name} (${user.email})`);
-        res.json({
-            success: true,
-            message: 'Password reset successfully',
-            emailSent,
-            newPassword // Return for admin reference in case email fails
-        });
-    } catch (error) {
-        console.error('Password reset error:', error);
-        res.status(500).json({ error: 'Password reset failed' });
-    }
-});
-
-// Change user role
-app.patch('/api/users/:id/role', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { role } = req.body;
-
-        if (!['participant', 'coordinator', 'faculty'].includes(role)) {
-            return res.status(400).json({ error: 'Invalid role' });
-        }
-
-        const user = await User.findByIdAndUpdate(id, { role }, { new: true });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        console.log(`👤 Role changed for ${user.email}: ${role}`);
-        res.json(user);
-    } catch (error) {
-        console.error('Change role error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// GALLERY ROUTES (Cloudinary)
-// ==========================================
-
-// Multer for temporary gallery uploads
-const galleryStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const tempDir = path.join(uploadsDir, 'temp');
-        if (!fs.existsSync(tempDir)) {
-            fs.mkdirSync(tempDir, { recursive: true });
-        }
-        cb(null, tempDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `gallery-${Date.now()}-${file.originalname}`);
-    }
-});
-
-const uploadGallery = multer({
-    storage: galleryStorage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
-    fileFilter: (req, file, cb) => {
-        const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        cb(null, allowed.includes(file.mimetype));
-    }
-});
-
-// Get all gallery images
-app.get('/api/gallery', async (req, res) => {
-    try {
-        const { category, featured, limit } = req.query;
-        let query = { isActive: true };
-
-        if (category) query.category = category;
-        if (featured === 'true') query.isFeatured = true;
-
-        let galleryQuery = Gallery.find(query)
-            .populate('uploadedBy', 'name')
-            .populate('event', 'title')
-            .sort({ displayOrder: 1, createdAt: -1 });
-
-        if (limit) galleryQuery = galleryQuery.limit(parseInt(limit));
-
-        const images = await galleryQuery;
-        res.json(images);
-    } catch (error) {
-        console.error('Get gallery error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Get featured gallery images (for landing page)
-app.get('/api/gallery/featured', async (req, res) => {
-    try {
-        const images = await Gallery.find({ isActive: true, isFeatured: true })
-            .sort({ displayOrder: 1 })
-            .limit(12);
-        res.json(images);
-    } catch (error) {
-        console.error('Get featured gallery error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Upload gallery image(s)
-app.post('/api/gallery', uploadGallery.array('images', 10), async (req, res) => {
-    try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: 'No images uploaded' });
-        }
-
-        const { title, description, category, tags, eventId, uploadedBy, isFeatured } = req.body;
-
-        // Check if Cloudinary is configured
-        const cloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME &&
-            process.env.CLOUDINARY_API_KEY &&
-            process.env.CLOUDINARY_API_SECRET;
-
-        const uploadedImages = [];
-
-        for (const file of req.files) {
-            let imageData;
-
-            if (cloudinaryConfigured) {
-                // Upload to Cloudinary
-                const cloudinaryResult = await uploadImage(file.path, 'gallery');
-                imageData = {
-                    publicId: cloudinaryResult.publicId,
-                    url: cloudinaryResult.url,
-                    thumbnailUrl: getThumbnailUrl(cloudinaryResult.publicId),
-                    width: cloudinaryResult.width,
-                    height: cloudinaryResult.height,
-                    format: cloudinaryResult.format,
-                    bytes: cloudinaryResult.bytes
-                };
-
-                // Delete temp file
-                fs.unlinkSync(file.path);
-            } else {
-                // Fallback: move to local gallery folder
-                const galleryDir = path.join(uploadsDir, 'gallery');
-                if (!fs.existsSync(galleryDir)) {
-                    fs.mkdirSync(galleryDir, { recursive: true });
-                }
-
-                const newPath = path.join(galleryDir, file.filename);
-                fs.renameSync(file.path, newPath);
-
-                imageData = {
-                    publicId: file.filename,
-                    url: `/uploads/gallery/${file.filename}`,
-                    thumbnailUrl: `/uploads/gallery/${file.filename}`,
-                    bytes: file.size
-                };
-            }
-
-            // Parse tags
-            let parsedTags = [];
-            try {
-                parsedTags = tags ? JSON.parse(tags) : [];
-            } catch (e) {
-                parsedTags = tags ? tags.split(',').map(t => t.trim()) : [];
-            }
-
-            // Create gallery record
-            const gallery = new Gallery({
-                title: title || file.originalname,
-                description,
-                ...imageData,
-                category: category || 'other',
-                tags: parsedTags,
-                event: eventId || null,
-                uploadedBy: uploadedBy || null,
-                isFeatured: isFeatured === 'true'
-            });
-
-            await gallery.save();
-            uploadedImages.push(gallery);
-        }
-
-        console.log(`📸 ${uploadedImages.length} image(s) uploaded to gallery`);
-        res.status(201).json(uploadedImages);
-    } catch (error) {
-        console.error('Gallery upload error:', error);
-        res.status(500).json({ error: 'Upload failed: ' + error.message });
-    }
-});
-
-// Update gallery image
-app.put('/api/gallery/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updates = req.body;
-
-        const image = await Gallery.findByIdAndUpdate(id, updates, { new: true });
-        if (!image) {
-            return res.status(404).json({ error: 'Image not found' });
-        }
-
-        res.json(image);
-    } catch (error) {
-        console.error('Update gallery error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Delete gallery image
-app.delete('/api/gallery/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const image = await Gallery.findById(id);
-        if (!image) {
-            return res.status(404).json({ error: 'Image not found' });
-        }
-
-        // Check if Cloudinary is configured
-        const cloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME &&
-            process.env.CLOUDINARY_API_KEY &&
-            process.env.CLOUDINARY_API_SECRET;
-
-        if (cloudinaryConfigured && image.publicId && !image.publicId.includes('/uploads/')) {
-            // Delete from Cloudinary
-            await deleteImage(image.publicId);
-        } else if (image.url.startsWith('/uploads/')) {
-            // Delete local file
-            const localPath = path.join(__dirname, image.url);
-            if (fs.existsSync(localPath)) {
-                fs.unlinkSync(localPath);
-            }
-        }
-
-        await Gallery.findByIdAndDelete(id);
-
-        console.log(`🗑️ Gallery image deleted: ${image.title}`);
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Delete gallery error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
-// ANNOUNCEMENT ROUTES
-// ==========================================
-app.get('/api/announcements', async (req, res) => {
-    try {
-        const announcements = await Announcement.find()
-            .populate('postedBy', 'name role')
-            .sort({ createdAt: -1 });
-        res.json(announcements);
-    } catch (error) {
-        console.error('Fetch announcements error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.post('/api/announcements', async (req, res) => {
-    try {
-        const { title, content, role, postedBy, date } = req.body;
-
-        // Basic validation
-        if (!title || !content || !postedBy) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        const announcement = new Announcement({
-            title,
-            content,
-            role,
-            postedBy: postedBy, // Ensure ID is used
-            date: date || new Date().toISOString()
-        });
-
-        await announcement.save();
-
-        // Return populated
-        await announcement.populate('postedBy', 'name role');
-
-        console.log(`📢 New Announcement: ${title}`);
-        res.status(201).json(announcement);
-    } catch (error) {
-        console.error('Create announcement error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.delete('/api/announcements/:id', async (req, res) => {
-    try {
-        await Announcement.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'Announcement deleted' });
-    } catch (error) {
-        console.error('Delete announcement error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// ==========================================
 // HEALTH CHECK
 // ==========================================
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'ok',

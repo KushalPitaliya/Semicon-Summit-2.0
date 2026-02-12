@@ -1,0 +1,202 @@
+/* ===================================
+   SEMICON LOGO
+   Bold outlined "SEMICONDUCTOR" with
+   chip "O" and "Summit 2.0" on green bar
+   =================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800;900&display=swap');
+
+.semicon-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    font-family: 'Oswald', sans-serif;
+    font-size: calc(4rem * var(--scale));
+    user-select: none;
+}
+
+/* MAIN TITLE: SEMICONDUCTOR */
+.logo-main-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.logo-main-text {
+    font-size: 1em;
+    font-weight: 900;
+    color: transparent;
+    margin: 0;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    -webkit-text-stroke: 0.04em #166534;
+    paint-order: stroke fill;
+    text-shadow: none;
+}
+
+/* THE CHIP "O" */
+.logo-chip-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.72em;
+    height: 0.88em;
+    background: rgba(22, 101, 52, 0.12);
+    border: 0.04em solid #166534;
+    border-radius: 0.1em;
+    margin: 0 0.02em;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-chip-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6em;
+    font-weight: 900;
+    color: #166534;
+    -webkit-text-stroke: 0.02em #166534;
+    background-image:
+        linear-gradient(rgba(22, 101, 52, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 101, 52, 0.45) 1px, transparent 1px);
+    background-size: 4px 4px;
+}
+
+/* SUBTITLE BAR: ── Summit 2.0 ── */
+.logo-sub-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.02em;
+    gap: 0;
+}
+
+.logo-bar {
+    flex: 1;
+    height: 0.16em;
+    background: #166534;
+}
+
+.logo-bar-left {
+    border-radius: 0.08em 0 0 0.08em;
+}
+
+.logo-bar-right {
+    border-radius: 0 0.08em 0.08em 0;
+}
+
+.logo-sub-text {
+    position: relative;
+    z-index: 1;
+    font-size: 0.44em;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.15em 0.5em;
+    background: #166534;
+    white-space: nowrap;
+}
+
+/* ===================================
+   HERO VARIANT - Large, dramatic
+   =================================== */
+.semicon-logo.hero {
+    font-size: calc(4rem * var(--scale));
+}
+
+.semicon-logo.hero .logo-main-text {
+    -webkit-text-stroke: 0.035em #22c55e;
+    filter: drop-shadow(0 2px 12px rgba(34, 197, 94, 0.15));
+}
+
+.semicon-logo.hero .logo-chip-container {
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.semicon-logo.hero .logo-chip-inner {
+    color: #22c55e;
+    -webkit-text-stroke: 0.02em #22c55e;
+    background-image:
+        linear-gradient(rgba(34, 197, 94, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.4) 1px, transparent 1px);
+    background-size: 5px 5px;
+}
+
+.semicon-logo.hero .logo-sub-text {
+    background: linear-gradient(135deg, #166534, #15803d);
+    padding: 0.18em 0.6em;
+}
+
+.semicon-logo.hero .logo-bar {
+    background: linear-gradient(90deg, transparent, #22c55e);
+}
+
+.semicon-logo.hero .logo-bar-right {
+    background: linear-gradient(90deg, #22c55e, transparent);
+}
+
+/* ===================================
+   NAVBAR VARIANT - Compact, readable
+   =================================== */
+.semicon-logo.navbar {
+    font-size: calc(1.6rem * var(--scale, 1));
+    flex-direction: row;
+    align-items: center;
+    gap: 0.12em;
+}
+
+.semicon-logo.navbar .logo-main-text {
+    font-size: 1em;
+    -webkit-text-stroke: 0.035em #22c55e;
+    color: transparent;
+}
+
+.semicon-logo.navbar .logo-chip-container {
+    width: 0.68em;
+    height: 0.84em;
+    border-width: 0.04em;
+    border-color: #22c55e;
+    border-radius: 0.08em;
+    margin: 0 0.02em;
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.semicon-logo.navbar .logo-chip-inner {
+    font-size: 0.55em;
+    color: #22c55e;
+    -webkit-text-stroke: 0.02em #22c55e;
+    background-image:
+        linear-gradient(rgba(34, 197, 94, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.5) 1px, transparent 1px);
+    background-size: 3px 3px;
+}
+
+.semicon-logo.navbar .logo-sub-wrapper {
+    margin-top: 0;
+    margin-left: 0.12em;
+    width: auto;
+    flex: none;
+}
+
+.semicon-logo.navbar .logo-bar {
+    display: none;
+}
+
+.semicon-logo.navbar .logo-sub-text {
+    font-size: 0.38em;
+    letter-spacing: 0.04em;
+    background: #22c55e;
+    padding: 0.12em 0.4em;
+    border-radius: 0.1em;
+    color: #020617;
+    font-weight: 800;
+}

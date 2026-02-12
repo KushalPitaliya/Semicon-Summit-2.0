@@ -119,30 +119,7 @@
    CUSTOM CURSOR SYSTEM
    =================================== */
 
-/* Custom circuit cursor */
-body {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='3' fill='%2322c55e'/%3E%3Ccircle cx='12' cy='12' r='6' fill='none' stroke='%2322c55e' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2322c55e' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E") 12 12, auto;
-}
-
-/* Pointer cursor for interactive elements */
-a,
-button,
-[role="button"],
-.clickable,
-input[type="submit"],
-input[type="button"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='8' y='8' width='8' height='8' fill='%2300ff88' rx='1'/%3E%3Crect x='6' y='6' width='12' height='12' fill='none' stroke='%2300ff88' stroke-width='1' rx='2'/%3E%3Cline x1='12' y1='2' x2='12' y2='6' stroke='%2300ff88' stroke-width='1'/%3E%3Cline x1='12' y1='18' x2='12' y2='22' stroke='%2300ff88' stroke-width='1'/%3E%3Cline x1='2' y1='12' x2='6' y2='12' stroke='%2300ff88' stroke-width='1'/%3E%3Cline x1='18' y1='12' x2='22' y2='12' stroke='%2300ff88' stroke-width='1'/%3E%3C/svg%3E") 12 12, pointer;
-}
-
-/* Text cursor */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="search"],
-textarea,
-[contenteditable="true"] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='24' viewBox='0 0 4 24'%3E%3Cline x1='2' y1='0' x2='2' y2='24' stroke='%2322c55e' stroke-width='2'/%3E%3C/svg%3E") 2 12, text;
-}
+/* Custom Cursor Removed */
 
 /* Base HTML */
 html {
@@ -1188,59 +1165,80 @@ body::before {
     opacity: 1;
   }
 }
+
 /* ===================================
    SHARED HERO BACKGROUNDS
    =================================== */
 
 .hero-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
 }
 
 .hero-glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(140px);
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
 }
 
 .hero-glow-1 {
-    top: -10%;
-    left: 15%;
-    width: 600px;
-    height: 600px;
-    background: rgba(16, 185, 129, 0.2);
-    animation: hero-orb-1 10s ease-in-out infinite;
+  top: -10%;
+  left: 15%;
+  width: 600px;
+  height: 600px;
+  background: rgba(16, 185, 129, 0.2);
+  animation: hero-orb-1 10s ease-in-out infinite;
 }
 
 .hero-glow-2 {
-    bottom: -10%;
-    right: 5%;
-    width: 500px;
-    height: 500px;
-    background: rgba(0, 255, 136, 0.12);
-    animation: hero-orb-2 12s ease-in-out infinite;
+  bottom: -10%;
+  right: 5%;
+  width: 500px;
+  height: 500px;
+  background: rgba(0, 255, 136, 0.12);
+  animation: hero-orb-2 12s ease-in-out infinite;
 }
 
 @keyframes hero-orb-1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -20px) scale(1.05); }
-    66% { transform: translate(-20px, 15px) scale(0.95); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-20px, 15px) scale(0.95);
+  }
 }
 
 @keyframes hero-orb-2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(-25px, 20px) scale(1.08); }
-    66% { transform: translate(15px, -25px) scale(0.92); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-25px, 20px) scale(1.08);
+  }
+
+  66% {
+    transform: translate(15px, -25px) scale(0.92);
+  }
 }

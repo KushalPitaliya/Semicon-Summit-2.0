@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Upload, Image, FileText, Bell, LogOut,
@@ -19,19 +19,44 @@ const CoordinatorDashboard = () => {
     })
     const [announcements, setAnnouncements] = useState([]) // Real API state
     const [newAnnouncement, setNewAnnouncement] = useState({ title: '', content: '' })
+    const [uploadStatus, setUploadStatus] = useState(null)
     const fileInputRef = useRef(null)
     const docInputRef = useRef(null)
 
     useEffect(() => {
-        fetchAnnouncements()
+        fetchData()
     }, [])
 
-    const fetchAnnouncements = async () => {
+    const fetchData = async () => {
         try {
-            const res = await api.get('/announcements')
-            setAnnouncements(res.data)
+            const [annRes, photosRes, docsRes] = await Promise.all([
+                api.get('/announcements'),
+                api.get('/uploads/photos'),
+                api.get('/uploads/documents')
+            ])
+
+            setAnnouncements(annRes.data)
+
+            // Transform API data to match UI expected format
+            const photos = (photosRes.data || []).map(p => ({
+                id: p.id,
+                name: p.originalName || p.filename,
+                size: formatFileSize(p.size),
+                preview: p.url, // URL from server
+                uploaded: new Date(p.uploadedAt).toLocaleDateString()
+            }))
+
+            const docs = (docsRes.data || []).map(d => ({
+                id: d.id,
+                name: d.originalName || d.filename,
+                size: formatFileSize(d.size),
+                type: d.filename.split('.').pop(),
+                uploaded: new Date(d.uploadedAt).toLocaleDateString()
+            }))
+
+            setUploads({ photos, documents: docs })
         } catch (err) {
-            console.error(err)
+            console.error('Error fetching data:', err)
         }
     }
 
@@ -40,41 +65,49 @@ const CoordinatorDashboard = () => {
         navigate('/', { replace: true })
     }
 
-    const handlePhotoUpload = (e) => {
+    const handlePhotoUpload = async (e) => {
         const files = Array.from(e.target.files)
         if (files.length > 0) {
-            const newPhotos = files.map(file => ({
-                id: Date.now() + Math.random(),
-                name: file.name,
-                size: formatFileSize(file.size),
-                preview: URL.createObjectURL(file),
-                uploaded: new Date().toLocaleDateString()
-            }))
-            setUploads(prev => ({
-                ...prev,
-                photos: [...prev.photos, ...newPhotos]
-            }))
-            setUploadStatus({ type: 'success', message: `${files.length} photo(s) uploaded successfully` })
-            setTimeout(() => setUploadStatus(null), 3000)
+            try {
+                // Upload each file
+                // Note: Ideally we'd optimize API to accept multiple, but looping works for now
+                for (const file of files) {
+                    const formData = new FormData()
+                    formData.append('photos', file)
+                    await api.post('/uploads/photos', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    })
+                }
+
+                setUploadStatus({ type: 'success', message: `${files.length} photo(s) uploaded successfully` })
+                fetchData() // Refresh list
+                setTimeout(() => setUploadStatus(null), 3000)
+            } catch (error) {
+                console.error('Upload error:', error)
+                setUploadStatus({ type: 'error', message: 'Failed to upload photos' })
+            }
         }
     }
 
-    const handleDocUpload = (e) => {
+    const handleDocUpload = async (e) => {
         const files = Array.from(e.target.files)
         if (files.length > 0) {
-            const newDocs = files.map(file => ({
-                id: Date.now() + Math.random(),
-                name: file.name,
-                size: formatFileSize(file.size),
-                type: file.type,
-                uploaded: new Date().toLocaleDateString()
-            }))
-            setUploads(prev => ({
-                ...prev,
-                documents: [...prev.documents, ...newDocs]
-            }))
-            setUploadStatus({ type: 'success', message: `${files.length} document(s) uploaded successfully` })
-            setTimeout(() => setUploadStatus(null), 3000)
+            try {
+                for (const file of files) {
+                    const formData = new FormData()
+                    formData.append('documents', file)
+                    await api.post('/uploads/documents', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    })
+                }
+
+                setUploadStatus({ type: 'success', message: `${files.length} document(s) uploaded successfully` })
+                fetchData() // Refresh list
+                setTimeout(() => setUploadStatus(null), 3000)
+            } catch (error) {
+                console.error('Upload error:', error)
+                setUploadStatus({ type: 'error', message: 'Failed to upload documents' })
+            }
         }
     }
 
@@ -88,7 +121,7 @@ const CoordinatorDashboard = () => {
                 })
                 setNewAnnouncement({ title: '', content: '' })
                 setUploadStatus({ type: 'success', message: 'Announcement posted successfully' })
-                fetchAnnouncements()
+                fetchData() // Refresh
                 setTimeout(() => setUploadStatus(null), 3000)
             } catch (err) {
                 setUploadStatus({ type: 'error', message: 'Failed to post announcement' })
@@ -97,22 +130,20 @@ const CoordinatorDashboard = () => {
     }
 
     const handleDelete = async (type, id) => {
-        if (type === 'announcements') {
-            if (!confirm('Delete this announcement?')) return
-            try {
-                await api.delete(`/announcements/${id}`)
-                fetchAnnouncements()
-            } catch (err) {
-                alert('Failed to delete')
-            }
-            return
-        }
+        if (!confirm('Are you sure you want to delete this item?')) return
 
-        // Local state delete for photos/docs
-        setUploads(prev => ({
-            ...prev,
-            [type]: prev[type].filter(item => item.id !== id)
-        }))
+        try {
+            if (type === 'announcements') {
+                await api.delete(`/announcements/${id}`)
+            } else {
+                // type is 'photos' or 'documents'
+                await api.delete(`/uploads/${type}/${id}`)
+            }
+            fetchData() // Refresh
+        } catch (err) {
+            console.error('Delete error:', err)
+            alert('Failed to delete item')
+        }
     }
 
     const formatFileSize = (bytes) => {

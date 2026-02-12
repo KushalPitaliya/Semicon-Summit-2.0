@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Cpu, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { Cpu, Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import api from '../services/api'
 import ParticleField from '../components/ParticleField'
 import './Login.css'
 
@@ -58,21 +59,12 @@ const Login = () => {
         setForgotStatus({ loading: true, success: false, error: '' })
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/forgot-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: forgotEmail })
-            })
-
-            const data = await response.json()
-
-            if (response.ok) {
-                setForgotStatus({ loading: false, success: true, error: '' })
-            } else {
-                setForgotStatus({ loading: false, success: false, error: data.error || 'Failed to request password reset' })
-            }
+            // Use the api service instead of raw fetch
+            await api.post('/auth/forgot-password', { email: forgotEmail })
+            setForgotStatus({ loading: false, success: true, error: '' })
         } catch (error) {
-            setForgotStatus({ loading: false, success: false, error: 'Network error. Please try again.' })
+            const errorMessage = error.response?.data?.error || 'Failed to request password reset'
+            setForgotStatus({ loading: false, success: false, error: errorMessage })
         }
     }
 

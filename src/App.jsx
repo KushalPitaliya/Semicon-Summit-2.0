@@ -6,12 +6,15 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Events from './pages/Events'
+import Schedule from './pages/Schedule'
+import Speakers from './pages/Speakers'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Committee from './pages/Committee'
 import ParticipantDashboard from './pages/ParticipantDashboard'
 import CoordinatorDashboard from './pages/CoordinatorDashboard'
 import FacultyDashboard from './pages/FacultyDashboard'
+import NotFound from './pages/NotFound'
 import { useCircuitRipple } from './hooks/useSemiconductorEffects'
 
 function App() {
@@ -27,6 +30,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/speakers" element={<Speakers />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/committee" element={<Committee />} />
@@ -56,6 +61,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* 404 Catch-all */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   )

@@ -1,24 +1,26 @@
 # Semiconductor Summit 2.0
 
-A professional event website for Semiconductor Summit 2.0 with Google Form-based registration, role-based dashboards, and email automation.
+A professional event website for Semiconductor Summit 2.0 featuring direct registration with automated payment verification, role-based dashboards, and email automation.
 
 ## 🚀 Features
 
 - **Landing Page**: Premium dark-themed design with hero section, events showcase, and registration CTA
-- **Google Form Registration**: External registration via Google Form with payment proof upload
-- **Email Automation**: Auto-generated credentials and confirmation emails via Apps Script
+- **Direct Registration**: Build-in registration flow with PDF receipt upload
+- **Automated Verification**: parses PDF receipts to verify Razorpay/Payment IDs automatically
+- **Email Automation**: Auto-generated credentials and confirmation emails via Nodemailer
 - **Role-Based Dashboards**:
   - **Participant**: View profile, registered events, announcements, and gallery
-  - **Coordinator**: Upload photos, documents, and manage announcements
-  - **Faculty**: View all registrations with filtering and Excel export
+  - **Coordinator**: Upload photos/documents and manage announcements
+  - **Faculty**: View all registrations with filtering, verify payments, and export to Excel
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React + Vite
 - **Styling**: Vanilla CSS with custom design system
-- **Backend**: Express.js (lightweight)
-- **Database**: Google Sheets (via Apps Script)
-- **Email**: Google Apps Script automation
+- **Backend**: Express.js (on Node.js)
+- **Database**: MongoDB (Mongoose)
+- **File Storage**: Local uploads (with Multer)
+- **Email**: Nodemailer (via SMTP)
 
 ## 📁 Project Structure
 
@@ -31,7 +33,9 @@ Semicon_summit2.0/
 │   ├── services/        # API services
 │   └── index.css        # Design system
 ├── server/              # Express backend
-├── docs/apps-script/    # Google Apps Script code
+│   ├── models/          # Mongoose models
+│   ├── routes/          # API routes
+│   └── uploads/         # Uploaded files directory
 └── public/              # Static assets
 ```
 
@@ -40,41 +44,51 @@ Semicon_summit2.0/
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
-- Google account (for Forms & Sheets)
-
-### Frontend Setup
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
+- MongoDB (local or Atlas)
+- Email account for SMTP (e.g., Gmail App Password)
 
 ### Backend Setup
 
-```bash
-# Navigate to server directory
-cd server
+1. Navigate to server directory:
+   ```bash
+   cd server
+   ```
 
-# Install dependencies
-npm install
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# Start server
-npm run dev
-```
+3. Create a `.env` file in `server/` with:
+   ```env
+   PORT=5000
+   MONGODB_URI=mongodb://localhost:27017/semicon_summit
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-app-password
+   Frontend_URL=http://localhost:5173
+   ```
 
-### Google Apps Script Setup
+4. Start server:
+   ```bash
+   npm run dev
+   ```
 
-1. Create a Google Form with required fields (see docs)
-2. Link form to a Google Sheet
-3. Open Extensions > Apps Script
-4. Copy code from `docs/apps-script/Code.gs`
-5. Update CONFIG section with your details
-6. Run `createTrigger()` function once
-7. Deploy as Web App for API access
+### Frontend Setup
+
+1. Navigate to root directory:
+   ```bash
+   cd ..
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
 
 ## 🔐 Demo Login
 
@@ -86,21 +100,11 @@ npm run dev
 
 ## 📧 Registration Flow
 
-1. User clicks "Register Now" → Google Form
-2. User fills details + uploads payment proof
-3. Apps Script generates credentials
-4. User receives:
-   - Email 1: Login credentials
-   - Email 2: Registration confirmation
+1. User registers on the website → Enters details & Uploads PDF receipt
+2. Backend parses PDF to find Payment ID
+3. If valid, user is auto-approved & account created
+4. User receives credentials via email
 5. User logs in to access dashboard
-
-## 🎨 Customization
-
-Update these files to customize:
-
-- `src/pages/Landing.jsx` - Event details, dates, venue
-- `src/index.css` - Colors and design tokens
-- `docs/apps-script/Code.gs` - Email templates and config
 
 ## 📝 License
 

@@ -130,7 +130,7 @@ const PageLoader = ({ onLoadComplete }) => {
                     </div>
 
                     {/* Chip body */}
-                    <div className="chip-inner">
+                    <div className="loader-chip-inner">
                         <span className="chip-progress">{progress}%</span>
                     </div>
                     <div className="chip-ring" />

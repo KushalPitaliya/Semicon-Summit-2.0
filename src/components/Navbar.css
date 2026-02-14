@@ -128,6 +128,8 @@
     cursor: pointer;
     padding: 0.5rem;
     transition: all 0.2s ease;
+    position: relative;
+    z-index: 10001;
 }
 
 .mobile-menu-btn:hover {

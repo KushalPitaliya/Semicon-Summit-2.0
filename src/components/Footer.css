@@ -27,9 +27,21 @@
 .footer-logo {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     text-decoration: none;
     margin-bottom: 1.5rem;
+}
+
+.footer-logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.footer-logo-charusat {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
 }
 
 .footer-logo .logo-icon {
@@ -180,9 +192,46 @@
 }
 
 @media (max-width: 768px) {
+    .footer {
+        padding: 3rem 0 1.5rem;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 2.5rem;
+    }
+
+    .footer-logo {
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .footer-logo-img {
+        height: 35px;
+    }
+
+    .footer-logo-charusat {
+        height: 32px;
+    }
+
+    .footer-description {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .footer-section {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-contact li {
+        justify-content: center;
+        text-align: left;
     }
 
     .footer-bottom {

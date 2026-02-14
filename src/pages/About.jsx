@@ -57,9 +57,16 @@ const About = () => {
                     </div>
 
                     <div className="premium-content-block">
-                        <h2>Department of <span className="text-gradient">EC Engineering</span></h2>
+                        <h2>About <span className="text-gradient">Institute</span></h2>
                         <p className="premium-text">
-                            The EC Department drives innovation across semiconductor technology, VLSI design, embedded systems, and advanced communication systems. With an industry-aligned curriculum and research-driven approach, the department prepares engineers for real-world technological challenges.
+                            Chandubhai S. Patel Institute of Technology (CSPIT), the flagship engineering institute of CHARUSAT, is known for its industry-aligned curriculum, research-driven education, and strong emphasis on practical learning. The institute nurtures innovation and technical excellence, preparing students to excel in advanced engineering fields including electronics, computing, and semiconductor technologies.
+                        </p>
+                    </div>
+
+                    <div className="premium-content-block">
+                        <h2>About <span className="text-gradient">V. T. Patel Department of Electronics & Communication Engineering</span></h2>
+                        <p className="premium-text">
+                            The V. T. Patel Department of Electronics & Communication Engineering at CSPIT drives innovation in semiconductor technology, VLSI design, embedded systems, and advanced communication systems. With a research-oriented approach, modern laboratories, and industry engagement, the department equips students to solve real-world engineering challenges and contribute to the evolving semiconductor ecosystem.
                         </p>
                     </div>
                 </section>
@@ -121,20 +128,24 @@ const About = () => {
                 {/* Stats Section */}
                 <section className="stats-section">
                     <div className="stat-item">
-                        <h3>10</h3>
-                        <p>Technical Events</p>
+                        <h3>200+</h3>
+                        <p>Expected Attendees</p>
                     </div>
                     <div className="stat-item">
-                        <h3>5+</h3>
+                        <h3>15+</h3>
                         <p>Industry Experts</p>
+                    </div>
+                    <div className="stat-item">
+                        <h3>12</h3>
+                        <p>Curated Events</p>
                     </div>
                     <div className="stat-item">
                         <h3>3</h3>
                         <p>Days of Learning</p>
                     </div>
                     <div className="stat-item">
-                        <h3>₹299</h3>
-                        <p>All-Inclusive Fee</p>
+                        <h3>10+</h3>
+                        <p>Internship Opportunities</p>
                     </div>
                 </section>
 

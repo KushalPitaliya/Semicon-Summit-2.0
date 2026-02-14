@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Cpu, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Youtube, Facebook } from 'lucide-react'
+import { Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Youtube, Facebook } from 'lucide-react'
 import './Footer.css'
 
 const Footer = () => {
@@ -16,10 +16,10 @@ const Footer = () => {
 
     const socialLinks = [
         { icon: Youtube, href: 'https://www.youtube.com/@CHARUSATUniversityOfficial', label: 'YouTube' },
-        { icon: Facebook, href: 'https://www.facebook.com/thecharusat/', label: 'Facebook' },
+        { icon: Facebook, href: 'https://www.facebook.com/share/1DdEMg4fE4/?mibextid=wwXIfr', label: 'Facebook' },
         { icon: Twitter, href: 'https://x.com/thecharusat/', label: 'X (Twitter)' },
-        { icon: Instagram, href: 'https://www.instagram.com/thecharusat/', label: 'Instagram' },
-        { icon: Linkedin, href: 'https://www.linkedin.com/school/charotar-university-of-science-and-technology/', label: 'LinkedIn' },
+        { icon: Instagram, href: 'https://www.instagram.com/semisummit_charusat/?__pwa=1', label: 'Instagram' },
+        { icon: Linkedin, href: 'https://linkedin.com/company/department-of-electronics-and-communication-charusat/', label: 'LinkedIn' },
     ]
 
     return (
@@ -30,13 +30,8 @@ const Footer = () => {
                     {/* Brand Column */}
                     <div className="footer-brand">
                         <Link to="/" className="footer-logo">
-                            <div className="logo-icon">
-                                <Cpu size={24} />
-                            </div>
-                            <div className="logo-text">
-                                <span className="logo-title">Semiconductor</span>
-                                <span className="logo-subtitle">Summit 2.0</span>
-                            </div>
+                            <img src="/images/Logo/Logo of SS.png" alt="Semiconductor Summit Logo" className="footer-logo-img" />
+                            <img src="/images/Logo/Charusat logo.png" alt="CHARUSAT Logo" className="footer-logo-charusat" />
                         </Link>
                         <p className="footer-description">
                             Join us for the premier semiconductor technology conference featuring
@@ -84,7 +79,11 @@ const Footer = () => {
                             </li>
                             <li>
                                 <Phone size={18} />
-                                <span>+91 98765 43210</span>
+                                <span>Dhruv: +91 63539 33976</span>
+                            </li>
+                            <li>
+                                <Phone size={18} />
+                                <span>Mann: +91 83201 66738</span>
                             </li>
                             <li>
                                 <MapPin size={18} />

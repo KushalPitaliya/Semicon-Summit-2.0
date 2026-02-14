@@ -54,13 +54,18 @@ const EVENTS = [
         id: 'fabless-startups',
         categoryId: 'industry-strategy',
         title: 'Fabless Startups & MSMEs',
-        subtitle: 'Powering India’s Semiconductor Growth',
+        subtitle: "Powering India's Semiconductor Growth",
         type: 'Industry Panel',
         icon: Users,
         poster: '/images/panel discussion event.png',
         prize: 'Networking',
-        description: 'A strategic panel discussion featuring industry leaders and startup founders exploring the role of fabless companies and MSMEs in strengthening India’s semiconductor ecosystem.',
-        fullDescription: `A strategic panel discussion featuring industry leaders and startup founders exploring the role of fabless companies and MSMEs in strengthening India’s semiconductor ecosystem.
+        description: "Powering India's Semiconductor Growth. Interact with leading semiconductor innovators and founders driving the fabless revolution.",
+        fullDescription: `Fabless Startups & MSMEs
+Powering India's Semiconductor Growth
+
+Interact with leading semiconductor innovators and founders driving the fabless revolution.
+
+Get the opportunity to ask your questions directly and explore real industry insights.
 
 This session will address:
 • Growth of fabless semiconductor startups in India
@@ -193,8 +198,13 @@ Recommended For: 1st and 2nd year students.`,
         icon: Lightbulb,
         poster: '/images/Silicon Shark Tank.png',
         prize: 'Internships',
-        description: 'A flagship innovation challenge connecting student ideas with industry evaluation and internship pathways. Two-round competitive platform.',
-        fullDescription: `Silicon Shark Tank is a two-round competitive platform designed to encourage innovation in semiconductor technology.
+        description: 'Industry-Driven Idea Pitching. Winners get a FREE Internship Opportunity!',
+        fullDescription: `Silicon Shark Tank
+Industry-Driven Idea Pitching
+
+🏆 Winners get a FREE Internship Opportunity!
+
+Silicon Shark Tank is a two-round competitive platform designed to encourage innovation in semiconductor technology.
 
 Round 1 – Screening Round (Idea Submission)
 Submit a technical concept proposal (max 500 words) covering:
@@ -422,22 +432,10 @@ const EventCard = ({ event, category, index, onClick }) => {
             </div>
 
             <div className="ev-card-modern-content">
-                <div className="ev-card-info-bar">
-                    <span className="ev-card-fee-badge">
-                        {event.fee === 'Included' ? 'Included' : event.fee}
-                    </span>
-                    <span className="ev-card-rules-text">
-                        {event.rulesUrl ? 'Rules Available' : ''}
-                    </span>
-                </div>
-
                 <div className="ev-card-buttons">
-                    <button className="ev-btn-view">
-                        View Details
+                    <button className="ev-btn-view-full">
+                        View Details <ArrowRight size={16} />
                     </button>
-                    <Link to="/register" className="ev-btn-reg" onClick={(e) => e.stopPropagation()}>
-                        Register <ArrowRight size={14} />
-                    </Link>
                 </div>
             </div>
         </div>
@@ -497,6 +495,44 @@ const Events = () => {
                     })}
                 </div>
             </div>
+
+            {/* Registration CTA Section */}
+            <section className="events-register-cta-section">
+                <div className="events-cta-bg">
+                    <div className="events-cta-grid" />
+                    <div className="events-cta-glow" />
+                    <ParticleField count={40} />
+                </div>
+                <div className="events-cta-container">
+                    <div className="events-cta-content">
+                        <h2>Ready to Join the <span className="text-gradient">Future of Tech?</span></h2>
+                        <p>Secure your spot at Semiconductor Summit 2.0 and be part of India's semiconductor revolution.</p>
+                        <div className="events-cta-features">
+                            <div className="events-cta-feature">
+                                <div className="events-cta-icon">
+                                    <Sparkles size={20} />
+                                </div>
+                                <span>12 Curated Events</span>
+                            </div>
+                            <div className="events-cta-feature">
+                                <div className="events-cta-icon">
+                                    <Users size={20} />
+                                </div>
+                                <span>15+ Industry Experts</span>
+                            </div>
+                            <div className="events-cta-feature">
+                                <div className="events-cta-icon">
+                                    <Trophy size={20} />
+                                </div>
+                                <span>Internship Opportunities</span>
+                            </div>
+                        </div>
+                        <Link to="/register" className="events-cta-button">
+                            Register Now - ₹299 <ArrowRight size={20} />
+                        </Link>
+                    </div>
+                </div>
+            </section>
 
             {selectedEvent && (
                 <EventModal

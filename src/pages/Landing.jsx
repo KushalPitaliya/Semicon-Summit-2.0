@@ -43,8 +43,10 @@ const Landing = () => {
     const stats = [
         { value: '200+', label: 'Expected Attendees' },
         { value: '15+', label: 'Industry Experts' },
-        { value: '10+', label: 'Technical Events' },
-        { value: '3', label: 'Days of Learning' }
+        { value: '12', label: 'Curated Events' },
+        { value: '3', label: 'Days of Learning' },
+        { value: '10+', label: 'Internship Opportunities' },
+        { value: '₹299', label: 'Registration Fee' }
     ]
 
     const features = [
@@ -87,6 +89,14 @@ const Landing = () => {
                 </div>
 
                 <div className="container hero-content">
+                    <div className="hero-university-logo hero-animate hero-animate-delay-0" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                        <img
+                            src="/images/Logo/Charusat logo.png"
+                            alt="CHARUSAT University"
+                            style={{ height: '80px', width: 'auto', objectFit: 'contain' }}
+                        />
+                    </div>
+                    
                     <div className="hero-title-wrapper hero-animate hero-animate-delay-1" style={{ display: 'flex', justifyContent: 'center' }}>
                         <img
                             src="/images/Logo/Logo of SS.png"
@@ -94,8 +104,6 @@ const Landing = () => {
                             className="hero-logo-img"
                         />
                     </div>
-
-
 
                     <div className="hero-info hero-animate hero-animate-delay-3">
                         <div className="hero-info-item">
@@ -108,9 +116,38 @@ const Landing = () => {
                             <span>A6 Building, CHARUSAT</span>
                         </div>
                     </div>
+                </div>
 
-                    {/* ====== REGISTRATION CTA CARD ====== */}
-                    <div className="hero-cta-card hero-animate hero-animate-delay-4">
+                <div className="hero-floating">
+                    <div className="floating-chip floating-chip-1"><Cpu size={32} /></div>
+                    <div className="floating-chip floating-chip-2"><CircuitBoard size={28} /></div>
+                    <div className="floating-chip floating-chip-3"><Sparkles size={24} /></div>
+                </div>
+            </section>
+
+            {/* ====== STATS ====== */}
+            <section className="stats-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-center" />
+                    <ParticleField count={30} />
+                </div>
+                <div className="container">
+                    <div className="stats-grid">
+                        {stats.map((stat, i) => (
+                            <StatCard key={i} value={stat.value} label={stat.label} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ====== REGISTRATION CTA CARD ====== */}
+            <section className="registration-cta-section reveal">                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-left" />
+                    <ParticleField count={30} />
+                </div>                <div className="container">
+                    <div className="hero-cta-card" style={{ maxWidth: '900px', margin: '0 auto' }}>
                         <div className="cta-card-inner">
                             <h3>Ready to Join the <span className="text-gradient">Future of Tech?</span></h3>
                             <p>Secure your spot at Semiconductor Summit 2.0 for just ₹299.</p>
@@ -143,52 +180,15 @@ const Landing = () => {
                         </div>
                     </div>
                 </div>
-
-                <div className="hero-floating">
-                    <div className="floating-chip floating-chip-1"><Cpu size={32} /></div>
-                    <div className="floating-chip floating-chip-2"><CircuitBoard size={28} /></div>
-                    <div className="floating-chip floating-chip-3"><Sparkles size={24} /></div>
-                </div>
-            </section>
-
-            {/* ====== COUNTDOWN ====== */}
-            <section className="countdown-section reveal">
-                <div className="container">
-                    <div className="countdown-wrapper">
-                        <h3 className="countdown-title">Event Starts In</h3>
-                        <div className="countdown-grid">
-                            {[
-                                { val: countdown.days, label: 'Days' },
-                                { val: countdown.hours, label: 'Hours' },
-                                { val: countdown.minutes, label: 'Minutes' },
-                                { val: countdown.seconds, label: 'Seconds' }
-                            ].map((item, i) => (
-                                <React.Fragment key={item.label}>
-                                    {i > 0 && <div className="countdown-separator">:</div>}
-                                    <div className="countdown-item">
-                                        <span className="countdown-value text-gradient">{String(item.val).padStart(2, '0')}</span>
-                                        <span className="countdown-label">{item.label}</span>
-                                    </div>
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ====== STATS ====== */}
-            <section className="stats-section reveal">
-                <div className="container">
-                    <div className="stats-grid">
-                        {stats.map((stat, i) => (
-                            <StatCard key={i} value={stat.value} label={stat.label} />
-                        ))}
-                    </div>
-                </div>
             </section>
 
             {/* ====== ABOUT SECTION ====== */}
             <section id="about-summit" className="about-summit-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-center" />
+                    <ParticleField count={40} />
+                </div>
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">About The Summit</span>
@@ -227,6 +227,11 @@ const Landing = () => {
 
             {/* ====== WHY ATTEND ====== */}
             <section id="why-attend" className="vision-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-right" />
+                    <ParticleField count={35} />
+                </div>
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Benefits</span>
@@ -246,8 +251,50 @@ const Landing = () => {
                 </div>
             </section>
 
+            {/* ====== INDUSTRY PARTNERS ====== */}
+            <section className="partners-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-center" />
+                    <ParticleField count={35} />
+                </div>
+                <div className="container">
+                    <div className="section-header section-header-center">
+                        <span className="section-tag">Our Partners</span>
+                        <h2>Industry <span className="text-gradient">Partners</span></h2>
+                        <p>Proud to collaborate with leading organizations in the semiconductor ecosystem.</p>
+                    </div>
+
+                    <div className="partners-grid">
+                        <div className="partner-card">
+                            <div className="partner-logo">
+                                <img src="/images/Logo/companys/IndieSemicLogo.jpg" alt="IndieSemic" />
+                            </div>
+                            <h3 className="partner-name">IndieSemic</h3>
+                        </div>
+                        <div className="partner-card">
+                            <div className="partner-logo">
+                                <img src="/images/Logo/companys/eInfochips-Logo-white.png" alt="eInfochips" />
+                            </div>
+                            <h3 className="partner-name">E infochips</h3>
+                        </div>
+                        <div className="partner-card">
+                            <div className="partner-logo">
+                                <img src="/images/Logo/companys/Monk-white.png" alt="Monk" />
+                            </div>
+                            <h3 className="partner-name">Monk 9</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* ====== LOCATION MAP ====== */}
             <section id="location" className="location-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-left" />
+                    <ParticleField count={30} />
+                </div>
                 <div className="container">
                     <div className="section-header section-header-center">
                         <span className="section-tag">Event Venue</span>
@@ -285,8 +332,38 @@ const Landing = () => {
                 </div>
             </section>
 
-            {/* ====== REGISTER CTA ====== */}
-            <section id="register" className="register-section reveal">
+            {/* ====== COUNTDOWN ====== */}
+            <section className="countdown-section reveal">
+                <div className="section-bg">
+                    <div className="section-grid" />
+                    <div className="section-glow section-glow-center" />
+                    <ParticleField count={40} />
+                </div>
+                <div className="container">
+                    <div className="countdown-wrapper">
+                        <h3 className="countdown-title">Event Starts In</h3>
+                        <div className="countdown-grid">
+                            {[
+                                { val: countdown.days, label: 'Days' },
+                                { val: countdown.hours, label: 'Hours' },
+                                { val: countdown.minutes, label: 'Minutes' },
+                                { val: countdown.seconds, label: 'Seconds' }
+                            ].map((item, i) => (
+                                <React.Fragment key={item.label}>
+                                    {i > 0 && <div className="countdown-separator">:</div>}
+                                    <div className="countdown-item">
+                                        <span className="countdown-value text-gradient">{String(item.val).padStart(2, '0')}</span>
+                                        <span className="countdown-label">{item.label}</span>
+                                    </div>
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ====== REGISTER CTA - REMOVED ====== */}
+            <section id="register" className="register-section reveal" style={{ display: 'none' }}>
                 <div className="register-bg"><div className="register-glow" /></div>
                 <div className="container">
                     <div className="register-content">

@@ -7,12 +7,15 @@
 .events-page {
     min-height: 100vh;
     background: var(--bg-primary);
+    overflow-x: hidden;
 }
 
 .events-container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 0 1.5rem 4rem;
+    padding: 0 1.5rem 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* ── HERO ────────────────────────── */
@@ -128,13 +131,76 @@
     }
 }
 
+/* ── MAIN SCHEDULE SECTION BACKGROUND ────────────── */
+.schedule-main-section {
+    position: relative;
+    background: var(--bg-primary);
+    overflow: hidden;
+    padding: 2rem 0 4rem;
+}
+
+.schedule-section-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.schedule-section-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(34, 197, 94, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    animation: gridPulse 4s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.schedule-section-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    animation: glowFloat 8s ease-in-out infinite;
+}
+
+.schedule-section-glow-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: rgba(34, 197, 94, 0.08);
+}
+
+@keyframes glowFloat {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.9;
+    }
+}
+
 /* ── DAY FILTER TABS ────────────── */
 .day-tabs {
     display: flex;
     gap: 0.75rem;
     margin-bottom: 3rem;
     overflow-x: auto;
-    padding-bottom: 0.5rem;
+    overflow-y: visible;
+    padding: 0.75rem 0 0.75rem 0;
     scrollbar-width: none;
 }
 
@@ -164,6 +230,7 @@
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(34, 197, 94, 0.2);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.1);
 }
 
 .day-tab.active {

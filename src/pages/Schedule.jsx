@@ -756,7 +756,14 @@ const Schedule = () => {
                 </div>
             </section>
 
-            <div className="events-container">
+            {/* Main Schedule Section with Background */}
+            <section className="schedule-main-section">
+                <div className="schedule-section-bg">
+                    <div className="schedule-section-grid" />
+                    <div className="schedule-section-glow schedule-section-glow-center" />
+                    <ParticleField count={40} />
+                </div>
+                <div className="events-container">
                 {/* Day Filter Tabs */}
                 <div className="day-tabs">
                     <button
@@ -928,6 +935,7 @@ const Schedule = () => {
                     </div>
                 </div>
             </div>
+            </section>
 
             <Footer />
 

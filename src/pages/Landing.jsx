@@ -9,7 +9,6 @@ import {
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import ParticleField from '../components/ParticleField'
-import StatCard from '../components/StatCard'
 import useScrollReveal from '../hooks/useScrollReveal'
 
 import './Landing.css'

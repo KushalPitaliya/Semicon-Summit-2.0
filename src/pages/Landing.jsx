@@ -132,12 +132,10 @@ const Landing = () => {
                     <div className="section-glow section-glow-center" />
                     <ParticleField count={30} />
                 </div>
-                <div className="container">
-                    <div className="stats-grid">
-                        {stats.map((stat, i) => (
-                            <StatCard key={i} value={stat.value} label={stat.label} />
-                        ))}
-                    </div>
+                <div className="stats-grid">
+                    {stats.map((stat, i) => (
+                        <StatCard key={i} value={stat.value} label={stat.label} />
+                    ))}
                 </div>
             </section>
 

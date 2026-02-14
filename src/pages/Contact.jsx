@@ -83,7 +83,7 @@ const Contact = () => {
                                     <h3>Phone</h3>
                                     <a href="tel:+916353933976">Dhruv Rupapara: +91 63539 33976</a>
                                     <br />
-                                    <a href="tel:+918320166738">Mann Bhimani: +91 83201 66738</a>
+                                    <a href="tel:+918320166738">Man Bhimani: +91 83201 66738</a>
                                 </div>
                             </div>
 

@@ -20,14 +20,14 @@ const CONVENERS = [
     },
     {
         name: "Dr. Upesh Patel",
-        role: "HOD, EC-cSPIT",
+        role: "HOD, EC-CSPIT",
         designation: null,
         image: "/images/members/1.Convener/upesh sir-2.jpeg",
         icon: <Award size={16} />
     },
     {
         name: 'Dr. Arpita Patel',
-        role: 'Associate Professor',
+        role: 'Associate Professor, EC-CSPIT',
         designation: null,
         image: "/images/members/1.Convener/arpita maam-3.jpeg",
         icon: <Star size={16} />
@@ -35,25 +35,25 @@ const CONVENERS = [
 ];
 
 const FACULTY_COORDINATORS = [
-    { name: 'Dr. Jitendra Chaudhari', role: 'Professor', designation: null, image: null, icon: <Users size={16} /> },
-    { name: 'Dr. Hardik Modi', role: 'Associate Professor', designation: null, image: "/images/members/2.faculty coordinators/7. hardik sir.WEBP", icon: <ClipboardList size={16} /> },
-    { name: 'Dr. Killol Pandya', role: 'Associate Professor', designation: null, image: "/images/members/2.faculty coordinators/2. killol sir.WEBP", icon: <Award size={16} /> },
-    { name: 'Dr. Sagar Patel', role: 'Associate Professor', designation: null, image: "/images/members/2.faculty coordinators/1. sagar sir.WEBP", icon: <Share2 size={16} /> },
-    { name: 'Dr. Dharmendra Chauhan', role: 'Associate Professor', designation: null, image: "/images/members/2.faculty coordinators/6. dharmwndra sir.WEBP", icon: <Share2 size={16} /> },
-    { name: 'Dr. Manthan Manavadaria', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/manthan sir.WEBP", icon: <Award size={16} /> },
-    { name: 'Dr. Poonam Thanki', role: 'Assistant Professor', designation: null, image: "/images/members/2.faculty coordinators/5. poonam maam.WEBP", icon: <Palette size={16} /> },
-    { name: 'Dr. Brijesh Kundaliya', role: 'Assistant Professor', designation: null, image: "/images/members/2.faculty coordinators/8. brijesh sir.jpeg", icon: <Monitor size={16} /> },
-    { name: 'Dr. Miral Desai', role: 'Assistant Professor', designation: null, image: "/images/members/2.faculty coordinators/3. miral sir.WEBP", icon: <Monitor size={16} /> },
-    { name: 'Dr. Dhara Patel', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/dhara patel.WEBP", icon: <Palette size={16} /> },
-    { name: 'Dr. Kanwar Preet Kaur', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/kanwar maam.WEBP", icon: <MessageSquare size={16} /> },
-    { name: 'Dr. Tigmashu Patel', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/tigmanshu sir.WEBP", icon: <Share2 size={16} /> },
-    { name: 'Prof. Vishal Shah', role: 'Assistant Professor', designation: null, image: "/images/members/2.faculty coordinators/10. vishal sir.WEBP", icon: <DollarSign size={16} /> },
-    { name: 'Dr. Mayur Makwana', role: 'Assistant Professor', designation: null, image: null, icon: <ClipboardList size={16} /> },
-    { name: 'Prof. Akshaya Patel', role: 'Assistant Professor', designation: null, image: null, icon: <MessageSquare size={16} /> },
-    { name: 'Prof. Dhara Pomal', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/dhara pomal.jpg", icon: <Palette size={16} /> },
-    { name: 'Prof. Dhruvika Sonar', role: 'Assistant Professor', designation: null, image: "/images/members/3.faculty co-coordinators/dhruvika maam.jpeg", icon: <Video size={16} /> },
-    { name: 'Prof. Niral Yagnik', role: 'Assistant Professor', designation: null, image: null, icon: <ClipboardList size={16} /> },
-    { name: 'Prof. Parth Chauhan', role: 'Assistant Professor', designation: null, image: null, icon: <Award size={16} /> }
+    { name: 'Dr. Jitendra Chaudhari', role: 'Professor, EC-CSPIT', designation: null, image: null, icon: <Users size={16} /> },
+    { name: 'Dr. Hardik Modi', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/7. hardik sir.WEBP", icon: <ClipboardList size={16} /> },
+    { name: 'Dr. Killol Pandya', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/2. killol sir.WEBP", icon: <Award size={16} /> },
+    { name: 'Dr. Sagar Patel', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/1. sagar sir.WEBP", icon: <Share2 size={16} /> },
+    { name: 'Dr. Dharmendra Chauhan', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/6. dharmwndra sir.WEBP", icon: <Share2 size={16} /> },
+    { name: 'Dr. Manthan Manavadaria', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/manthan sir.WEBP", icon: <Award size={16} /> },
+    { name: 'Dr. Poonam Thanki', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/5. poonam maam.WEBP", icon: <Palette size={16} /> },
+    { name: 'Dr. Brijesh Kundaliya', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/8. brijesh sir.jpeg", icon: <Monitor size={16} /> },
+    { name: 'Dr. Miral Desai', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/3. miral sir.WEBP", icon: <Monitor size={16} /> },
+    { name: 'Dr. Dhara Patel', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/dhara patel.WEBP", icon: <Palette size={16} /> },
+    { name: 'Dr. Kanwar Preet Kaur', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/kanwar maam.WEBP", icon: <MessageSquare size={16} /> },
+    { name: 'Dr. Tigmashu Patel', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/tigmanshu sir.WEBP", icon: <Share2 size={16} /> },
+    { name: 'Prof. Vishal Shah', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/10. vishal sir.WEBP", icon: <DollarSign size={16} /> },
+    { name: 'Dr. Mayur Makwana', role: 'Assistant Professor, EC-CSPIT', designation: null, image: null, icon: <ClipboardList size={16} /> },
+    { name: 'Prof. Akshaya Patel', role: 'Assistant Professor, EC-CSPIT', designation: null, image: null, icon: <MessageSquare size={16} /> },
+    { name: 'Prof. Dhara Pomal', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/dhara pomal.jpg", icon: <Palette size={16} /> },
+    { name: 'Prof. Dhruvika Sonar', role: 'Assistant Professor, EC-CSPIT', designation: null, image: "/images/members/3.faculty co-coordinators/dhruvika maam.jpeg", icon: <Video size={16} /> },
+    { name: 'Prof. Niral Yagnik', role: 'Assistant Professor, EC-CSPIT', designation: null, image: null, icon: <ClipboardList size={16} /> },
+    { name: 'Prof. Parth Chauhan', role: 'Assistant Professor, EC-CSPIT', designation: null, image: null, icon: <Award size={16} /> }
 ];
 
 const CORE_COMMITTEE = [

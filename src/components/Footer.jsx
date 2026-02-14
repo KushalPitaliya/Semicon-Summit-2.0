@@ -79,11 +79,11 @@ const Footer = () => {
                             </li>
                             <li>
                                 <Phone size={18} />
-                                <span>Dhruv: +91 63539 33976</span>
+                                <span>Dhruv Rupapara: +91 63539 33976</span>
                             </li>
                             <li>
                                 <Phone size={18} />
-                                <span>Mann: +91 83201 66738</span>
+                                <span>Man Bhimani: +91 83201 66738</span>
                             </li>
                             <li>
                                 <MapPin size={18} />

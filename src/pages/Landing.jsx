@@ -126,15 +126,18 @@ const Landing = () => {
             </section>
 
             {/* ====== STATS ====== */}
-            <section className="stats-section reveal">
+            <section className="landing-stats reveal">
                 <div className="section-bg">
                     <div className="section-grid" />
                     <div className="section-glow section-glow-center" />
                     <ParticleField count={30} />
                 </div>
-                <div className="stats-grid">
+                <div className="landing-stats-row">
                     {stats.map((stat, i) => (
-                        <StatCard key={i} value={stat.value} label={stat.label} />
+                        <div key={i} className="landing-stat-item">
+                            <span className="landing-stat-num text-gradient">{stat.value}</span>
+                            <span className="landing-stat-text">{stat.label}</span>
+                        </div>
                     ))}
                 </div>
             </section>

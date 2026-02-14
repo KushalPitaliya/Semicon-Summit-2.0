@@ -609,36 +609,34 @@
 }
 
 /* ====== STATS SECTION ====== */
-.stats-section {
-    padding: 3.5rem 0;
+.landing-stats {
+    padding: 3.5rem 2rem;
     background: var(--bg-primary);
     position: relative;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
 }
 
-.stats-section .stats-grid {
+.landing-stats-row {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0;
-    width: 90%;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
     max-width: 1000px;
+    margin: 0 auto;
     position: relative;
     z-index: 1;
 }
 
-.stats-section .stat-card {
+.landing-stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 1.5rem 0.75rem;
+    padding: 1.5rem 0.5rem;
     position: relative;
 }
 
-.stats-section .stat-card:not(:last-child)::after {
+.landing-stat-item:not(:last-child)::after {
     content: '';
     position: absolute;
     right: 0;
@@ -649,17 +647,19 @@
     background: linear-gradient(180deg, transparent, rgba(34, 197, 94, 0.3), transparent);
 }
 
-.stats-section .stat-value {
+.landing-stat-num {
     display: block;
     font-family: var(--font-display);
     font-size: 2.25rem;
     font-weight: 800;
     margin-bottom: 0.25rem;
+    line-height: 1.2;
 }
 
-.stats-section .stat-label {
+.landing-stat-text {
     font-size: 0.875rem;
     color: var(--text-tertiary);
+    line-height: 1.4;
 }
 
 
@@ -1218,12 +1218,12 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .stats-section .stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .landing-stats-row {
+        grid-template-columns: repeat(3, 1fr);
         max-width: 500px;
     }
 
-    .stats-section .stat-card:nth-child(3)::after {
+    .landing-stat-item:nth-child(3)::after {
         display: none;
     }
 
@@ -1293,12 +1293,12 @@
         grid-template-columns: 1fr;
     }
 
-    .stats-section .stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .landing-stats-row {
+        grid-template-columns: repeat(3, 1fr);
         max-width: 450px;
     }
 
-    .stats-section .stat-card {
+    .landing-stat-item {
         padding: 1.25rem 0.5rem;
     }
 
@@ -1369,24 +1369,24 @@
         font-size: 0.875rem;
     }
     
-    .stats-section .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .landing-stats-row {
+        grid-template-columns: repeat(2, 1fr);
         max-width: 300px;
     }
     
-    .stats-section .stat-card {
+    .landing-stat-item {
         padding: 1rem 0.5rem;
     }
 
-    .stats-section .stat-card::after {
-        display: none;
+    .landing-stat-item::after {
+        display: none !important;
     }
     
-    .stat-value {
+    .landing-stat-num {
         font-size: 1.75rem;
     }
     
-    .stat-label {
+    .landing-stat-text {
         font-size: 0.75rem;
     }
 

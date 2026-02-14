@@ -1,7 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const logger = require('../utils/logger');
 
+// Validate JWT_SECRET in production
 const JWT_SECRET = process.env.JWT_SECRET || 'semiconductor_summit_2026_secret_key';
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+    logger.error('CRITICAL: JWT_SECRET is not set in production environment!');
+    throw new Error('JWT_SECRET must be set in production');
+}
+
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 // Generate JWT token
@@ -44,7 +51,7 @@ const authenticate = async (req, res, next) => {
             return res.status(401).json({ error: 'Token is not valid' });
         }
     } catch (error) {
-        console.error('Auth middleware error:', error);
+        logger.error('Auth middleware error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 };

@@ -1,9 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+
+// Utilities
+const logger = require('./utils/logger');
 
 // MongoDB connection
 const connectDB = require('./config/database');
@@ -32,16 +38,48 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 connectDB();
 
-// Middleware
+// ==========================================
+// SECURITY MIDDLEWARE
+// ==========================================
+
+// Security headers - Protect against XSS, clickjacking, etc.
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP for API
+    crossOriginEmbedderPolicy: false
+}));
+
+// Sanitize data against NoSQL injection
+app.use(mongoSanitize());
+
+// CORS configuration
 app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
 }));
 
+// Rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // 5 requests per window per IP
+    message: { error: 'Too many authentication attempts, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+// Rate limiting for general API
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // 100 requests per window per IP
+    message: { error: 'Too many requests, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
 // Webhook routes (must be before express.json() to handle raw body)
 app.use('/api/webhooks', webhookRoutes);
 
-app.use(express.json());
+// Body parsing with size limit
+app.use(express.json({ limit: '10mb' }));
 
 // Payment verification routes (after express.json so req.body is parsed)
 app.use('/api', paymentVerificationRoutes);
@@ -62,7 +100,8 @@ const receiptsDir = path.join(uploadsDir, 'receipts');
 // ==========================================
 // MOUNT ROUTE FILES
 // ==========================================
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes); // Rate limit auth routes
+app.use('/api', apiLimiter); // Rate limit all other API routes
 app.use('/api/users', userRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/events', eventRoutes);
@@ -138,9 +177,9 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             const dataBuffer = fs.readFileSync(pdfFile.path);
             const pdfData = await pdfParse(dataBuffer);
             pdfText = pdfData.text;
-            console.log(`📝 PDF text extracted (${pdfText.length} characters)`);
+            logger.debug('PDF text extracted', { length: pdfText.length });
         } catch (pdfError) {
-            console.error('PDF parsing error:', pdfError);
+            logger.error('PDF parsing error:', pdfError);
             return res.status(400).json({ error: 'Unable to read PDF. Please ensure you uploaded a valid PDF receipt.' });
         }
 
@@ -175,8 +214,8 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
 
         const emailSent = await sendCredentialsEmail(user, password);
 
-        console.log(`✅ User registered & auto-approved: ${user.name} (${user.email})`);
-        console.log(`📧 Credentials email sent: ${emailSent}`);
+        logger.info('User registered and auto-approved', { userId: user._id, email: user.email });
+        logger.info('Credentials email sent', { success: emailSent });
 
         res.status(201).json({
             message: 'Registration successful! Check your email for login credentials.',
@@ -189,7 +228,7 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             }
         });
     } catch (error) {
-        console.error('Registration error:', error);
+        logger.error('Registration error:', error);
         res.status(500).json({ error: 'Registration failed. Please try again.' });
     }
 });
@@ -203,7 +242,7 @@ app.get('/api/admin/pending', async (req, res) => {
             .sort({ createdAt: -1 });
         res.json(pending);
     } catch (error) {
-        console.error('Error fetching pending:', error);
+        logger.error('Error fetching pending:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -230,7 +269,7 @@ app.post('/api/admin/verify/:id', async (req, res) => {
 
         const emailSent = await sendCredentialsEmail(user, password);
 
-        console.log(`✅ User verified: ${user.name} (${user.email})`);
+        logger.info('User verified by admin', { userId: user._id, email: user.email });
         res.json({
             message: 'User verified successfully',
             user,
@@ -238,7 +277,7 @@ app.post('/api/admin/verify/:id', async (req, res) => {
             generatedPassword: password
         });
     } catch (error) {
-        console.error('Verification error:', error);
+        logger.error('Verification error:', error);
         res.status(500).json({ error: 'Verification failed: ' + error.message });
     }
 });
@@ -266,10 +305,10 @@ app.post('/api/admin/reject/:id', async (req, res) => {
 
         await sendRejectionEmail(user, reason);
 
-        console.log(`❌ User rejected: ${user.name} (${user.email})`);
+        logger.info('User rejected by admin', { userId: user._id, email: user.email, reason });
         res.json({ message: 'User rejected', user });
     } catch (error) {
-        console.error('Rejection error:', error);
+        logger.error('Rejection error:', error);
         res.status(500).json({ error: 'Rejection failed: ' + error.message });
     }
 });
@@ -290,7 +329,7 @@ app.post('/api/seed', async (req, res) => {
             if (!exists) {
                 const user = new User(userData);
                 await user.save();
-                console.log(`Created user: ${userData.email}`);
+                logger.info('Created demo user', { email: userData.email });
             }
         }
 
@@ -306,13 +345,13 @@ app.post('/api/seed', async (req, res) => {
             if (!exists) {
                 const event = new Event(eventData);
                 await event.save();
-                console.log(`Created event: ${eventData.title}`);
+                logger.info('Created demo event', { title: eventData.title });
             }
         }
 
         res.json({ success: true, message: 'Demo data seeded successfully' });
     } catch (error) {
-        console.error('Seed error:', error);
+        logger.error('Seed error:', error);
         res.status(500).json({ error: 'Seed failed: ' + error.message });
     }
 });
@@ -335,8 +374,8 @@ app.get('/api/health', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📁 Uploads directory: ${uploadsDir}`);
-    console.log(`🗄️  Database: MongoDB`);
-    console.log(`☁️  Cloudinary: ${process.env.CLOUDINARY_CLOUD_NAME ? 'Configured' : 'Not configured (using local storage)'}`);
+    logger.info(`Server running on http://localhost:${PORT}`);
+    logger.info(`Uploads directory: ${uploadsDir}`);
+    logger.info('Database: MongoDB');
+    logger.info(`Cloudinary: ${process.env.CLOUDINARY_CLOUD_NAME ? 'Configured' : 'Not configured'}`);
 });

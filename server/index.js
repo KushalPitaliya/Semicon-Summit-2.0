@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const pdfParse = require('pdf-parse');
 
 // Utilities
 const logger = require('./utils/logger');
@@ -209,7 +210,6 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
         // Extract text from PDF and verify payment ID
         let pdfText = '';
         try {
-            const pdfParse = require('pdf-parse');
             const dataBuffer = fs.readFileSync(pdfFile.path);
             const pdfData = await pdfParse(dataBuffer);
             pdfText = pdfData.text;
@@ -249,10 +249,16 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
 
         await user.save();
 
-        const emailSent = await sendCredentialsEmail(user, password);
+        // Send email asynchronously (don't block response)
+        sendCredentialsEmail(user, password)
+            .then((emailSent) => {
+                logger.info('Credentials email sent', { success: emailSent, userId: user._id });
+            })
+            .catch((emailError) => {
+                logger.error('Email sending failed (async)', { error: emailError, userId: user._id });
+            });
 
         logger.info('User registered and auto-approved', { userId: user._id, email: user.email });
-        logger.info('Credentials email sent', { success: emailSent });
 
         res.status(201).json({
             message: 'Registration successful! Check your email for login credentials.',
@@ -305,13 +311,19 @@ app.post('/api/admin/verify/:id', async (req, res) => {
 
         await user.save();
 
-        const emailSent = await sendCredentialsEmail(user, password);
+        // Send email asynchronously (don't block response)
+        sendCredentialsEmail(user, password)
+            .then((emailSent) => {
+                logger.info('Credentials email sent', { success: emailSent, userId: user._id });
+            })
+            .catch((emailError) => {
+                logger.error('Email sending failed (async)', { error: emailError, userId: user._id });
+            });
 
         logger.info('User verified by admin', { userId: user._id, email: user.email });
         res.json({
             message: 'User verified successfully',
             user,
-            emailSent,
             generatedPassword: password
         });
     } catch (error) {

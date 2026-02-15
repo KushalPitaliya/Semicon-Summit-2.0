@@ -92,13 +92,19 @@ router.post('/:id/reset-password', authenticate, authorize('faculty'), async (re
         user.generatedPassword = newPassword;
         await user.save();
 
-        const emailSent = await sendPasswordResetEmail(user, newPassword);
+        // Send email asynchronously (don't block response)
+        sendPasswordResetEmail(user, newPassword)
+            .then((emailSent) => {
+                console.log(`📧 Password reset email sent: ${emailSent} (${user.email})`);
+            })
+            .catch((emailError) => {
+                console.error('Password reset email failed (async):', emailError);
+            });
 
         console.log(`🔐 Password reset for: ${user.name} (${user.email})`);
         res.json({
             success: true,
             message: 'Password reset successfully',
-            emailSent,
             newPassword
         });
     } catch (error) {

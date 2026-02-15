@@ -108,12 +108,12 @@ const Register = () => {
             data.append('selectedEvents', JSON.stringify(formData.selectedEvents));
 
             // Show progress messages
-            setTimeout(() => setLoadingMessage('Verifying payment receipt...'), 1000);
-            setTimeout(() => setLoadingMessage('Processing your registration...'), 3000);
+            setTimeout(() => setLoadingMessage('Verifying payment receipt...'), 500);
+            setTimeout(() => setLoadingMessage('Finalizing your registration...'), 2000);
 
             const response = await api.post('/register', data, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                timeout: 60000 // 60 second timeout
+                timeout: 30000 // 30 second timeout (reduced from 60s)
             });
 
             setLoadingMessage('Registration complete!');
@@ -216,7 +216,7 @@ const Register = () => {
                         <div className="loading-card">
                             <div className="loading-spinner"></div>
                             <h3>{loadingMessage}</h3>
-                            <p>Please wait, this may take up to 30 seconds...</p>
+                            <p>Please wait, this typically takes 10-15 seconds...</p>
                             <small>⚠️ Do not close this page or press back</small>
                         </div>
                     </div>

@@ -24,6 +24,13 @@ const CONVENERS = [
         designation: null,
         image: "/images/members/1.Convener/upesh sir-2.jpeg",
         icon: <Award size={16} />
+    },
+    {
+        name: 'Dr. Arpita Patel',
+        role: 'Associate Professor, EC-CSPIT',
+        designation: null,
+        image: "/images/members/1.Convener/arpita maam-3.jpeg",
+        icon: <Star size={16} />
     }
 ];
 

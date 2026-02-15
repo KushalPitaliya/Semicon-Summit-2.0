@@ -21,11 +21,11 @@ const About = () => {
         { id: 8, title: 'Summit Day 1 - Session 8', image: '/images/Glimps/7.jpeg' },
         { id: 9, title: 'Summit Day 1 - Session 9', image: '/images/Glimps/8.jpeg' },
         { id: 10, title: 'Summit Day 1 - Session 10', image: '/images/Glimps/9.jpeg' },
-        // Day 2 images - 4 images (removed 2 photos)
-        { id: 11, title: 'Summit Day 2 - Highlights 3', image: '/images/Glimps/summit day 2 _3.jpg' },
-        { id: 12, title: 'Summit Day 2 - Highlights 4', image: '/images/Glimps/summit day 2 _4.jpg' },
-        { id: 13, title: 'Summit Day 2 - Highlights 5', image: '/images/Glimps/summit day 2 _5.jpg' },
-        { id: 14, title: 'Summit Day 2 - Highlights 6', image: '/images/Glimps/summit day 2 _6.jpeg' }
+        // Day 2 images - 4 images
+        { id: 11, title: 'Summit Day 2 - Highlights 2', image: '/images/Glimps/summit day 2 _2.jpg' },
+        { id: 12, title: 'Summit Day 2 - Highlights 3', image: '/images/Glimps/summit day 2 _3.jpg' },
+        { id: 13, title: 'Summit Day 2 - Highlights 4', image: '/images/Glimps/summit day 2 _4.jpg' },
+        { id: 14, title: 'Summit Day 2 - Highlights 5', image: '/images/Glimps/summit day 2 _5.jpg' }
     ];
 
     return (

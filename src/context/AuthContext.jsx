@@ -44,11 +44,16 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     const login = async (email, password) => {
-        const userData = await authAPI.login(email, password)
-        // userData now includes a JWT token from the backend
-        localStorage.setItem('summitUser', JSON.stringify(userData))
-        setUser(userData)
-        return userData
+        try {
+            const userData = await authAPI.login(email, password)
+            // userData now includes a JWT token from the backend
+            localStorage.setItem('summitUser', JSON.stringify(userData))
+            setUser(userData)
+            return { success: true, user: userData }
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || 'Invalid email or password'
+            return { success: false, error: errorMessage }
+        }
     }
 
     const logout = () => {

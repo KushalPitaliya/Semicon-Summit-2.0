@@ -69,6 +69,7 @@ const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:5174',
     'https://semicon-summit-2-0.vercel.app',
+    'https://semiconsummit.vercel.app',
     process.env.CORS_ORIGIN
 ].filter(Boolean);
 

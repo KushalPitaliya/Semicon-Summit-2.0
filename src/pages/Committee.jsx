@@ -24,7 +24,10 @@ const CONVENERS = [
         designation: null,
         image: "/images/members/1.Convener/upesh sir-2.jpeg",
         icon: <Award size={16} />
-    },
+    }
+];
+
+const COORDINATORS = [
     {
         name: 'Dr. Arpita Patel',
         role: 'Associate Professor, EC-CSPIT',
@@ -34,7 +37,7 @@ const CONVENERS = [
     }
 ];
 
-const FACULTY_COORDINATORS = [
+const FACULTY_CO_COORDINATORS = [
     { name: 'Dr. Jitendra Chaudhari', role: 'Professor, EC-CSPIT', designation: null, image: null, icon: <Users size={16} /> },
     { name: 'Dr. Hardik Modi', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/7. hardik sir.WEBP", icon: <ClipboardList size={16} /> },
     { name: 'Dr. Killol Pandya', role: 'Associate Professor, EC-CSPIT', designation: null, image: "/images/members/2.faculty coordinators/2. killol sir.WEBP", icon: <Award size={16} /> },
@@ -141,7 +144,8 @@ const Committee = () => {
 
     const tabs = [
         'Conveners',
-        'Faculty Coordinators',
+        'Coordinator',
+        'Faculty Co-Coordinators',
         'Core Committee',
         'Student Coordinators'
     ];
@@ -149,7 +153,8 @@ const Committee = () => {
     const getActiveData = () => {
         switch (activeTab) {
             case 'Conveners': return CONVENERS;
-            case 'Faculty Coordinators': return FACULTY_COORDINATORS;
+            case 'Coordinator': return COORDINATORS;
+            case 'Faculty Co-Coordinators': return FACULTY_CO_COORDINATORS;
             case 'Core Committee': return CORE_COMMITTEE;
             case 'Student Coordinators': return STUDENT_COORDINATORS;
             default: return [];

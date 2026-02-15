@@ -98,6 +98,7 @@ router.post('/forgot-password', async (req, res) => {
 
         const newPassword = generatePassword();
         user.password = newPassword;
+        user.generatedPassword = newPassword; // Store plain password for faculty viewing
         await user.save();
 
         await sendPasswordResetEmail(user, newPassword);

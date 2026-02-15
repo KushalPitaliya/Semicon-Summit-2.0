@@ -11,3 +11,5 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: CORS_ORIGIN
+        value: https://semicon-summit-2-0.vercel.app

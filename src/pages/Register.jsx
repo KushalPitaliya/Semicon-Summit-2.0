@@ -35,6 +35,7 @@ const Register = () => {
     const [loadingMessage, setLoadingMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [generatedPassword, setGeneratedPassword] = useState('');
 
     const [formData, setFormData] = useState({
         name: '',
@@ -116,6 +117,11 @@ const Register = () => {
                 timeout: 30000 // 30 second timeout (reduced from 60s)
             });
 
+            // Store the generated password from response
+            if (response.data.password) {
+                setGeneratedPassword(response.data.password);
+            }
+
             setLoadingMessage('Registration complete!');
             setTimeout(() => setSuccess(true), 500);
         } catch (err) {
@@ -146,18 +152,25 @@ const Register = () => {
                     </div>
                     <h1>Registration Successful! 🎉</h1>
                     <p className="success-message">
-                        Your registration has been completed and approved! Check your email for login credentials.
-                        If you don't see the email, please check your spam folder.
+                        Your account has been created! Use the credentials below to login.
+                        We've also sent a confirmation email (check spam folder if not in inbox).
                     </p>
                     <div className="success-info">
                         <div className="info-item">
-                            <Mail size={20} />
-                            <span>Confirmation sent to: <strong>{formData.email}</strong></span>
+                            <User size={20} />
+                            <span>Email: <strong>{formData.email}</strong></span>
+                        </div>
+                        <div className="info-item" style={{ background: 'rgba(34, 197, 94, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+                            <Mail size={20} style={{ color: '#22c55e' }} />
+                            <span>Password: <code style={{ background: '#fff', color: '#0f172a', padding: '4px 8px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '16px', fontWeight: 'bold' }}>{generatedPassword}</code></span>
                         </div>
                         <div className="info-item">
                             <CreditCard size={20} />
                             <span>Payment ID: <strong>{formData.paymentId}</strong></span>
                         </div>
+                    </div>
+                    <div style={{ background: 'rgba(251, 191, 36, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(251, 191, 36, 0.3)', marginTop: '20px', marginBottom: '20px' }}>
+                        <p style={{ margin: 0, fontSize: '14px', color: '#fbbf24' }}>⚠️ <strong>Important:</strong> Save your password now. You can also use "Forgot Password" on the login page if needed.</p>
                     </div>
                     <Link to="/login" className="btn btn-primary">
                         Go to Login

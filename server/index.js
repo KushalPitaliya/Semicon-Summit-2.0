@@ -284,7 +284,8 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
                 email: user.email,
                 phone: user.phone,
                 verificationStatus: user.verificationStatus
-            }
+            },
+            password: password
         });
     } catch (error) {
         logger.error('Registration error:', error);

@@ -45,7 +45,7 @@ const Landing = () => {
         { value: '12', label: 'Curated Events' },
         { value: '3', label: 'Days of Learning' },
         { value: '10+', label: 'Internship Opportunities' },
-        { value: '₹299', label: 'Registration Fee' }
+        { value: '₹299', label: 'Registration Fee', subtitle: 'Included all events' }
     ]
 
     const features = [
@@ -136,6 +136,7 @@ const Landing = () => {
                         <div key={i} className="landing-stat-item">
                             <span className="landing-stat-num text-gradient">{stat.value}</span>
                             <span className="landing-stat-text">{stat.label}</span>
+                            {stat.subtitle && <span className="landing-stat-subtitle">{stat.subtitle}</span>}
                         </div>
                     ))}
                 </div>

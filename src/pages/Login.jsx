@@ -81,9 +81,11 @@ const Login = () => {
                 <div className="login-card">
                     <div className="login-header">
                         <Link to="/" className="login-logo">
-                            <div className="logo-icon">
-                                <Cpu size={28} />
-                            </div>
+                            <img 
+                                src="/images/Logo/Logo of SS.png" 
+                                alt="Semiconductor Summit 2.0" 
+                                className="login-logo-img"
+                            />
                             <div className="logo-text">
                                 <span className="logo-title">Semiconductor</span>
                                 <span className="logo-subtitle">Summit 2.0</span>

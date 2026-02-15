@@ -143,21 +143,16 @@
     transform: scale(1.03);
 }
 
-.login-logo .logo-icon {
-    width: 48px;
+.login-logo-img {
     height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-lg);
-    color: #000;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-    transition: box-shadow 0.3s ease;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+    transition: filter 0.3s ease;
 }
 
-.login-logo:hover .logo-icon {
-    box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+.login-logo:hover .login-logo-img {
+    filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.5));
 }
 
 .login-logo .logo-text {
@@ -424,6 +419,10 @@
     .login-logo {
         flex-direction: column;
         text-align: center;
+    }
+
+    .login-logo-img {
+        height: 40px;
     }
 
     .login-logo .logo-text {

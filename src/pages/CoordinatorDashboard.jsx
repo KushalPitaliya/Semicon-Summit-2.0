@@ -31,7 +31,7 @@ const CoordinatorDashboard = () => {
         try {
             const [annRes, photosRes, docsRes] = await Promise.all([
                 api.get('/announcements'),
-                api.get('/uploads/photos'),
+                api.get('/gallery'),
                 api.get('/uploads/documents')
             ])
 
@@ -39,11 +39,11 @@ const CoordinatorDashboard = () => {
 
             // Transform API data to match UI expected format
             const photos = (photosRes.data || []).map(p => ({
-                id: p.id,
-                name: p.originalName || p.filename,
-                size: formatFileSize(p.size),
+                id: p._id,
+                name: p.title || 'Untitled',
+                size: formatFileSize(p.bytes || 0),
                 preview: p.url, // URL from server
-                uploaded: new Date(p.uploadedAt).toLocaleDateString()
+                uploaded: new Date(p.createdAt).toLocaleDateString()
             }))
 
             const docs = (docsRes.data || []).map(d => ({
@@ -69,15 +69,19 @@ const CoordinatorDashboard = () => {
         const files = Array.from(e.target.files)
         if (files.length > 0) {
             try {
-                // Upload each file
-                // Note: Ideally we'd optimize API to accept multiple, but looping works for now
-                for (const file of files) {
-                    const formData = new FormData()
-                    formData.append('photos', file)
-                    await api.post('/uploads/photos', formData, {
-                        headers: { 'Content-Type': 'multipart/form-data' }
-                    })
-                }
+                // Upload all files in a single request to /gallery endpoint
+                const formData = new FormData()
+                formData.append('title', 'Gallery Upload')
+                formData.append('description', `Uploaded by ${user?.name || 'Coordinator'}`)
+                formData.append('category', 'event')
+                
+                files.forEach(file => {
+                    formData.append('images', file)
+                })
+
+                await api.post('/gallery', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                })
 
                 setUploadStatus({ type: 'success', message: `${files.length} photo(s) uploaded successfully` })
                 fetchData() // Refresh list
@@ -135,14 +139,18 @@ const CoordinatorDashboard = () => {
         try {
             if (type === 'announcements') {
                 await api.delete(`/announcements/${id}`)
+            } else if (type === 'photos') {
+                // Gallery endpoint - only faculty can delete
+                alert('Only faculty members can delete gallery photos.')
+                return
             } else {
-                // type is 'photos' or 'documents'
+                // type is 'documents'
                 await api.delete(`/uploads/${type}/${id}`)
             }
             fetchData() // Refresh
         } catch (err) {
             console.error('Delete error:', err)
-            alert('Failed to delete item')
+            alert('Failed to delete item: ' + (err.response?.data?.error || err.message))
         }
     }
 

@@ -243,6 +243,7 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
             razorpayPaymentId: normalizedPaymentId,
             paymentScreenshot: `/uploads/receipts/${pdfFile.filename}`,
             password: password,
+            generatedPassword: password,
             verifiedAt: new Date()
         });
 
@@ -297,6 +298,7 @@ app.post('/api/admin/verify/:id', async (req, res) => {
 
         const password = generatePassword();
         user.password = password;
+        user.generatedPassword = password;
         user.verificationStatus = 'approved';
         user.paymentStatus = 'completed';
         user.verifiedAt = new Date();

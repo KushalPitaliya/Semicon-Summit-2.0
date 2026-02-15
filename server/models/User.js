@@ -19,7 +19,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         minlength: 6
     },
-    // plainPassword field removed for security - never store plain passwords
+    generatedPassword: {
+        type: String
+    },
     role: {
         type: String,
         enum: ['participant', 'coordinator', 'faculty'],
@@ -124,7 +126,6 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 userSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;
-    delete user.plainPassword; // Remove if still in DB from old records
     return user;
 };
 

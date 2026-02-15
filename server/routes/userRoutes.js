@@ -89,6 +89,7 @@ router.post('/:id/reset-password', authenticate, authorize('faculty'), async (re
 
         const newPassword = generatePassword();
         user.password = newPassword;
+        user.generatedPassword = newPassword;
         await user.save();
 
         const emailSent = await sendPasswordResetEmail(user, newPassword);

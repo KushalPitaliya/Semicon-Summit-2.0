@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-    Users, Download, Filter, Search, LogOut,
-    CheckCircle, XCircle, Eye, Clock, Image,
+    Users, Download, Filter, Search, LogOut, Image,
     AlertTriangle, X, Key, Trash2, UserCog, Upload, ImagePlus, Bell
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -14,16 +13,14 @@ import './Dashboard.css'
 const FacultyDashboard = () => {
     const { user, logout } = useAuth()
     const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState('pending')
+    const [activeTab, setActiveTab] = useState('registrations')
     const [participants, setParticipants] = useState([])
-    const [pendingVerifications, setPendingVerifications] = useState([])
     const [filteredParticipants, setFilteredParticipants] = useState([])
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedEvent, setSelectedEvent] = useState('all')
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState(null)
-    const [previewImage, setPreviewImage] = useState(null)
-    const [rejectModal, setRejectModal] = useState({ open: false, user: null, reason: '' })
+
 
     // User Management State
     const [allUsers, setAllUsers] = useState([])
@@ -54,10 +51,6 @@ const FacultyDashboard = () => {
     const fetchData = async () => {
         setLoading(true)
         try {
-            // Fetch pending verifications
-            const pendingRes = await api.get('/admin/pending')
-            setPendingVerifications(pendingRes.data)
-
             // Fetch all verified participants
             const participantsRes = await api.get('/participants')
             setParticipants(participantsRes.data)
@@ -109,44 +102,7 @@ const FacultyDashboard = () => {
         navigate('/', { replace: true })
     }
 
-    const handleVerify = async (userId) => {
-        setActionLoading(userId)
-        try {
-            const response = await api.post(`/admin/verify/${userId}`, {
-                verifierId: user?._id
-            })
 
-            // Show success with generated password
-            alert(`✅ User verified!\n\nGenerated password: ${response.data.generatedPassword}\n\nEmail ${response.data.emailSent ? 'sent successfully!' : 'sending failed - share password manually.'}`)
-
-            // Refresh data
-            await fetchData()
-        } catch (error) {
-            alert('Error verifying user: ' + (error.response?.data?.error || error.message))
-        } finally {
-            setActionLoading(null)
-        }
-    }
-
-    const handleReject = async () => {
-        if (!rejectModal.user) return
-
-        setActionLoading(rejectModal.user._id)
-        try {
-            await api.post(`/admin/reject/${rejectModal.user._id}`, {
-                reason: rejectModal.reason,
-                verifierId: user?._id
-            })
-
-            alert('User registration rejected.')
-            setRejectModal({ open: false, user: null, reason: '' })
-            await fetchData()
-        } catch (error) {
-            alert('Error rejecting user: ' + (error.response?.data?.error || error.message))
-        } finally {
-            setActionLoading(null)
-        }
-    }
 
     const handleAddAnnouncement = async () => {
         if (!newAnnouncement.title || !newAnnouncement.content) return
@@ -191,6 +147,7 @@ const FacultyDashboard = () => {
             'S.No': index + 1,
             'Name': p.name || '',
             'Email': p.email || '',
+            'Password': p.generatedPassword || 'N/A',
             'Phone': p.phone || '',
             'College': p.college || '',
             'Selected Events': (p.selectedEvents || []).join(', '),
@@ -208,6 +165,7 @@ const FacultyDashboard = () => {
             { wch: 6 },   // S.No
             { wch: 25 },  // Name
             { wch: 30 },  // Email
+            { wch: 12 },  // Password
             { wch: 15 },  // Phone
             { wch: 30 },  // College
             { wch: 40 },  // Events
@@ -343,16 +301,6 @@ const FacultyDashboard = () => {
 
                 <nav className="sidebar-nav">
                     <button
-                        className={`nav-item ${activeTab === 'pending' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('pending')}
-                    >
-                        <Clock size={20} />
-                        <span>Pending Verification</span>
-                        {pendingVerifications.length > 0 && (
-                            <span className="nav-badge">{pendingVerifications.length}</span>
-                        )}
-                    </button>
-                    <button
                         className={`nav-item ${activeTab === 'registrations' ? 'active' : ''}`}
                         onClick={() => setActiveTab('registrations')}
                     >
@@ -396,9 +344,9 @@ const FacultyDashboard = () => {
                     <div className="header-content">
                         <h1>Welcome, {user?.name || 'Faculty'}!</h1>
                         <p>Faculty Dashboard - {
-                            activeTab === 'pending' ? 'Payment Verification' :
-                                activeTab === 'registrations' ? 'View All Registrations' :
-                                    activeTab === 'users' ? 'User Management' :
+                            activeTab === 'registrations' ? 'View All Registrations' :
+                                activeTab === 'users' ? 'User Management' :
+                                    activeTab === 'announcements' ? 'Announcements' :
                                         'Gallery Management'
                         }</p>
                     </div>
@@ -408,118 +356,6 @@ const FacultyDashboard = () => {
                 </header>
 
                 <div className="dashboard-content">
-                    {/* Pending Verifications Tab */}
-                    {activeTab === 'pending' && (
-                        <section className="dashboard-section">
-                            <div className="section-header">
-                                <h2><Clock size={24} /> Pending Verifications</h2>
-                                <span className="pending-count">{pendingVerifications.length} awaiting review</span>
-                            </div>
-
-                            {loading ? (
-                                <div className="loading-state">
-                                    <div className="loading-spinner-small"></div>
-                                    <span>Loading pending verifications...</span>
-                                </div>
-                            ) : pendingVerifications.length === 0 ? (
-                                <div className="empty-state card">
-                                    <CheckCircle size={48} />
-                                    <h3>All Caught Up!</h3>
-                                    <p>No pending verifications at the moment.</p>
-                                </div>
-                            ) : (
-                                <div className="verification-grid">
-                                    {pendingVerifications.map(pendingUser => (
-                                        <div key={pendingUser._id} className="verification-card card">
-                                            <div className="verification-header">
-                                                <div className="user-info">
-                                                    <h3>{pendingUser.name}</h3>
-                                                    <span className="email">{pendingUser.email}</span>
-                                                </div>
-                                                <span className="pending-badge">
-                                                    <AlertTriangle size={14} />
-                                                    Pending
-                                                </span>
-                                            </div>
-
-                                            <div className="verification-details">
-                                                <div className="detail-row">
-                                                    <span className="label">Phone:</span>
-                                                    <span className="value">{pendingUser.phone}</span>
-                                                </div>
-                                                <div className="detail-row">
-                                                    <span className="label">College:</span>
-                                                    <span className="value">{pendingUser.college || 'N/A'}</span>
-                                                </div>
-                                                <div className="detail-row">
-                                                    <span className="label">Transaction ID:</span>
-                                                    <code className="value">{pendingUser.transactionId}</code>
-                                                </div>
-                                                <div className="detail-row">
-                                                    <span className="label">Amount:</span>
-                                                    <span className="value amount">₹{pendingUser.paymentAmount || 400}</span>
-                                                </div>
-                                                <div className="detail-row">
-                                                    <span className="label">Events:</span>
-                                                    <div className="events-badges">
-                                                        {pendingUser.selectedEvents?.map((event, i) => (
-                                                            <span key={i} className="event-badge">{event}</span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {pendingUser.paymentScreenshot && (
-                                                <button
-                                                    className="btn btn-secondary screenshot-btn"
-                                                    onClick={() => {
-                                                        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-                                                        const serverBase = apiUrl.replace(/\/api\/?$/, '');
-                                                        setPreviewImage(`${serverBase}${pendingUser.paymentScreenshot}`);
-                                                    }}
-                                                >
-                                                    <Image size={16} />
-                                                    View Payment Receipt (PDF)
-                                                </button>
-                                            )}
-
-                                            <div className="verification-actions">
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={() => handleVerify(pendingUser._id)}
-                                                    disabled={actionLoading === pendingUser._id}
-                                                >
-                                                    {actionLoading === pendingUser._id ? (
-                                                        <span className="loading-spinner-small"></span>
-                                                    ) : (
-                                                        <>
-                                                            <CheckCircle size={16} />
-                                                            Approve
-                                                        </>
-                                                    )}
-                                                </button>
-                                                <button
-                                                    className="btn btn-danger"
-                                                    onClick={() => setRejectModal({ open: true, user: pendingUser, reason: '' })}
-                                                    disabled={actionLoading === pendingUser._id}
-                                                >
-                                                    <XCircle size={16} />
-                                                    Reject
-                                                </button>
-                                            </div>
-
-                                            <div className="verification-footer">
-                                                <span className="timestamp">
-                                                    Registered: {new Date(pendingUser.createdAt).toLocaleString()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </section>
-                    )}
-
                     {/* All Registrations Tab */}
                     {activeTab === 'registrations' && (
                         <>
@@ -531,15 +367,6 @@ const FacultyDashboard = () => {
                                     <div className="stat-info">
                                         <span className="stat-value-small">{participants.length}</span>
                                         <span className="stat-label-small">Total Registrations</span>
-                                    </div>
-                                </div>
-                                <div className="stat-card-small card">
-                                    <div className="stat-icon pending">
-                                        <Clock size={24} />
-                                    </div>
-                                    <div className="stat-info">
-                                        <span className="stat-value-small">{pendingVerifications.length}</span>
-                                        <span className="stat-label-small">Pending Verification</span>
                                     </div>
                                 </div>
                             </div>
@@ -603,7 +430,7 @@ const FacultyDashboard = () => {
                                                             <td>{participant.email}</td>
                                                             <td className="password-cell">
                                                                 <code style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '2px 6px', borderRadius: '4px' }}>
-                                                                    {participant.password || 'N/A'}
+                                                                    {participant.generatedPassword || 'N/A'}
                                                                 </code>
                                                             </td>
                                                             <td>{participant.college}</td>
@@ -686,7 +513,7 @@ const FacultyDashboard = () => {
                                                     <td>{u.email}</td>
                                                     <td>
                                                         <code style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '2px 6px', borderRadius: '4px' }}>
-                                                            {u.plainPassword || 'N/A'}
+                                                            {u.generatedPassword || 'N/A'}
                                                         </code>
                                                     </td>
                                                     <td>
@@ -867,56 +694,7 @@ const FacultyDashboard = () => {
                 </div>
             </main>
 
-            {/* Image Preview Modal */}
-            {previewImage && (
-                <div className="modal-overlay" onClick={() => setPreviewImage(null)}>
-                    <div className="modal-content image-preview-modal" onClick={e => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setPreviewImage(null)}>
-                            <X size={24} />
-                        </button>
-                        <h3>Payment Screenshot</h3>
-                        <img src={previewImage} alt="Payment Screenshot" />
-                    </div>
-                </div>
-            )}
 
-            {/* Reject Modal */}
-            {rejectModal.open && (
-                <div className="modal-overlay" onClick={() => setRejectModal({ open: false, user: null, reason: '' })}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setRejectModal({ open: false, user: null, reason: '' })}>
-                            <X size={24} />
-                        </button>
-                        <h3>Reject Registration</h3>
-                        <p>Rejecting registration for: <strong>{rejectModal.user?.name}</strong></p>
-                        <div className="input-group">
-                            <label>Reason for rejection:</label>
-                            <textarea
-                                className="input"
-                                rows={3}
-                                placeholder="Enter reason for rejection..."
-                                value={rejectModal.reason}
-                                onChange={(e) => setRejectModal(prev => ({ ...prev, reason: e.target.value }))}
-                            />
-                        </div>
-                        <div className="modal-actions">
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => setRejectModal({ open: false, user: null, reason: '' })}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="btn btn-danger"
-                                onClick={handleReject}
-                                disabled={actionLoading}
-                            >
-                                {actionLoading ? 'Processing...' : 'Confirm Rejection'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Delete Confirmation Modal */}
             {deleteConfirmModal.open && (

@@ -131,20 +131,20 @@
 }
 
 .login-logo {
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 0.75rem;
     text-decoration: none;
     margin-bottom: 2rem;
     transition: transform 0.3s ease;
 }
 
 .login-logo:hover {
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
 .login-logo-img {
-    height: 48px;
+    height: 60px;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
@@ -153,28 +153,6 @@
 
 .login-logo:hover .login-logo-img {
     filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.5));
-}
-
-.login-logo .logo-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-    text-align: left;
-}
-
-.login-logo .logo-title {
-    font-family: var(--font-display);
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.login-logo .logo-subtitle {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--accent-400);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
 }
 
 .login-header h1 {
@@ -416,17 +394,8 @@
         padding: 1.5rem;
     }
 
-    .login-logo {
-        flex-direction: column;
-        text-align: center;
-    }
-
     .login-logo-img {
-        height: 40px;
-    }
-
-    .login-logo .logo-text {
-        text-align: center;
+        height: 50px;
     }
 }
 

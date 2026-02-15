@@ -86,10 +86,6 @@ const Login = () => {
                                 alt="Semiconductor Summit 2.0" 
                                 className="login-logo-img"
                             />
-                            <div className="logo-text">
-                                <span className="logo-title">Semiconductor</span>
-                                <span className="logo-subtitle">Summit 2.0</span>
-                            </div>
                         </Link>
                         <h1>Welcome Back</h1>
                         <p>Enter your credentials to access your dashboard</p>

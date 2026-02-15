@@ -16,6 +16,18 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // Prevent body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => {
+            document.body.style.overflow = ''
+        }
+    }, [isMobileMenuOpen])
+
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'About', path: '/about' },
@@ -27,7 +39,7 @@ const Navbar = () => {
     ]
 
     return (
-        <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
+        <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''} ${isMobileMenuOpen ? 'menu-open' : ''}`}>
             <div className="navbar-container">
                 <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
                     <img

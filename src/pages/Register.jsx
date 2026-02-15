@@ -32,6 +32,7 @@ const AVAILABLE_EVENTS = [
 const Register = () => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
@@ -92,6 +93,7 @@ const Register = () => {
 
         setLoading(true);
         setError('');
+        setLoadingMessage('Uploading receipt...');
 
         try {
             const data = new FormData();
@@ -105,15 +107,26 @@ const Register = () => {
             data.append('pdfReceipt', formData.pdfFile);
             data.append('selectedEvents', JSON.stringify(formData.selectedEvents));
 
-            await api.post('/register', data, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            // Show progress messages
+            setTimeout(() => setLoadingMessage('Verifying payment receipt...'), 1000);
+            setTimeout(() => setLoadingMessage('Processing your registration...'), 3000);
+
+            const response = await api.post('/register', data, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                timeout: 60000 // 60 second timeout
             });
 
-            setSuccess(true);
+            setLoadingMessage('Registration complete!');
+            setTimeout(() => setSuccess(true), 500);
         } catch (err) {
-            setError(err.response?.data?.error || 'Registration failed. Please try again.');
+            if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+                setError('Request timeout. Please check your internet connection and try again. If the problem persists, your registration may have been saved - please check your email or contact support.');
+            } else {
+                setError(err.response?.data?.error || 'Registration failed. Please try again.');
+            }
         } finally {
             setLoading(false);
+            setLoadingMessage('');
         }
     };
 
@@ -133,8 +146,8 @@ const Register = () => {
                     </div>
                     <h1>Registration Successful! 🎉</h1>
                     <p className="success-message">
-                        Your payment receipt has been submitted for verification.
-                        Once verified, you'll receive an email with your login credentials.
+                        Your registration has been completed and approved! Check your email for login credentials.
+                        If you don't see the email, please check your spam folder.
                     </p>
                     <div className="success-info">
                         <div className="info-item">
@@ -195,6 +208,17 @@ const Register = () => {
                     <div className="error-message">
                         <AlertCircle size={20} />
                         {error}
+                    </div>
+                )}
+
+                {loading && (
+                    <div className="loading-overlay">
+                        <div className="loading-card">
+                            <div className="loading-spinner"></div>
+                            <h3>{loadingMessage}</h3>
+                            <p>Please wait, this may take up to 30 seconds...</p>
+                            <small>⚠️ Do not close this page or press back</small>
+                        </div>
                     </div>
                 )}
 
@@ -419,8 +443,17 @@ const Register = () => {
                                     className="btn btn-primary"
                                     disabled={loading}
                                 >
-                                    {loading ? 'Submitting...' : 'Complete Registration'}
-                                    {!loading && <CheckCircle size={18} />}
+                                    {loading ? (
+                                        <span>
+                                            <span className="spinner"></span>
+                                            {loadingMessage || 'Processing...'}
+                                        </span>
+                                    ) : (
+                                        <>
+                                            Complete Registration
+                                            <CheckCircle size={18} />
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>

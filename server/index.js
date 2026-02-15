@@ -210,7 +210,23 @@ app.post('/api/register', uploadReceipt.single('pdfReceipt'), async (req, res) =
         // Extract text from PDF and verify payment ID
         let pdfText = '';
         try {
-            const dataBuffer = fs.readFileSync(pdfFile.path);
+            // Wait a moment for file to be fully written (prevents intermittent read errors)
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Read file with retry logic
+            let dataBuffer;
+            let retries = 3;
+            while (retries > 0) {
+                try {
+                    dataBuffer = fs.readFileSync(pdfFile.path);
+                    break;
+                } catch (readError) {
+                    retries--;
+                    if (retries === 0) throw readError;
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+            
             const pdfData = await pdfParse(dataBuffer);
             pdfText = pdfData.text;
             logger.debug('PDF text extracted', { length: pdfText.length });
